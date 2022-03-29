@@ -1,2 +1,0 @@
-USERNAME = "rileyjthompson5@gmail.com"
-PASSWORD = "EzW99/96"
