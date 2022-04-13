@@ -1,7 +1,12 @@
 import CollectPlayerData as cpd
+import numpy as np
+import math
 from WebScraper import *
 from os.path import exists
-from datetime import date
+from datetime import date, datetime
+import matplotlib.pyplot as plt
+
+plt.close("all")
 
 today = date.today()
 year = today.year
@@ -32,23 +37,95 @@ def gather_injury_data():
         df = pd.concat(df_list)
     df = df.drop_duplicates()
     df.to_csv(r'data/injury_data.csv', index = False, header=True)
-    # #TODO split into Offense and DST+K
     
-    # #TODO suggest what player to trade for and who to trade to get the player
-    # if (not exists("data/wr-te_wopr_"+str(date.today())+".csv")):
-    #     cpd.get_player_data()
-    # wopr_df.read_csv('data/wr-te_wopr_'+str(date.today())+'.csv')
-    # rb_adv_df.read_csv('data/rb_share_'+str(date.today())+'.csv')
 
 def clean_injury_data():
     injury_df = pd.read_csv("data/injury_data.csv")
     pd.set_option('display.max_columns', None)
-    # print(injury_df.head())
-    df = pd.DataFrame()
-    df = injury_df["Acquired"]
+
+    aquired_df = injury_df[~injury_df['Acquired'].isnull()]
+    aquired_df = aquired_df.drop("Relinquished", axis=1)
+    
+    relinquished_df = injury_df[~injury_df['Relinquished'].isnull()]
+    relinquished_df = relinquished_df.drop("Acquired", axis=1)
+
+    df = pd.DataFrame(columns=['Name', 'Team', 'Relinquished', 'Acquired', 'Notes'])
+    aquired_df = aquired_df.reset_index()
+    i = 0
+
+    for index, row in relinquished_df.iterrows():
+        new_row = pd.DataFrame({'Name': row['Relinquished'], 'Team': row['Team'], 'Acquired':  None, 'Relinquished': row['Date'], 'Notes': row['Notes']}, index=[i])
+        i += 1
+        df = df.append(new_row)
+
+    for index, row in aquired_df.iterrows():
+        i = df.index[df['Name'] == row['Acquired']]
+        if(len(i) > 0):
+            for value in i:
+                if df.iloc[value]['Acquired'] == None:
+                    current = value
+                    break
+        else:
+            current = i
+        old = pd.to_datetime(row['Date'], infer_datetime_format=True)
+        new = pd.to_datetime(df['Relinquished'].iloc[current], infer_datetime_format=True)
+        if not isinstance(new, pd.core.series.Series) and (old > new):
+            df.iloc[current]['Acquired'] = row['Date']
+
+    df.to_csv(r'data/injury_data_combined.csv', index = False, header=True)
+    return df
+
+
+def df_normalize():
+    df = pd.read_csv("data/injury_data_combined.csv")
+    numerical_df = pd.DataFrame(columns=["Description", "Time"])
+    i = 0
+
+    for index, row in df.iterrows():
+        if (row['Acquired'] != None and not pd.isna(row['Acquired'])):
+            print(row['Acquired'])
+            acquired = pd.to_datetime(row['Acquired'], infer_datetime_format=True)
+            relinquished = pd.to_datetime(row['Relinquished'], infer_datetime_format=True)
+            new_row = pd.DataFrame({'Description': row['Notes'], 'Time': (acquired-relinquished)}, index=[i])
+            i += 1
+            numerical_df = numerical_df.append(new_row)
+
+    numerical_df.to_csv(r'data/injury_data_numerical.csv', index = False, header=True)
+
+
+#TODO take injury data combined and create normal distributions based on how long the injury took and grouped by notes
+def normal_dist(df):
+    df['Time'] = df['Time'].apply(lambda x: int(x.strip(' days')))
+    df['Count'] = df.groupby('Description')['Description'].transform('count')
+    df = df[df.Count > 1]
+    df = df.drop(columns=["Count"])
+    df['Zscore'] = df.groupby('Description').Time.apply(lambda x: x.div(x.mean()))
     print(df.head())
-    # df['Name'] = injury_df.loc[["Acquired", "Relinquished"] != None]
+    # df.groupby('Description').Zscore.plot.kde()
+    # g = df.groupby('Description').Zscore
+    # n = g.ngroups
+    # fig, axes = plt.subplots(n // 2, 2, figsize=(6, 6), sharex=True, sharey=True)
+    # for i, (name, group) in enumerate(g):
+    #     r, c = i // 2, i % 2
+    #     a1 = axes[r, c]
+    #     a2 = a1.twinx()
+    #     group.plot.hist(ax=a2, alpha=.3)
+    #     group.plot.kde(title=name, ax=a1, c='r')
+    # fig.tight_layout()
+    
+    # df = df.groupby('Description')
+    df.to_csv(r'data/injury_data_dist.csv', index = False, header=True)
+    # plt.show()
+
+def to_integer(dt_time):
+    return 10000*dt_time.year + 100*dt_time.month + dt_time.day
+
+def nothing():
+    return
 
 if __name__ == '__main__':
     # gather_injury_data()
-    clean_injury_data()
+    # clean_injury_data()
+    # df_normalize()
+    df = pd.read_csv("data/injury_data_numerical.csv")
+    normal_dist(df)
