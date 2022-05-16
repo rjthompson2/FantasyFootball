@@ -1,5 +1,6 @@
 from WebScraper import *
 from Teams import *
+from typing import Tuple, List
 import pandas as pd
 import nflfastpy as nfl
 import re
@@ -7,7 +8,7 @@ import re
 positions = ['rb', 'qb', 'te', 'wr', 'k', 'dst']
 
 #TODO maybe split into smaller chunks and give each chunk its own python file
-def build_players(df):
+def build_players(df:pd.DataFrame) -> Tuple[dict, dict]:
     replacement_players = {}
     replacement_values = {}
 
@@ -24,21 +25,21 @@ def build_players(df):
     
     return replacement_players, replacement_values
 
-def prediction(BASE_URL, data, id):
+def prediction(BASE_URL:str, data:str, _id) -> pd.DataFrame:
     final_df = pd.DataFrame()
     ws = WebScraper()
     if data == "TableBase-table":
-        df_list = [fpts_multi_index_output(position, ws.new_collect(BASE_URL.format(position=position.upper()), id, data)) for position in positions] #collect data with list comprehensions
+        df_list = [fpts_multi_index_output(position, ws.new_collect(BASE_URL.format(position=position.upper()), _id, data)) for position in positions] #collect data with list comprehensions
     elif data == "projections":
-        df_list = [new_fpts_output(position, ws.new_collect(BASE_URL.format(position=position), id, data)) for position in positions if position not in ['k', 'dst']]
+        df_list = [new_fpts_output(position, ws.new_collect(BASE_URL.format(position=position), _id, data)) for position in positions if position not in ['k', 'dst']]
     else:
-        df_list = [fpts_output(position, ws.new_collect(BASE_URL.format(position=position), id, data), ['k', 'dst'], 'FPTS') for position in positions]
+        df_list = [fpts_output(position, ws.new_collect(BASE_URL.format(position=position), _id, data), ['k', 'dst'], 'FPTS') for position in positions]
 
     final_df = pd.concat(df_list)
     final_df = final_df.sort_values(by='FPTS', ascending=False) #sort df in descending order on FPTS column
     return final_df
 
-def adp_output(df):
+def adp_output(df:pd.DataFrame) -> pd.DataFrame:
     df = df[['Player Team (Bye)', 'POS', 'AVG']]
     df['PLAYER'] = df['Player Team (Bye)'].apply(lambda x: ' '.join(x.split()[:-2]) if x.split()[-1] != 'DST' else ' '.join(x.split()[:-1])) #removing the team and position
     df['POS'] = df['POS'].apply(lambda x: x[:1] if x[0] == "K" else ( x[:3] if x[:3] == "DST" else x[:2])) #removing the position rank
@@ -46,7 +47,7 @@ def adp_output(df):
     return df
 
 #TODO could move these 3 to Clean____.py file?
-def fpts_output(position, df, check_array, ftps):
+def fpts_output(position:str, df:pd.DataFrame, check_array:List[str], ftps:str) -> pd.DataFrame:
     if position not in check_array:
         df.columns = df.columns.droplevel(level=0) #our data has a multi-level column index. The first column level is useless so let's drop it.
     df['PLAYER'] = df['Player'].apply(lambda x: re.sub("\.", "", ' '.join(x.split()[:-1]))) #fixing player name to not include team
@@ -56,14 +57,14 @@ def fpts_output(position, df, check_array, ftps):
     df = df[['PLAYER', 'POS', 'FPTS']]
     return df
 
-def new_fpts_output(position, df):
+def new_fpts_output(position:str, df:pd.DataFrame) -> pd.DataFrame:
     df['PLAYER'] = change_team_name(df[1]) #fixing player name to not include team
     df["FPTS"] = df[len(df.columns)-2]
     df['POS'] = position.upper() #add a position column
     df = df[['PLAYER', 'POS', 'FPTS']]
     return df
 
-def fpts_multi_index_output(position, df):
+def fpts_multi_index_output(position:str, df:pd.DataFrame) -> pd.DataFrame:
     df.columns = df.columns.droplevel(level=0)
     if position != 'dst':
         df["PLAYER"] = df['Player'].apply(lambda x: re.sub("\.", "", ' '.join(x.split()[4:6])))
@@ -77,7 +78,7 @@ def fpts_multi_index_output(position, df):
     df = df.sort_values(by='FPTS', ascending=False)
     return df
 
-def change_team_name(df_series):
+def change_team_name(df_series:pd.Series) -> pd.Series:
     changes = {
         'Miami': 'Miami Dolphins', 
         'Dallas': 'Dallas Cowboys', 
@@ -116,13 +117,13 @@ def change_team_name(df_series):
     return df_series.apply(lambda x: changes[x] if x in changes else x)
 #-----------------------------------------------------------------
 
-def player_data(BASE_URL, data, ws, pos):
+def player_data(BASE_URL:str, data, ws:Scraper, pos:str) -> pd.DataFrame:
     final_df = pd.DataFrame()
     df_list = [build_player_data(ws.new_collect(BASE_URL.format(position=position), 'id', data), position) for position in pos] #collect data with list comprehensions
     final_df = pd.concat(df_list)
     return final_df
 
-def build_player_data(df, position):
+def build_player_data(df:pd.DataFrame, position:str) -> pd.DataFrame:
     new_df = pd.DataFrame()
     for column in df.columns:
         if column[0] in ['PASSING', 'RUSHING']:
@@ -132,7 +133,7 @@ def build_player_data(df, position):
     new_df['POS'] = position.upper()
     return new_df
 
-def build_drafting_data(df):
+def build_drafting_data(df:pd.DataFrame) -> pd.DataFrame:
     changes = {
         "Patrick Mahomes": "Patrick Mahomes II",
         "Darrell Henderson Jr": "Darrell Henderson",
@@ -146,7 +147,7 @@ def build_drafting_data(df):
     df['Player'] = df['Player'].replace(changes) #getting the correct names 
     return df
 
-def build_teams(df):
+def build_teams(df:pd.DataFrame) -> Teams:
     '''Builds the teams from the given pandas dataframe'''
     total_teams = df.sort_values(by='TEAM', ascending=False).iloc[0]['TEAM']
     teams = Teams([])
@@ -158,7 +159,7 @@ def build_teams(df):
         teams.teams.append(team)
     return teams
 
-def calculate_VOR(df, final_df, replacement_values):
+def calculate_VOR(df:pd.DataFrame, final_df:pd.DataFrame, replacement_values:dict) -> pd.DataFrame:
     df['VOR'] = df.apply(
         lambda row: row['FPTS'] - replacement_values[row['POS']] if row['POS'] != 'DST' and row['POS'] != 'K' else None, axis=1
     )
@@ -170,14 +171,14 @@ def calculate_VOR(df, final_df, replacement_values):
     final_df['SLEEPERSCORE'] = final_df['ADPRANK'] - final_df['VALUERANK']
     return final_df
 
-def opportunity(df):
+def opportunity(df:pd.DataFrame) -> pd.DataFrame:
     df['TGT/G'] = round(df['TGT']/df['G'], 2)
     df['RA/G'] = round(df['RUSHING ATT']/df['G'], 2)
     df['COMPLETION %'] = round((df['REC']/df['TGT'])*100, 2)
     df = df[['PLAYER', 'POS', 'TGT', 'TGT/G', 'COMPLETION %', 'RUSHING ATT', 'RA/G', 'G', 'FPTS', 'FPTS/G']]
     return df
 
-def flex_wopr(df):
+def flex_wopr(df:pd.DataFrame) -> pd.DataFrame:
     rec_df = df.groupby(['receiver_player_id', 'posteam', 'game_id'], as_index=False)[['pass_attempt', 'yards_gained', 'air_yards', 'complete_pass', 'pass_touchdown']].sum().assign(raw_rec_fpts = lambda x: x.yards_gained * 0.1 + x.complete_pass + x.pass_touchdown*6)
     team_stats = df.loc[(df['pass_attempt'] == 1) & (df['receiver_player_id'].notnull())].groupby(['game_id', 'posteam'], as_index=False)[['air_yards', 'pass_attempt']].sum()
     rec_df = rec_df.merge(team_stats, on=['game_id', 'posteam'], suffixes=('_player', '_team'))
@@ -211,7 +212,7 @@ def flex_wopr(df):
 
     return rec_df
 
-def rb_share(df):
+def rb_share(df:pd.DataFrame) -> pd.DataFrame:
     rush_df = df.groupby(['rusher_player_id', 'posteam', 'game_id'], as_index=False)[['rush_attempt', 'yards_gained', 'complete_pass', 'rushing_yards', 'rush_touchdown', 'touchdown']].sum().assign(raw_rush_fpts = lambda x: x.yards_gained * 0.1 + x.complete_pass + x.touchdown*6)
     team_stats = df.loc[(df['rush_attempt'] == 1) & (df['rusher_player_id'].notnull())].groupby(['game_id', 'posteam'], as_index=False)[['rushing_yards', 'rush_attempt']].sum()
     rush_df = rush_df.merge(team_stats, on=['game_id', 'posteam'], suffixes=('_player', '_team'))

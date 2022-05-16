@@ -2,7 +2,7 @@ import pandas as pd
 import re
 
 class Draft():
-    def __init__(self, df, total_teams):
+    def __init__(self, df:pd.DataFrame, total_teams:int):
         self.increment = 1
         self.current_round = 1
         self.current_team = 1

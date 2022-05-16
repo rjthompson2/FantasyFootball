@@ -3,7 +3,7 @@ from WebScraper import *
 import BuildData as bd
 import time
 
-def main(args):
+def main(args:list):
     if args == None or len(args) < 3:
         total_teams = int(input("Enter total number of teams: "))
         pos = int(input("Enter draft position: "))

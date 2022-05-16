@@ -51,7 +51,7 @@ def main(args):
     print("Total--- %s seconds ---" % (time.time() - total_time))
 
 #This function does nothing allowing the loop to continue
-def next():
+def next() -> None:
     pass
     
 
