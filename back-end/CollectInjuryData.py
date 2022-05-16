@@ -16,7 +16,7 @@ if(today.month == 1):
 URL="https://www.prosportstransactions.com/football/Search/SearchResults.php?Player=&Team=&BeginDate=1900-01-01&EndDate=2022-03-11&ILChkBx=yes&submit=Search&start=0"
 
 #TODO WIP
-def gather_injury_data():
+def gather_injury_data() -> None:
     ws = InjuryScraper()
     ws.start(url=URL, headless=True)
     if exists("data/injury_data.csv"):
@@ -39,7 +39,7 @@ def gather_injury_data():
     df.to_csv(r'data/injury_data.csv', index = False, header=True)
     
 
-def clean_injury_data():
+def clean_injury_data() -> pd.DataFrame:
     injury_df = pd.read_csv("data/injury_data.csv")
     pd.set_option('display.max_columns', None)
 
@@ -76,7 +76,7 @@ def clean_injury_data():
     return df
 
 
-def df_normalize():
+def df_normalize() -> None:
     df = pd.read_csv("data/injury_data_combined.csv")
     numerical_df = pd.DataFrame(columns=["Description", "Time"])
     i = 0
@@ -93,35 +93,18 @@ def df_normalize():
     numerical_df.to_csv(r'data/injury_data_numerical.csv', index = False, header=True)
 
 
-#TODO take injury data combined and create normal distributions based on how long the injury took and grouped by notes
-def normal_dist(df):
+def normal_dist(df:pd.DataFrame) -> None:
     df['Time'] = df['Time'].apply(lambda x: int(x.strip(' days')))
-    df['Count'] = df.groupby('Description')['Description'].transform('count')
-    df = df[df.Count > 1]
-    df = df.drop(columns=["Count"])
-    df['Zscore'] = df.groupby('Description').Time.apply(lambda x: x.div(x.mean()))
+    plt.figure()
+    df["Time"].hist()
     print(df.head())
-    # df.groupby('Description').Zscore.plot.kde()
-    # g = df.groupby('Description').Zscore
-    # n = g.ngroups
-    # fig, axes = plt.subplots(n // 2, 2, figsize=(6, 6), sharex=True, sharey=True)
-    # for i, (name, group) in enumerate(g):
-    #     r, c = i // 2, i % 2
-    #     a1 = axes[r, c]
-    #     a2 = a1.twinx()
-    #     group.plot.hist(ax=a2, alpha=.3)
-    #     group.plot.kde(title=name, ax=a1, c='r')
-    # fig.tight_layout()
-    
-    # df = df.groupby('Description')
-    df.to_csv(r'data/injury_data_dist.csv', index = False, header=True)
-    # plt.show()
+    plt.show()
 
-def to_integer(dt_time):
-    return 10000*dt_time.year + 100*dt_time.month + dt_time.day
 
-def nothing():
-    return
+#TODO group by notes
+def _groupby(_filter:str, df:pd.DataFrame) -> dict:
+    return {_filter: df}
+
 
 if __name__ == '__main__':
     # gather_injury_data()
