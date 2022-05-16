@@ -8,7 +8,7 @@ import time
 import multiprocessing
 import re
 
-def get_draft_data(year):
+def get_draft_data(year:int) -> None:
     start_time = time.time()
     total_time = time.time()
     
@@ -56,7 +56,7 @@ def get_draft_data(year):
 
     print("Total--- %s seconds ---" % (time.time() - total_time))
 
-def merge(df_list):
+def merge(df_list:list) -> pd.DataFrame:
     df = pd.DataFrame()
 
     for i in range(len(df_list)):
@@ -67,13 +67,13 @@ def merge(df_list):
             df = df.merge(df_list[i], how='left', on=['PLAYER', 'POS'])
     return df
 
-def clean_name(df):
+def clean_name(df:pd.DataFrame) -> pd.DataFrame:
     df["PLAYER"] = df["PLAYER"].apply(lambda x: re.sub("\s[IVX]*$", "", x))
     df["PLAYER"] = df["PLAYER"].apply(lambda x: re.sub("\s[JS]r\.?$", "", x))
     df['PLAYER'] = df['PLAYER'].apply(lambda x: re.sub("\.", "", x))
     return df
 
-def get_bootstrap(fpts_df):
+def get_bootstrap(fpts_df:pd.DataFrame):
     data = []
     players = fpts_df["PLAYER"].values
     with multiprocessing.Pool() as pool:
@@ -83,7 +83,7 @@ def get_bootstrap(fpts_df):
         pool.terminate()
     return data
 
-def mp_bootstrap(player, fpts_df):
+def mp_bootstrap(player:str, fpts_df:pd.DataFrame):
     new_df = fpts_df.loc[fpts_df["PLAYER"] == player]
     new_df = new_df.drop(columns=["PLAYER", "POS"])
     new_df = new_df.dropna(axis=1, how='all').dropna()
@@ -93,7 +93,7 @@ def mp_bootstrap(player, fpts_df):
         return output
     return None
 
-def get_cf(data):
+def get_cf(data:list) -> pd.DataFrame:
     temp_df = []
     cf_df = pd.DataFrame()
     for dictionary in data:
@@ -103,7 +103,7 @@ def get_cf(data):
     cf_df = pd.concat(temp_df)
     return cf_df
 
-def collect_data():
+def collect_data() -> list:
     aggr_sites = {
         'https://www.fantasypros.com/nfl/projections/{position}.php?week=draft&scoring=PPR&week=draft': ['data', 'id'], 
         'https://www.cbssports.com/fantasy/football/stats/{position}/'+str(year)+'/restofseason/projections/ppr/': ['TableBase-table',  'class'],
@@ -142,13 +142,13 @@ def collect_data():
 def get_site_data(aggr_sites, site):
     return bd.prediction(site, aggr_sites[site][0], aggr_sites[site][1])
 
-def get_adp_data():
+def get_adp_data() -> pd.DataFrame:
     ws = WebScraper()
     ws.start("https://www.fantasypros.com/nfl/adp/ppr-overall.php")
     df = bd.adp_output(ws.collect('id', 'data'))
     return df
 
-def get_injury_data(position):
+def get_injury_data(position:str) -> pd.DataFrame:
     dws = DynamicWebScraper()
     dws.start("https://www.draftsharks.com/injury-predictor/"+position, headless=True)
     injury_df = dws.collect('class', 'sip-table')
@@ -158,7 +158,7 @@ def get_injury_data(position):
     injury_df.drop('Proj. Points', axis=1, inplace=True)
     return injury_df
 
-def get_ecr_data():
+def get_ecr_data() -> pd.DataFrame:
     dws = DynamicWebScraper()
     dws.start("https://www.fantasypros.com/nfl/rankings/ppr-cheatsheets.php", headless=True)
     ecr_df = dws.collect('id', 'ranking-table')
