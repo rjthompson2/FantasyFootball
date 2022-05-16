@@ -226,3 +226,8 @@ class InjuryScraper(DynamicScraper):
     def quit(self):
         '''Shuts down the browser'''
         self.driver.quit()
+
+
+#TODO Cookie-based webscraper
+class CookieScraper(ABC):
+    pass

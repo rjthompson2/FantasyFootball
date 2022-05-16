@@ -2,7 +2,7 @@ import CollectData
 import RunDraft
 import TeamBuilder
 
-def main(choice):
+def main(choice) -> None:
     choice.main(None)
 
 #TODO better UI/GUI/Website (maybe in React and host locally)
@@ -14,6 +14,7 @@ def main(choice):
 #TODO something like synthea data obsucation
 #TODO Faust event bus? 
 #TODO Decision trees after adding events
+#TODO Documenting and typing
 
 if __name__ == '__main__':
     choices = {
