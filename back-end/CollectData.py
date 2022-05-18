@@ -39,8 +39,8 @@ enums = [
     'plot'
     ]
 
-#TODO add error bars based on confidence from number of observations
-def main(args):
+
+def main(args) -> None:
     total_time = time.time()
 
     for enum in enums:
@@ -50,8 +50,8 @@ def main(args):
 
     print("Total--- %s seconds ---" % (time.time() - total_time))
 
-#This function does nothing allowing the loop to continue
-def next() -> None:
+
+def next() -> None: #This function does nothing allowing the loop to continue
     pass
     
 
