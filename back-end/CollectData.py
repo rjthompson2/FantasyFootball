@@ -5,7 +5,6 @@ import CollectDraftData as drft
 import CollectPlayerData as plyr
 import CollectPlayerDataTimeSeries as weeklyData
 import CorrelationMap as cm
-import CovarianceMap as cvm
 import PlotTeams as plotWeeklyData
 from enum import Enum
 from functools import partial
@@ -19,7 +18,6 @@ class Functions(Enum):
     draft = lambda: drft.get_draft_data(year) if not exists("data/draft_order_"+str(year)+".csv") else next(),
     player = lambda: plyr.get_player_data(year),
     corr_map = lambda: cm.main(2002, year),
-    cov_map = lambda: cvm.main(2002, year),
     weekly = lambda: weeklyData.main(year),
     plot = lambda: plotWeeklyData.main(year),
 
@@ -34,7 +32,6 @@ enums = [
     'draft',
     'player', 
     'corr_map', 
-    'cov_map'
     'weekly', 
     'plot'
     ]
