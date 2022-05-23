@@ -2,7 +2,7 @@ import neat
 import pickle
 import Objects
 
-def eval_genomes(genomes, config):
+def eval_draft_genomes(genomes, config):
     """
     runs the simulation of the current population of
     birds and sets their fitness based on the distance they
@@ -22,16 +22,15 @@ def eval_genomes(genomes, config):
         genome.fitness = 0  # start with fitness level of 0
         net = neat.nn.FeedForwardNetwork.create(genome, config)
         nets.append(net)
-        birds.append(Bird(230,350))
+        players.append(FFPlayer())
         ge.append(genome)
 
     score = 0
-
     run = True
     while run and len(players) > 0:
-        for x, bird in enumerate(birds):  # give each bird a fitness of 0.1 for each frame it stays alive
+        for x, players in enumerate(players):  # give each bird a fitness of 0.1 for each frame it stays alive
             ge[x].fitness += 0.1 
-            bird.move()
+            players.move()
 
             # send bird location, top pipe location and bottom pipe location and determine from network whether to jump or not
             output = nets[birds.index(bird)].activate((bird.y, abs(bird.y - pipes[pipe_ind].height), abs(bird.y - pipes[pipe_ind].bottom)))
@@ -76,15 +75,13 @@ def eval_genomes(genomes, config):
                 ge.pop(birds.index(bird))
                 birds.pop(birds.index(bird))
 
-        draw_window(WIN, birds, pipes, base, score, gen, pipe_ind)
-
         # break if score gets large enough
-        '''if score > 20:
+        if score > 20:
             pickle.dump(nets[0],open("best.pickle", "wb"))
-            break'''
+            break
 
 
-def run(config_file):
+def run(config_file) -> None:
     """
     runs the NEAT algorithm to train a neural network to play flappy bird.
     :param config_file: location of config file
@@ -104,7 +101,15 @@ def run(config_file):
     #p.add_reporter(neat.Checkpointer(5))
 
     # Run for up to 50 generations.
-    winner = p.run(eval_genomes, 50)
+    winner = p.run(eval_draft_genomes, 50)
 
     # show final stats
     print('\nBest genome:\n{!s}'.format(winner))
+
+if __name__ == '__main__':
+    # Determine path to configuration file. This path manipulation is
+    # here so that the script will run successfully regardless of the
+    # current working directory.
+    local_dir = os.path.dirname(__file__)
+    config_path = os.path.join(local_dir, 'config-neat.txt')
+    run(config_path)
