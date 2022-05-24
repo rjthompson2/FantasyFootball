@@ -1,4 +1,4 @@
-from backend.WebScraper import *
+from backend.WebScraper import Scraper
 from itertools import repeat
 from datetime import date
 import pandas as pd
