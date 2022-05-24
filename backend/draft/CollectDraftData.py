@@ -1,9 +1,9 @@
-from backend.WebScraper import Scraper
+from WebScraper import Scraper
 from itertools import repeat
 from datetime import date
 import pandas as pd
 import BuildData as bd
-import Bootstrap as bs
+import ml.Bootstrap as bs
 import time
 import multiprocessing
 import re
