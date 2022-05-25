@@ -1,8 +1,8 @@
 from os.path import exists
 from datetime import date
 import time
-import draft.CollectDraftData as drft
-import CollectPlayerData as plyr
+import backend.data_collection.CollectDraftData as drft
+import backend.data_collection.CollectPlayerData as plyr
 import CollectPlayerDataTimeSeries as weeklyData
 import CorrelationMap as cm
 import PlotTeams as plotWeeklyData
