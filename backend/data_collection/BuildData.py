@@ -26,54 +26,6 @@ def build_players(df:pd.DataFrame) -> Tuple[dict, dict]:
     
     return replacement_players, replacement_values
 
-def prediction(BASE_URL:str, data:str, _id) -> pd.DataFrame:
-    final_df = pd.DataFrame()
-    ws = WebScraper()
-    if data == "TableBase-table":
-        df_list = [fpts_multi_index_output(position, ws.new_collect(BASE_URL.format(position=position.upper()), _id, data)) for position in positions] #collect data with list comprehensions
-    elif data == "projections":
-        df_list = [new_fpts_output(position, ws.new_collect(BASE_URL.format(position=position), _id, data)) for position in positions if position not in ['k', 'dst']]
-    else:
-        df_list = [fpts_output(position, ws.new_collect(BASE_URL.format(position=position), _id, data), ['k', 'dst'], 'FPTS') for position in positions]
-
-    final_df = pd.concat(df_list)
-    final_df = final_df.sort_values(by='FPTS', ascending=False) #sort df in descending order on FPTS column
-    return final_df
-
-
-
-#TODO could move these 3 to Clean____.py file?
-def fpts_output(position:str, df:pd.DataFrame, check_array:List[str], ftps:str) -> pd.DataFrame:
-    if position not in check_array:
-        df.columns = df.columns.droplevel(level=0) #our data has a multi-level column index. The first column level is useless so let's drop it.
-    df['PLAYER'] = df['Player'].apply(lambda x: re.sub("\.", "", ' '.join(x.split()[:-1]))) #fixing player name to not include team
-    df['PLAYER'] = change_team_name(df['PLAYER'])
-    df["FPTS"] = df[ftps]
-    df['POS'] = position.upper() #add a position column
-    df = df[['PLAYER', 'POS', 'FPTS']]
-    return df
-
-def new_fpts_output(position:str, df:pd.DataFrame) -> pd.DataFrame:
-    df['PLAYER'] = change_team_name(df[1]) #fixing player name to not include team
-    df["FPTS"] = df[len(df.columns)-2]
-    df['POS'] = position.upper() #add a position column
-    df = df[['PLAYER', 'POS', 'FPTS']]
-    return df
-
-def fpts_multi_index_output(position:str, df:pd.DataFrame) -> pd.DataFrame:
-    df.columns = df.columns.droplevel(level=0)
-    if position != 'dst':
-        df["PLAYER"] = df['Player'].apply(lambda x: re.sub("\.", "", ' '.join(x.split()[4:6])))
-    else:
-        #TODO change names to long form
-        df["PLAYER"] = change_team_name(df['Team'])
-    df["POS"] = position.upper()
-    df = df.loc[df['fpts  Fantasy Points'] != '—']
-    df["FPTS"] = df['fpts  Fantasy Points'].apply(lambda x: float(x))
-    df = df[['PLAYER', 'POS', 'FPTS']]
-    df = df.sort_values(by='FPTS', ascending=False)
-    return df
-
 def change_team_name(df_series:pd.Series) -> pd.Series:
     changes = {
         'Miami': 'Miami Dolphins', 

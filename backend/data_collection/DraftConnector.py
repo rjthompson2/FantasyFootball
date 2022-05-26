@@ -1,5 +1,6 @@
 import pandas as pd
 from BuildData.BootstrapAnalysis import get_bootstrap, get_cf
+from BuildData import build_players, calculate_VOR
 from CollectData import ADPCollector, ECRCollector, FPTSDataCollector, InjuryDataCollector
 from utils import merge_list
 
@@ -17,7 +18,7 @@ class DraftConnector():
             }
         )
 
-    def ingest(self) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    def collect(self) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         #Gets all data
         df = self.adp.collect()
         ecr_df = self.ecr.collect()
@@ -28,10 +29,11 @@ class DraftConnector():
     def run(self) -> None:
         start_time = time.time()
         total_time = time.time()
-        df, ecr_df, injury_df, fpts_df = self.ingest()
+        df, ecr_df, injury_df, fpts_df = self.collect()
         print("Collected Data--- %s seconds ---" % (time.time() - start_time))
         start_time = time.time()
 
+        df = self.adp.clean_data(df)
         ecr_df = self.ecr.clean_data(ecr_df)
         fpts_df = self.fdc.clean_data(fpts_df)
         injury_df = self.idc.clean_data(injury_df)
@@ -46,7 +48,7 @@ class DraftConnector():
         #Merge the list into a single pandas dataframe
         cf_df = get_cf(data)
         pos_df = fpts_df[["PLAYER", "POS"]]
-        cf_df = pos_df.merge_list(cf_df, on="PLAYER")
+        cf_df = pos_df.merge(cf_df, on="PLAYER")
         print("CF--- %s seconds ---" % (time.time() - start_time))
         start_time = time.time()
 

@@ -28,6 +28,13 @@ def merge_list(df_list:list, how='left', on=['PLAYER', 'POS']) -> pd.DataFrame:
         df = df.merge(clean_name(new_df), how=how, on=on) 
     return df
 
+def list_to_dict(_list:list) -> dict:
+    _dict = {}
+    for list_value in _list:
+        if isinstance(list_value, dict):
+            _dict.update(list_value)
+    return _dict
+
 
 def update_chrome_driver() -> None:
     # get the latest chrome driver version number

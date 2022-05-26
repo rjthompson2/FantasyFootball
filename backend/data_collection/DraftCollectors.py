@@ -73,21 +73,77 @@ class MultiProssCollector():
         'https://fantasy.espn.com/football/players/projections'
     ]'''
 class FPTSDataCollector(MultiProssCollector):
+    #TODO change to an enum
+    positions = ['rb', 'qb', 'te', 'wr', 'k', 'dst']
+
     def __init__(self, aggr_sites: dict) -> None:
         self.input = aggr_sites
         
-
     def collect_data(self) -> pd.DataFrame:
         #Aggregate all data from the sites
         df_list = super().collect_data()
             
         #Merge the list into a single pandas dataframe
-        fpts_df = merge_list(df_list)
+        df_dict = list_to_dict(df_list)
 
-        return fpts_df
+        return df_dict
     
-    def get_site_data(self, site: str) -> list:
-        return prediction(site, self.input[site][0], self.input[site][1])
+    def get_site_data(self, site: str) -> dict:
+        base_url = site
+        data =  self.input[site][0]
+        _id = self.input[site][1]
+        ws = WebScraper()
+        df_dict = {position: ws.new_collect(base_url.format(position=position.upper())) for position in positions}
+        return df_dict
+
+    def clean(self, df_dict: dict) -> pd.DataFrame:
+        df = pd.DataFrame()
+        df_list = []
+        
+        for data in df_dict.keys():
+            temp = df_dict[data]
+            if data == "TableBase-table":
+                df_list.append([fpts_multi_index_output(temp[position]for position in positions]) #collect data with list comprehensions
+            elif data == "projections":
+                df_list.append([new_fpts_output(temp[position]for position in positions if position not in ['k', 'dst']])
+            else:
+                df_list.append([fpts_output(temp[position], ['k', 'dst'], 'FPTS') for position in positions])
+        
+        df = pd.concat(df_list)
+        df = final_df.sort_values(by='FPTS', ascending=False) #sort df in descending order on FPTS column
+        return df
+        
+    #TODO decouple cleaning from collecting
+    def fpts_output(position:str, df:pd.DataFrame, check_array:List[str], ftps:str) -> pd.DataFrame:
+        if position not in check_array:
+            df.columns = df.columns.droplevel(level=0) #our data has a multi-level column index. The first column level is useless so let's drop it.
+        df['PLAYER'] = df['Player'].apply(lambda x: re.sub("\.", "", ' '.join(x.split()[:-1]))) #fixing player name to not include team
+        df['PLAYER'] = change_team_name(df['PLAYER'])
+        df["FPTS"] = df[ftps]
+        df['POS'] = position.upper() #add a position column
+        df = df[['PLAYER', 'POS', 'FPTS']]
+        return df
+
+    def new_fpts_output(position:str, df:pd.DataFrame) -> pd.DataFrame:
+        df['PLAYER'] = change_team_name(df[1]) #fixing player name to not include team
+        df["FPTS"] = df[len(df.columns)-2]
+        df['POS'] = position.upper() #add a position column
+        df = df[['PLAYER', 'POS', 'FPTS']]
+        return df
+
+    def fpts_multi_index_output(position:str, df:pd.DataFrame) -> pd.DataFrame:
+        df.columns = df.columns.droplevel(level=0)
+        if position != 'dst':
+            df["PLAYER"] = df['Player'].apply(lambda x: re.sub("\.", "", ' '.join(x.split()[4:6])))
+        else:
+            #TODO change names to long form
+            df["PLAYER"] = change_team_name(df['Team'])
+        df["POS"] = position.upper()
+        df = df.loc[df['fpts  Fantasy Points'] != '—']
+        df["FPTS"] = df['fpts  Fantasy Points'].apply(lambda x: float(x))
+        df = df[['PLAYER', 'POS', 'FPTS']]
+        df = df.sort_values(by='FPTS', ascending=False)
+        return df
 
 class InjuryDataCollector(MultiProssCollector):
     def __init__(self, positions: str) -> None:
