@@ -1,7 +1,7 @@
 from BuildData import adp_output, build_players, prediction, calculate_VOR
 from Bootstrap import calculate_ceiling_floor
 from WebScraper import WebScraper, DynamicWebScraper
-from utils import merge_list, update_chrome_driver
+from utils import clean_name, merge_list, update_chrome_driver
 from selenium.common.exceptions import WebDriverException
 from typing import List
 from itertools import repeat
@@ -135,12 +135,6 @@ def get_draft_data(year:int) -> None:
 
     print("Total--- %s seconds ---" % (time.time() - total_time))
 
-def clean_name(df:pd.DataFrame) -> pd.DataFrame:
-    df["PLAYER"] = df["PLAYER"].apply(lambda x: re.sub("\s[IVX]*$", "", x))
-    df["PLAYER"] = df["PLAYER"].apply(lambda x: re.sub("\s[JS]r\.?$", "", x))
-    df['PLAYER'] = df['PLAYER'].apply(lambda x: re.sub("\.", "", x))
-    return df
-
 def get_bootstrap(fpts_df:pd.DataFrame):
     data = []
     players = fpts_df["PLAYER"].values
@@ -182,6 +176,7 @@ def get_ecr_data() -> pd.DataFrame:
     dws = DynamicWebScraper()
     dws.start("https://www.fantasypros.com/nfl/rankings/ppr-cheatsheets.php", headless=True)
     ecr_df = dws.collect('id', 'ranking-table')
+    print("!!!!!!!!!",ecr_df.columns)
     ecr_df[['PLAYER', 'ECR']] = ecr_df[['Player Name', 'AVG.']]
     ecr_df = ecr_df[['PLAYER', 'ECR']]
     ecr_df = ecr_df.dropna()

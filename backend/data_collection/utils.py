@@ -3,7 +3,16 @@ import requests
 import wget
 import zipfile
 import os
+import re
 from os.path import join
+
+
+def clean_name(df:pd.DataFrame) -> pd.DataFrame:
+    df["PLAYER"] = df["PLAYER"].apply(lambda x: re.sub("\s[IVX]*$", "", x))
+    df["PLAYER"] = df["PLAYER"].apply(lambda x: re.sub("\s[JS]r\.?$", "", x))
+    df['PLAYER'] = df['PLAYER'].apply(lambda x: re.sub("\.", "", x))
+    return df
+
 
 def merge_list(df_list:list, how='left', on=['PLAYER', 'POS']) -> pd.DataFrame:
     df = pd.DataFrame(clean_name(df_list.pop(0)))
@@ -11,10 +20,6 @@ def merge_list(df_list:list, how='left', on=['PLAYER', 'POS']) -> pd.DataFrame:
         df = df.merge(clean_name(new_df), how=how, on=on) 
     return df
 
-#TODO write a function to check that Chrome Driver is up to date and if it isn't download the version and set permission
-
-def get_files_in_dir(file: str) -> str:
-    return exists(join(os.getcwd(), file))
 
 def update_chrome_driver() -> None:
     # get the latest chrome driver version number
