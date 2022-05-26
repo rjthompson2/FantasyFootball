@@ -1,4 +1,5 @@
-from WebScraper import *
+from WebScraper import Scraper
+from utils import Positions
 # from Teams import *
 from typing import Tuple, List
 import pandas as pd
@@ -6,7 +7,6 @@ import nflfastpy as nfl
 import re
 
 #TODO change to an enum
-positions = ['rb', 'qb', 'te', 'wr', 'k', 'dst']
 
 #TODO maybe split into smaller chunks and give each chunk its own python file
 def build_players(df:pd.DataFrame) -> Tuple[dict, dict]:
@@ -21,7 +21,7 @@ def build_players(df:pd.DataFrame) -> Tuple[dict, dict]:
         replacement_players[position] = player
 
     for position, player in replacement_players.items():
-        if position.lower() in positions:
+        if position.lower() in Positions:
             replacement_values[position] = df.loc[df['PLAYER'] == player].values[0, 2]
     
     return replacement_players, replacement_values
