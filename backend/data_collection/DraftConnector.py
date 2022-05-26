@@ -25,7 +25,7 @@ class DraftConnector():
         fpts_df = self.fdc.collect_data()
         return df, ecr, injury_df, fpts_df
 
-    def process(self) -> None:
+    def run(self) -> None:
         start_time = time.time()
         total_time = time.time()
         df, ecr_df, injury_df, fpts_df = self.ingest()
