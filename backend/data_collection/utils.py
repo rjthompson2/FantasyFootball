@@ -4,8 +4,16 @@ import wget
 import zipfile
 import os
 import re
+from datetime import date
 from os.path import join
 
+
+def get_season_year() -> int:
+    today = date.today()
+    year = today.year
+    if(today.month == 1):
+        year -= 1
+    return year
 
 def clean_name(df:pd.DataFrame) -> pd.DataFrame:
     df["PLAYER"] = df["PLAYER"].apply(lambda x: re.sub("\s[IVX]*$", "", x))

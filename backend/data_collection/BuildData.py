@@ -39,12 +39,7 @@ def prediction(BASE_URL:str, data:str, _id) -> pd.DataFrame:
     final_df = final_df.sort_values(by='FPTS', ascending=False) #sort df in descending order on FPTS column
     return final_df
 
-def adp_output(df:pd.DataFrame) -> pd.DataFrame:
-    df = df[['Player Team (Bye)', 'POS', 'AVG']]
-    df['PLAYER'] = df['Player Team (Bye)'].apply(lambda x: ' '.join(x.split()[:-2]) if x.split()[-1] != 'DST' else ' '.join(x.split()[:-1])) #removing the team and position
-    df['POS'] = df['POS'].apply(lambda x: x[:1] if x[0] == "K" else ( x[:3] if x[:3] == "DST" else x[:2])) #removing the position rank
-    df = df[['PLAYER', 'POS', 'AVG']].sort_values(by='AVG')
-    return df
+
 
 #TODO could move these 3 to Clean____.py file?
 def fpts_output(position:str, df:pd.DataFrame, check_array:List[str], ftps:str) -> pd.DataFrame:
