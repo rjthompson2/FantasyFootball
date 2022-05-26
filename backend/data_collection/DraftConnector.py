@@ -1,5 +1,5 @@
 import pandas as pd
-from Bootstrap import calculate_ceiling_floor
+from BuildData.BootstrapAnalysis import get_bootstrap, get_cf
 from CollectData import ADPCollector, ECRCollector, FPTSDataCollector, InjuryDataCollector
 from utils import merge_list
 
@@ -69,7 +69,7 @@ class DraftConnector():
         print("Injury--- %s seconds ---" % (time.time() - start_time))
         start_time = time.time()
 
-        load(df)
+        self.load(df)
         print("Total--- %s seconds ---" % (time.time() - total_time))
 
     def load(self, df:pd.DataFrame) -> None:

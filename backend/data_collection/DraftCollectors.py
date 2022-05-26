@@ -114,34 +114,3 @@ class InjuryDataCollector(MultiProssCollector):
         df = clean_name(df)
         df.drop('Proj. Points', axis=1, inplace=True)
         return df
-
-
-def get_bootstrap(fpts_df:pd.DataFrame):
-    data = []
-    players = fpts_df["PLAYER"].values
-    with multiprocessing.Pool() as pool:
-        data = pool.starmap(mp_bootstrap, zip(players, repeat(fpts_df)))
-        pool.close()
-        pool.join()
-        pool.terminate()
-    return data
-
-def mp_bootstrap(player:str, fpts_df:pd.DataFrame):
-    new_df = fpts_df.loc[fpts_df["PLAYER"] == player]
-    new_df = new_df.drop(columns=["PLAYER", "POS"])
-    new_df = new_df.dropna(axis=1, how='all').dropna()
-    if(len(new_df.columns) <= 1):
-        return None
-    new_list = new_df.values
-    output = calculate_ceiling_floor(arrays=new_list, player_names=[player], stdout=False)
-    return output
-
-def get_cf(data:list) -> pd.DataFrame:
-    temp_df = []
-    cf_df = pd.DataFrame()
-    for dictionary in data:
-        if dictionary != None:
-            values = [dictionary["player"], dictionary["mean"], dictionary["ceiling"], dictionary["floor"], dictionary["std"]]
-            temp_df.append(pd.DataFrame([values], columns=["PLAYER", "FPTS", "C", "F", "STD"]))
-    cf_df = pd.concat(temp_df)
-    return cf_df
