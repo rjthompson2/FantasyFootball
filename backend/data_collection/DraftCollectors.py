@@ -1,6 +1,6 @@
 from BuildData import adp_output, build_players, prediction, calculate_VOR
 from WebScraper import WebScraper, DynamicWebScraper
-from utils import clean_name, merge_list, update_chrome_driver
+from utils import clean_name, merge_list, update_chrome_driver, Positions
 from selenium.common.exceptions import WebDriverException
 from typing import List
 from itertools import repeat
@@ -73,9 +73,6 @@ class MultiProssCollector():
         'https://fantasy.espn.com/football/players/projections'
     ]'''
 class FPTSDataCollector(MultiProssCollector):
-    #TODO change to an enum
-    positions = ['rb', 'qb', 'te', 'wr', 'k', 'dst']
-
     def __init__(self, aggr_sites: dict) -> None:
         self.input = aggr_sites
         
@@ -93,7 +90,7 @@ class FPTSDataCollector(MultiProssCollector):
         data =  self.input[site][0]
         _id = self.input[site][1]
         ws = WebScraper()
-        df_dict = {position: ws.new_collect(base_url.format(position=position.upper())) for position in positions}
+        df_dict = {position.value: ws.new_collect(base_url.format(position=position.value.upper())) for position in Positions}
         return df_dict
 
     def clean(self, df_dict: dict) -> pd.DataFrame:
@@ -103,11 +100,11 @@ class FPTSDataCollector(MultiProssCollector):
         for data in df_dict.keys():
             temp = df_dict[data]
             if data == "TableBase-table":
-                df_list.append([fpts_multi_index_output(temp[position]for position in positions]) #collect data with list comprehensions
+                df_list.append([fpts_multi_index_output(temp[position.value]) for position in Positions]) #collect data with list comprehensions
             elif data == "projections":
-                df_list.append([new_fpts_output(temp[position]for position in positions if position not in ['k', 'dst']])
+                df_list.append([new_fpts_output(temp[position.value]) for position in Positions if position.value not in ['k', 'dst']])
             else:
-                df_list.append([fpts_output(temp[position], ['k', 'dst'], 'FPTS') for position in positions])
+                df_list.append([fpts_output(temp[position.value], ['k', 'dst'], 'FPTS') for position in Positions])
         
         df = pd.concat(df_list)
         df = final_df.sort_values(by='FPTS', ascending=False) #sort df in descending order on FPTS column
@@ -146,8 +143,8 @@ class FPTSDataCollector(MultiProssCollector):
         return df
 
 class InjuryDataCollector(MultiProssCollector):
-    def __init__(self, positions: str) -> None:
-        self.position = positions
+    def __init__(self, url: str) -> None:
+        self.input = url
 
     def collect_data(self) -> pd.DataFrame:
         #Aggregate all data from the sites
@@ -160,7 +157,7 @@ class InjuryDataCollector(MultiProssCollector):
     
     def get_site_data(self, position: str) -> pd.DataFrame:
         ws = DynamicWebScraper()
-        ws.start("https://www.draftsharks.com/injury-predictor/"+position, headless=True)
+        ws.start(self.input.format(position=position.value), headless=True)
         df = dws.collect('class', 'sip-table')
         return df
 

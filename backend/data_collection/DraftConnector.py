@@ -9,7 +9,7 @@ class DraftConnector():
         self.year = year
         self.adp = ADPCollector(ws=WebScraper(), url="https://www.fantasypros.com/nfl/adp/ppr-overall.php", _id='id', tag='data')
         self.ecr = ECRCollector(ws=DynamicWebScraper(), url="https://www.fantasypros.com/nfl/rankings/ppr-cheatsheets.php", _id='id', tag='ranking-table')
-        self.idc = InjuryDataCollector(positions=['qb', 'rb', 'wr', 'te'])
+        self.idc = InjuryDataCollector(url="https://www.draftsharks.com/injury-predictor/{position}")
         self.fdc = FPTSDataCollector(
             aggr_sites={
                 'https://www.fantasypros.com/nfl/projections/{position}.php?week=draft&scoring=PPR&week=draft': ['data', 'id'], 

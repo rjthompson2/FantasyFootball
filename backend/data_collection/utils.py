@@ -6,6 +6,7 @@ import os
 import re
 from datetime import date
 from os.path import join
+from enum import Enum
 
 
 def get_season_year() -> int:
@@ -55,3 +56,14 @@ def update_chrome_driver() -> None:
     os.remove(latest_driver_zip)
 
     os.chmod(join(os.getcwd(), 'chromedriver'), 0o755)
+
+class Positions(Enum):
+    RB = 'rb'
+    QB = 'qb'
+    TE = 'te'
+    WR = 'wr'
+    K = 'k'
+    DST = 'dst'
+
+    def __repr__(self):
+        return self.value
