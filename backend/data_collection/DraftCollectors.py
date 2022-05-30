@@ -1,11 +1,8 @@
-from BuildData import adp_output, build_players, prediction, calculate_VOR
 from WebScraper import WebScraper, DynamicWebScraper
-from utils import clean_name, merge_list, update_chrome_driver, Positions
+from utils import clean_name, merge_list, update_chrome_driver, change_team_name, Positions
 from selenium.common.exceptions import WebDriverException
-from typing import List
 from itertools import repeat
 import pandas as pd
-import time
 import multiprocessing
 import re
 
@@ -22,11 +19,11 @@ class Collector():
         df = ws.collect(self.id, self.tag)
         return df
 
-    def clean(self, df):
+    def clean_data(self, df):
         raise NotImplementedError
 
 class ADPCollector(Collector):
-    def clean(self, df):
+    def clean_data(self, df):
         df = df[['Player Team (Bye)', 'POS', 'AVG']]
         df['PLAYER'] = df['Player Team (Bye)'].apply(lambda x: ' '.join(x.split()[:-2]) if x.split()[-1] != 'DST' else ' '.join(x.split()[:-1])) #removing the team and position
         df['POS'] = df['POS'].apply(lambda x: x[:1] if x[0] == "K" else ( x[:3] if x[:3] == "DST" else x[:2])) #removing the position rank
@@ -34,7 +31,7 @@ class ADPCollector(Collector):
         return df
 
 class ECRCollector(Collector):
-    def clean(self, df):
+    def clean_data(self, df):
         df[['PLAYER', 'ECR']] = df[['Player Name', 'AVG.']]
         df = df[['PLAYER', 'ECR']]
         df = df.dropna()
@@ -63,6 +60,9 @@ class MultiProssCollector():
             self.collect_data()
 
         return df_list
+    
+    def clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
+        raise NotImplementedError
 
 '''TODO add sites later
     self.reg_sites = [
@@ -86,14 +86,13 @@ class FPTSDataCollector(MultiProssCollector):
         return df_dict
     
     def get_site_data(self, site: str) -> dict:
-        base_url = site
         data =  self.input[site][0]
         _id = self.input[site][1]
         ws = WebScraper()
-        df_dict = {position.value: ws.new_collect(base_url.format(position=position.value.upper())) for position in Positions}
+        df_dict = {data: {position.value: ws.new_collect(site.format(position=position.value.upper(), data, _id)) for position in Positions}}
         return df_dict
 
-    def clean(self, df_dict: dict) -> pd.DataFrame:
+    def collect_data(self, df_dict: dict) -> pd.DataFrame:
         df = pd.DataFrame()
         df_list = []
         
@@ -110,7 +109,6 @@ class FPTSDataCollector(MultiProssCollector):
         df = final_df.sort_values(by='FPTS', ascending=False) #sort df in descending order on FPTS column
         return df
         
-    #TODO decouple cleaning from collecting
     def fpts_output(position:str, df:pd.DataFrame, check_array:List[str], ftps:str) -> pd.DataFrame:
         if position not in check_array:
             df.columns = df.columns.droplevel(level=0) #our data has a multi-level column index. The first column level is useless so let's drop it.

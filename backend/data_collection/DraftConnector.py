@@ -71,7 +71,7 @@ class DraftConnector():
         print("Injury--- %s seconds ---" % (time.time() - start_time))
         start_time = time.time()
 
-        self.load(df)
+        # self.load(df)
         print("Total--- %s seconds ---" % (time.time() - total_time))
 
     def load(self, df:pd.DataFrame) -> None:

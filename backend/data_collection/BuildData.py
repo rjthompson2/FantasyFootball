@@ -6,8 +6,6 @@ import pandas as pd
 import nflfastpy as nfl
 import re
 
-#TODO change to an enum
-
 #TODO maybe split into smaller chunks and give each chunk its own python file
 def build_players(df:pd.DataFrame) -> Tuple[dict, dict]:
     replacement_players = {}
@@ -25,45 +23,6 @@ def build_players(df:pd.DataFrame) -> Tuple[dict, dict]:
             replacement_values[position] = df.loc[df['PLAYER'] == player].values[0, 2]
     
     return replacement_players, replacement_values
-
-def change_team_name(df_series:pd.Series) -> pd.Series:
-    changes = {
-        'Miami': 'Miami Dolphins', 
-        'Dallas': 'Dallas Cowboys', 
-        'Philadelphia': 'Philadelphia Eagles', 
-        'Tampa Bay': 'Tampa Bay Buccaneers', 
-        'Green Bay': 'Green Bay Packers', 
-        'Kansas City': 'Kansas City Chiefs', 
-        'Las Vegas': 'Las Vegas Raiders', 
-        'L.A. Rams': 'Los Angeles Rams', 
-        'Houston': 'Houston Texans', 
-        'Denver': 'Denver Broncos', 
-        'Detroit': 'Detroit Lions', 
-        'N.Y. Jets': 'New York Jets', 
-        'New Orleans': 'New Orleans Saints', 
-        'San Francisco': 'San Francisco 49ers', 
-        'Tennessee': 'Tennessee Titans', 
-        'Buffalo': 'Buffalo Bills', 
-        'Atlanta': 'Atlanta Falcons', 
-        'Minnesota': 'Minnesota Vikings', 
-        'Indianapolis': 'Indianapolis Colts', 
-        'Seattle': 'Seattle Seahawks', 
-        'Cincinnati': 'Cincinnati Bengals', 
-        'Chicago': 'Chicago Bears', 
-        'Arizona': 'Arizona Cardinals', 
-        'Baltimore': 'Baltimore Ravens', 
-        'Jacksonville': 'Jacksonville Jaguars', 
-        'Washington': 'Washington Commanders', 
-        'Pittsburgh': 'Pittsburgh Steelers', 
-        'Cleveland': 'Cleveland Browns', 
-        'L.A. Chargers': 'Los Angeles Chargers', 
-        'N.Y. Giants': 'New York Giants', 
-        'Carolina': 'Carolina Panthers', 
-        'New England': 'New England Patriots'
-    }
-
-    return df_series.apply(lambda x: changes[x] if x in changes else x)
-#-----------------------------------------------------------------
 
 def player_data(BASE_URL:str, data, ws:Scraper, pos:str) -> pd.DataFrame:
     final_df = pd.DataFrame()
