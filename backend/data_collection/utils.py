@@ -9,6 +9,43 @@ from os.path import join
 from enum import Enum
 
 
+#TODO changes to an Enum?
+team_name_changes = {
+    'Miami': 'Miami Dolphins', 
+    'Dallas': 'Dallas Cowboys', 
+    'Philadelphia': 'Philadelphia Eagles', 
+    'Tampa Bay': 'Tampa Bay Buccaneers', 
+    'Green Bay': 'Green Bay Packers', 
+    'Kansas City': 'Kansas City Chiefs', 
+    'Las Vegas': 'Las Vegas Raiders', 
+    'L.A. Rams': 'Los Angeles Rams', 
+    'Houston': 'Houston Texans', 
+    'Denver': 'Denver Broncos', 
+    'Detroit': 'Detroit Lions', 
+    'N.Y. Jets': 'New York Jets', 
+    'New Orleans': 'New Orleans Saints', 
+    'San Francisco': 'San Francisco 49ers', 
+    'Tennessee': 'Tennessee Titans', 
+    'Buffalo': 'Buffalo Bills', 
+    'Atlanta': 'Atlanta Falcons', 
+    'Minnesota': 'Minnesota Vikings', 
+    'Indianapolis': 'Indianapolis Colts', 
+    'Seattle': 'Seattle Seahawks', 
+    'Cincinnati': 'Cincinnati Bengals', 
+    'Chicago': 'Chicago Bears', 
+    'Arizona': 'Arizona Cardinals', 
+    'Baltimore': 'Baltimore Ravens', 
+    'Jacksonville': 'Jacksonville Jaguars', 
+    'Washington': 'Washington Commanders', 
+    'Pittsburgh': 'Pittsburgh Steelers', 
+    'Cleveland': 'Cleveland Browns', 
+    'L.A. Chargers': 'Los Angeles Chargers', 
+    'N.Y. Giants': 'New York Giants', 
+    'Carolina': 'Carolina Panthers', 
+    'New England': 'New England Patriots'
+}
+
+
 def get_season_year() -> int:
     today = date.today()
     year = today.year
@@ -58,43 +95,7 @@ def update_chrome_driver() -> None:
     os.chmod(join(os.getcwd(), 'chromedriver'), 0o755)
 
 def change_team_name(df_series:pd.Series) -> pd.Series:
-    #TODO changes to an Enum?
-    changes = {
-        'Miami': 'Miami Dolphins', 
-        'Dallas': 'Dallas Cowboys', 
-        'Philadelphia': 'Philadelphia Eagles', 
-        'Tampa Bay': 'Tampa Bay Buccaneers', 
-        'Green Bay': 'Green Bay Packers', 
-        'Kansas City': 'Kansas City Chiefs', 
-        'Las Vegas': 'Las Vegas Raiders', 
-        'L.A. Rams': 'Los Angeles Rams', 
-        'Houston': 'Houston Texans', 
-        'Denver': 'Denver Broncos', 
-        'Detroit': 'Detroit Lions', 
-        'N.Y. Jets': 'New York Jets', 
-        'New Orleans': 'New Orleans Saints', 
-        'San Francisco': 'San Francisco 49ers', 
-        'Tennessee': 'Tennessee Titans', 
-        'Buffalo': 'Buffalo Bills', 
-        'Atlanta': 'Atlanta Falcons', 
-        'Minnesota': 'Minnesota Vikings', 
-        'Indianapolis': 'Indianapolis Colts', 
-        'Seattle': 'Seattle Seahawks', 
-        'Cincinnati': 'Cincinnati Bengals', 
-        'Chicago': 'Chicago Bears', 
-        'Arizona': 'Arizona Cardinals', 
-        'Baltimore': 'Baltimore Ravens', 
-        'Jacksonville': 'Jacksonville Jaguars', 
-        'Washington': 'Washington Commanders', 
-        'Pittsburgh': 'Pittsburgh Steelers', 
-        'Cleveland': 'Cleveland Browns', 
-        'L.A. Chargers': 'Los Angeles Chargers', 
-        'N.Y. Giants': 'New York Giants', 
-        'Carolina': 'Carolina Panthers', 
-        'New England': 'New England Patriots'
-    }
-
-    return df_series.apply(lambda x: changes[x] if x in changes else x)
+    return df_series.apply(lambda x: team_name_changes[x] if x in team_name_changes else x)
 
 class Positions(Enum):
     RB = 'rb'
