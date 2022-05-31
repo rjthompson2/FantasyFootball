@@ -54,6 +54,7 @@ def build_drafting_data(df:pd.DataFrame) -> pd.DataFrame:
     df['Player'] = df['Player'].replace(changes) #getting the correct names 
     return df
 
+#TODO DONT DELETE!
 # def build_teams(df:pd.DataFrame) -> Teams:
 #     '''Builds the teams from the given pandas dataframe'''
 #     total_teams = df.sort_values(by='TEAM', ascending=False).iloc[0]['TEAM']
@@ -85,6 +86,8 @@ def opportunity(df:pd.DataFrame) -> pd.DataFrame:
     df = df[['PLAYER', 'POS', 'TGT', 'TGT/G', 'COMPLETION %', 'RUSHING ATT', 'RA/G', 'G', 'FPTS', 'FPTS/G']]
     return df
 
+################################################
+#TODO overlap with other functions, make generic
 def flex_wopr(df:pd.DataFrame) -> pd.DataFrame:
     rec_df = df.groupby(['receiver_player_id', 'posteam', 'game_id'], as_index=False)[['pass_attempt', 'yards_gained', 'air_yards', 'complete_pass', 'pass_touchdown']].sum().assign(raw_rec_fpts = lambda x: x.yards_gained * 0.1 + x.complete_pass + x.pass_touchdown*6)
     team_stats = df.loc[(df['pass_attempt'] == 1) & (df['receiver_player_id'].notnull())].groupby(['game_id', 'posteam'], as_index=False)[['air_yards', 'pass_attempt']].sum()
@@ -144,12 +147,13 @@ def rb_share(df:pd.DataFrame) -> pd.DataFrame:
     rush_df = rush_df.rename(columns={
         'rusher_player_name': 'Rusher', 'posteam': 'Team'
     })
-    # TODO need to create a value to figure out which RBs are the best (rushing + passing)
+    # TODO need to create a value to figure out which RBs are the best (rushing + passing) ---- IT?!?!?!
     #rec_df['Avg. WOPR'] = round((rec_df['Avg. Target Share']*1.5+rec_df['Avg. Air Yards Share']*0.7), 2)
     # merging total FPTS scored in to our original df
     rush_df = rush_df.merge(df.groupby(['rusher_player_id'], as_index=False)[['rushing_yards', 'yards_gained', 'complete_pass', 'rush_touchdown', 'touchdown']].sum().assign(total_fpts = lambda x: round(x.yards_gained*0.1 + x.touchdown*6 + x.complete_pass, 1)), on='rusher_player_id').sort_values(by='total_fpts', ascending=False).drop(columns=[ 'rushing_yards', 'complete_pass', 'rush_touchdown'])
     rush_df = rush_df[[column for column in rush_df.columns if column != 'rusher_player_id']]
     return rush_df
+################################################
 
 class BootstrapAnalysis():
     def get_bootstrap(fpts_df:pd.DataFrame):
@@ -173,7 +177,7 @@ class BootstrapAnalysis():
         return output
 
     def get_cf(data:list) -> pd.DataFrame:
-        '''gets each player's ceiling and floor for the best/worst they might perform'''
+        '''Gets each player's ceiling and floor for the best/worst they might perform'''
         temp_df = []
         cf_df = pd.DataFrame()
         for dictionary in data:
