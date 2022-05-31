@@ -8,6 +8,7 @@ import re
 
 
 class Collector():
+    '''Generic Collector template'''
     def __init__(self, ws, url, _id, tag):
         self.ws = ws
         self.url = url
@@ -23,6 +24,7 @@ class Collector():
         raise NotImplementedError
 
 class ADPCollector(Collector):
+    '''Collects the average draaft pick for each player'''
     def clean_data(self, df):
         df = df[['Player Team (Bye)', 'POS', 'AVG']]
         df['PLAYER'] = df['Player Team (Bye)'].apply(lambda x: ' '.join(x.split()[:-2]) if x.split()[-1] != 'DST' else ' '.join(x.split()[:-1])) #removing the team and position
@@ -31,6 +33,7 @@ class ADPCollector(Collector):
         return df
 
 class ECRCollector(Collector):
+    '''Collects the expert consensus rating for each player'''
     def clean_data(self, df):
         df[['PLAYER', 'ECR']] = df[['Player Name', 'AVG.']]
         df = df[['PLAYER', 'ECR']]
@@ -41,8 +44,8 @@ class ECRCollector(Collector):
 
 
 class MultiProssCollector():
+    '''Generic Collector template with multiprocessing'''
     def __init__(self):
-        self.input = None
         raise NotImplementedError
 
     def collect_data(self) -> list:
@@ -73,6 +76,7 @@ class MultiProssCollector():
         'https://fantasy.espn.com/football/players/projections'
     ]'''
 class FPTSDataCollector(MultiProssCollector):
+    '''Collects the predicted Fantasy Points for each player'''
     def __init__(self, aggr_sites: dict) -> None:
         self.input = aggr_sites
         
@@ -141,6 +145,7 @@ class FPTSDataCollector(MultiProssCollector):
         return df
 
 class InjuryDataCollector(MultiProssCollector):
+    '''Collects the injury statistics for each player'''
     def __init__(self, url: str) -> None:
         self.input = url
 
