@@ -47,6 +47,7 @@ team_name_changes = {
 
 
 def get_season_year() -> int:
+    '''Gets the current year of the season'''
     today = date.today()
     year = today.year
     if(today.month == 1):
@@ -75,6 +76,7 @@ def list_to_dict(_list:list) -> dict:
 
 
 def update_chrome_driver() -> None:
+    '''Updates the chrome driver to ensure there are no issues with outdated versions'''
     # get the latest chrome driver version number
     url = 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE'
     response = requests.get(url)
@@ -95,6 +97,7 @@ def update_chrome_driver() -> None:
     os.chmod(join(os.getcwd(), 'chromedriver'), 0o755)
 
 def change_team_name(df_series:pd.Series) -> pd.Series:
+    '''Changes the team name so all data has the same values for teams'''
     return df_series.apply(lambda x: team_name_changes[x] if x in team_name_changes else x)
 
 class Positions(Enum):

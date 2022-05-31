@@ -173,6 +173,7 @@ class BootstrapAnalysis():
         return output
 
     def get_cf(data:list) -> pd.DataFrame:
+        '''gets each player's ceiling and floor for the best/worst they might perform'''
         temp_df = []
         cf_df = pd.DataFrame()
         for dictionary in data:
