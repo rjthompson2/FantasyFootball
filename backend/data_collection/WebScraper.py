@@ -31,7 +31,7 @@ class AsyncWebScraper(Scraper):
     '''Generalized scraper for asyncronously collecting data from static webpages'''
     def collect(self, id, tag):
         df = pd.DataFrame()
-        if self.driver == None and not self.driver.ok:
+        if self.driver == None or not self.driver.ok:
             print("Could not connect.")
             return pd.DataFrame()
         soup = BS(self.driver.content, features='lxml')
