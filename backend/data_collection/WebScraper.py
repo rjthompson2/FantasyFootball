@@ -9,7 +9,6 @@ import multiprocessing
 import requests
 import asyncio
 import os
-import time
 
 #TODO collect Data using AsyncIO
 class Scraper(ABC):
@@ -27,6 +26,7 @@ class Scraper(ABC):
         self.start(url)
         return self.collect(id, tag)
 
+#TODO WIP
 class AsyncWebScraper(Scraper):
     '''Generalized scraper for asyncronously collecting data from static webpages'''
     def collect(self, id, tag):

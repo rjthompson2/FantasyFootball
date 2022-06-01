@@ -1,4 +1,4 @@
-from DraftConnector import DraftConnector
+from Connectors import DraftConnector
 from utils import get_season_year
 
 def main():

@@ -2,6 +2,7 @@ from WebScraper import WebScraper, DynamicWebScraper
 from utils import clean_name, merge_list, update_chrome_driver, change_team_name, Positions
 from selenium.common.exceptions import WebDriverException
 from itertools import repeat
+from typing import List
 import pandas as pd
 import multiprocessing
 import re
@@ -16,8 +17,11 @@ class Collector():
         self.tag = tag
 
     def collect(self):
-        self.ws.start(self.url, headless=True)
-        df = ws.collect(self.id, self.tag)
+        if isinstance(self.ws, DynamicWebScraper):
+            self.ws.start(self.url, headless=True)
+        else:
+            self.ws.start(self.url)
+        df = self.ws.collect(self.id, self.tag)
         return df
 
     def clean_data(self, df):
@@ -93,25 +97,25 @@ class FPTSDataCollector(MultiProssCollector):
         data =  self.input[site][0]
         _id = self.input[site][1]
         ws = WebScraper()
-        df_dict = {data: {position.value: ws.new_collect(site.format(position=position.value.upper(), data, _id)) for position in Positions}}
+        df_dict = {data: {position.value: ws.new_collect(site.format(position=position.value.upper()), data, _id) for position in Positions}}
         return df_dict
 
-    def collect_data(self, df_dict: dict) -> pd.DataFrame:
-        df = pd.DataFrame()
-        df_list = []
+    # def collect_data(self, df_dict: dict) -> pd.DataFrame:
+    #     df = pd.DataFrame()
+    #     df_list = []
         
-        for data in df_dict.keys():
-            temp = df_dict[data]
-            if data == "TableBase-table":
-                df_list.append([fpts_multi_index_output(temp[position.value]) for position in Positions]) #collect data with list comprehensions
-            elif data == "projections":
-                df_list.append([new_fpts_output(temp[position.value]) for position in Positions if position.value not in ['k', 'dst']])
-            else:
-                df_list.append([fpts_output(temp[position.value], ['k', 'dst'], 'FPTS') for position in Positions])
+    #     for data in df_dict.keys():
+    #         temp = df_dict[data]
+    #         if data == "TableBase-table":
+    #             df_list.append([fpts_multi_index_output(temp[position.value]) for position in Positions]) #collect data with list comprehensions
+    #         elif data == "projections":
+    #             df_list.append([new_fpts_output(temp[position.value]) for position in Positions if position.value not in ['k', 'dst']])
+    #         else:
+    #             df_list.append([fpts_output(temp[position.value], ['k', 'dst'], 'FPTS') for position in Positions])
         
-        df = pd.concat(df_list)
-        df = final_df.sort_values(by='FPTS', ascending=False) #sort df in descending order on FPTS column
-        return df
+    #     df = pd.concat(df_list)
+    #     df = final_df.sort_values(by='FPTS', ascending=False) #sort df in descending order on FPTS column
+    #     return df
         
     def fpts_output(position:str, df:pd.DataFrame, check_array:List[str], ftps:str) -> pd.DataFrame:
         if position not in check_array:

@@ -1,11 +1,14 @@
+import time
 import pandas as pd
-from BuildData.BootstrapAnalysis import get_bootstrap, get_cf
+from BuildData import BootstrapAnalysis as ba
 from BuildData import build_players, calculate_VOR
-from CollectData import ADPCollector, ECRCollector, FPTSDataCollector, InjuryDataCollector
+from Collectors import ADPCollector, ECRCollector, FPTSDataCollector, InjuryDataCollector
+from WebScraper import WebScraper, DynamicWebScraper
 from utils import merge_list
+from typing import Tuple
 
 class DraftConnector():
-    self __init__(self, year: int):
+    def __init__(self, year: int):
         self.year = year
         self.adp = ADPCollector(ws=WebScraper(), url="https://www.fantasypros.com/nfl/adp/ppr-overall.php", _id='id', tag='data')
         self.ecr = ECRCollector(ws=DynamicWebScraper(), url="https://www.fantasypros.com/nfl/rankings/ppr-cheatsheets.php", _id='id', tag='ranking-table')
@@ -19,7 +22,6 @@ class DraftConnector():
         )
 
     def collect(self) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-        #Gets all data
         df = self.adp.collect()
         ecr_df = self.ecr.collect()
         injury_df = self.idc.collect_data()
@@ -33,6 +35,7 @@ class DraftConnector():
         print("Collected Data--- %s seconds ---" % (time.time() - start_time))
         start_time = time.time()
 
+        #Gets all data
         df = self.adp.clean_data(df)
         ecr_df = self.ecr.clean_data(ecr_df)
         fpts_df = self.fdc.clean_data(fpts_df)
@@ -41,12 +44,12 @@ class DraftConnector():
         start_time = time.time()
 
         #Get a list of dictionaries with the player, mean, ceiling, floor, and standard deviation
-        data = get_bootstrap(fpts_df)
+        data = ba.get_bootstrap(fpts_df)
         print("Bootstrap--- %s seconds ---" % (time.time() - start_time))
         start_time = time.time()
 
         #Merge the list into a single pandas dataframe
-        cf_df = get_cf(data)
+        cf_df = ba.get_cf(data)
         pos_df = fpts_df[["PLAYER", "POS"]]
         cf_df = pos_df.merge(cf_df, on="PLAYER")
         print("CF--- %s seconds ---" % (time.time() - start_time))
