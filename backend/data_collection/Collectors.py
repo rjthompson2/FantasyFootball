@@ -1,11 +1,15 @@
-from WebScraper import WebScraper, DynamicWebScraper
-from utils import clean_name, merge_list, update_chrome_driver, change_team_name, Positions
+from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
+from backend.data_collection.utils import clean_name, merge_list, list_to_dict, update_chrome_driver, change_team_name, Positions
 from selenium.common.exceptions import WebDriverException
 from itertools import repeat
 from typing import List
 import pandas as pd
 import multiprocessing
 import re
+import logging
+
+
+LOG = logging.getLogger(__name__)
 
 
 class Collector():
@@ -16,34 +20,12 @@ class Collector():
         self.id = _id
         self.tag = tag
 
-    def collect(self):
+    def collect_data(self):
         if isinstance(self.ws, DynamicWebScraper):
             self.ws.start(self.url, headless=True)
         else:
             self.ws.start(self.url)
         df = self.ws.collect(self.id, self.tag)
-        return df
-
-    def clean_data(self, df):
-        raise NotImplementedError
-
-class ADPCollector(Collector):
-    '''Collects the average draaft pick for each player'''
-    def clean_data(self, df):
-        df = df[['Player Team (Bye)', 'POS', 'AVG']]
-        df['PLAYER'] = df['Player Team (Bye)'].apply(lambda x: ' '.join(x.split()[:-2]) if x.split()[-1] != 'DST' else ' '.join(x.split()[:-1])) #removing the team and position
-        df['POS'] = df['POS'].apply(lambda x: x[:1] if x[0] == "K" else ( x[:3] if x[:3] == "DST" else x[:2])) #removing the position rank
-        df = df[['PLAYER', 'POS', 'AVG']].sort_values(by='AVG')
-        return df
-
-class ECRCollector(Collector):
-    '''Collects the expert consensus rating for each player'''
-    def clean_data(self, df):
-        df[['PLAYER', 'ECR']] = df[['Player Name', 'AVG.']]
-        df = df[['PLAYER', 'ECR']]
-        df = df.dropna()
-        df['PLAYER'] = df['PLAYER'].apply(lambda x: re.sub('\s\(.*', '', x))
-        df = clean_name(df)
         return df
 
 
@@ -67,9 +49,6 @@ class MultiProssCollector():
             self.collect_data()
 
         return df_list
-    
-    def clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
-        raise NotImplementedError
 
 '''TODO add sites later
     self.reg_sites = [
@@ -94,64 +73,18 @@ class FPTSDataCollector(MultiProssCollector):
         return df_dict
     
     def get_site_data(self, site: str) -> dict:
+        exceptions = ['https://www.cbssports.com/fantasy/football/stats/{position}/2022/restofseason/projections/ppr/'] #sites that need the position to be capitalized to work
         data =  self.input[site][0]
         _id = self.input[site][1]
+        
         ws = WebScraper()
-        df_dict = {data: {position.value: ws.new_collect(site.format(position=position.value.upper()), data, _id) for position in Positions}}
+        df_dict = {data: {position.value: (ws.new_collect(site.format(position=position.value), _id, data) if site not in exceptions else ws.new_collect(site.format(position=position.value.upper()), _id, data)) for position in Positions}}
         return df_dict
-
-    # def collect_data(self, df_dict: dict) -> pd.DataFrame:
-    #     df = pd.DataFrame()
-    #     df_list = []
-        
-    #     for data in df_dict.keys():
-    #         temp = df_dict[data]
-    #         if data == "TableBase-table":
-    #             df_list.append([fpts_multi_index_output(temp[position.value]) for position in Positions]) #collect data with list comprehensions
-    #         elif data == "projections":
-    #             df_list.append([new_fpts_output(temp[position.value]) for position in Positions if position.value not in ['k', 'dst']])
-    #         else:
-    #             df_list.append([fpts_output(temp[position.value], ['k', 'dst'], 'FPTS') for position in Positions])
-        
-    #     df = pd.concat(df_list)
-    #     df = final_df.sort_values(by='FPTS', ascending=False) #sort df in descending order on FPTS column
-    #     return df
-        
-    def fpts_output(position:str, df:pd.DataFrame, check_array:List[str], ftps:str) -> pd.DataFrame:
-        if position not in check_array:
-            df.columns = df.columns.droplevel(level=0) #our data has a multi-level column index. The first column level is useless so let's drop it.
-        df['PLAYER'] = df['Player'].apply(lambda x: re.sub("\.", "", ' '.join(x.split()[:-1]))) #fixing player name to not include team
-        df['PLAYER'] = change_team_name(df['PLAYER'])
-        df["FPTS"] = df[ftps]
-        df['POS'] = position.upper() #add a position column
-        df = df[['PLAYER', 'POS', 'FPTS']]
-        return df
-
-    def new_fpts_output(position:str, df:pd.DataFrame) -> pd.DataFrame:
-        df['PLAYER'] = change_team_name(df[1]) #fixing player name to not include team
-        df["FPTS"] = df[len(df.columns)-2]
-        df['POS'] = position.upper() #add a position column
-        df = df[['PLAYER', 'POS', 'FPTS']]
-        return df
-
-    def fpts_multi_index_output(position:str, df:pd.DataFrame) -> pd.DataFrame:
-        df.columns = df.columns.droplevel(level=0)
-        if position != 'dst':
-            df["PLAYER"] = df['Player'].apply(lambda x: re.sub("\.", "", ' '.join(x.split()[4:6])))
-        else:
-            #TODO change names to long form
-            df["PLAYER"] = change_team_name(df['Team'])
-        df["POS"] = position.upper()
-        df = df.loc[df['fpts  Fantasy Points'] != '—']
-        df["FPTS"] = df['fpts  Fantasy Points'].apply(lambda x: float(x))
-        df = df[['PLAYER', 'POS', 'FPTS']]
-        df = df.sort_values(by='FPTS', ascending=False)
-        return df
 
 class InjuryDataCollector(MultiProssCollector):
     '''Collects the injury statistics for each player'''
     def __init__(self, url: str) -> None:
-        self.input = url
+        self.input = [url.format(position=position.value) for position in Positions]
 
     def collect_data(self) -> pd.DataFrame:
         #Aggregate all data from the sites
@@ -162,15 +95,8 @@ class InjuryDataCollector(MultiProssCollector):
 
         return df
     
-    def get_site_data(self, position: str) -> pd.DataFrame:
+    def get_site_data(self, site: str) -> pd.DataFrame:
         ws = DynamicWebScraper()
-        ws.start(self.input.format(position=position.value), headless=True)
-        df = dws.collect('class', 'sip-table')
-        return df
-
-    def clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
-        df = df.rename(columns={'Player':'PLAYER', 'Career Injuries':'CI', 'Probability of Injury In the Season':'IJ%', 'Projected Games Missed':'PGM', 'Probability of Injury Per Game':'IPG%', 'Durability':'D'})
-        df["PLAYER"] = df["PLAYER"].apply(lambda x: x.split(",")[0])
-        df = clean_name(df)
-        df.drop('Proj. Points', axis=1, inplace=True)
+        ws.start(site, headless=True)
+        df = ws.collect('class', 'sip-table')
         return df

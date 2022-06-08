@@ -1,10 +1,15 @@
-from WebScraper import Scraper
-from utils import Positions
+from backend.data_collection.WebScraper import Scraper
+from backend.data_collection.utils import Positions
 # from Teams import *
 from typing import Tuple, List
 import pandas as pd
 import nflfastpy as nfl
 import re
+import logging
+
+
+LOG = logging.getLogger(__name__)
+
 
 #TODO maybe split into smaller chunks and give each chunk its own python file
 def build_players(df:pd.DataFrame) -> Tuple[dict, dict]:
@@ -153,36 +158,18 @@ def rb_share(df:pd.DataFrame) -> pd.DataFrame:
     rush_df = rush_df.merge(df.groupby(['rusher_player_id'], as_index=False)[['rushing_yards', 'yards_gained', 'complete_pass', 'rush_touchdown', 'touchdown']].sum().assign(total_fpts = lambda x: round(x.yards_gained*0.1 + x.touchdown*6 + x.complete_pass, 1)), on='rusher_player_id').sort_values(by='total_fpts', ascending=False).drop(columns=[ 'rushing_yards', 'complete_pass', 'rush_touchdown'])
     rush_df = rush_df[[column for column in rush_df.columns if column != 'rusher_player_id']]
     return rush_df
-################################################
 
-class BootstrapAnalysis():
-    def get_bootstrap(fpts_df:pd.DataFrame):
-        data = []
-        players = fpts_df["PLAYER"].values
-        with multiprocessing.Pool() as pool:
-            data = pool.starmap(mp_bootstrap, zip(players, repeat(fpts_df)))
-            pool.close()
-            pool.join()
-            pool.terminate()
-        return data
+def fix_ecr(ecr_df, adp_df):
+    #TODO calculate ECR from ECRDiff and ADP
+    ecr_df['ECR'] = ecr_df['PLAYER'].apply(lambda x: calculate_ecr(ecr_df.loc['PLAYER' == x], adp_df.loc['PLAYER' == x]))
+    ecr_df = ecr_df[['PLAYER', 'ECR']]
+    return ecr_df
 
-    def mp_bootstrap(player:str, fpts_df:pd.DataFrame):
-        new_df = fpts_df.loc[fpts_df["PLAYER"] == player]
-        new_df = new_df.drop(columns=["PLAYER", "POS"])
-        new_df = new_df.dropna(axis=1, how='all').dropna()
-        if(len(new_df.columns) <= 1):
-            return None
-        new_list = new_df.values
-        output = calculate_ceiling_floor(arrays=new_list, player_names=[player], stdout=False)
-        return output
-
-    def get_cf(data:list) -> pd.DataFrame:
-        '''Gets each player's ceiling and floor for the best/worst they might perform'''
-        temp_df = []
-        cf_df = pd.DataFrame()
-        for dictionary in data:
-            if dictionary != None:
-                values = [dictionary["player"], dictionary["mean"], dictionary["ceiling"], dictionary["floor"], dictionary["std"]]
-                temp_df.append(pd.DataFrame([values], columns=["PLAYER", "FPTS", "C", "F", "STD"]))
-        cf_df = pd.concat(temp_df)
-        return cf_df
+def calculate_ecr(ecr_val, adp_val):
+    if ecr_val == None or ecr_val == '0':
+        return int(adp_val)
+     
+    if ecr_val[0] == '-':
+        return int(adp_val) - int(ecr_val[1:])
+    
+    return int(adp_val) + int(ecr_val[1:])

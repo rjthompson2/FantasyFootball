@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup as BS
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from concurrent.futures import ThreadPoolExecutor
+from selenium.common.exceptions import ElementNotInteractableException
 from abc import ABC
 from itertools import repeat
 import pandas as pd
@@ -9,6 +10,13 @@ import multiprocessing
 import requests
 import asyncio
 import os
+import csv
+import urllib
+import logging
+
+
+LOG = logging.getLogger(__name__)
+
 
 #TODO collect Data using AsyncIO
 class Scraper(ABC):
@@ -51,6 +59,8 @@ class WebScraper(Scraper):
         soup = BS(self.driver.content, features='lxml')
         table = soup.findAll('table', {id: tag})
         read_tables = pd.read_html(str(table))
+
+        # df = pd.concat([read_table])
         for read_table in read_tables:
             df = df.append(read_table)
         return df
@@ -100,6 +110,31 @@ class DynamicWebScraper(DynamicScraper):
                     
             df = pd.DataFrame(data=dfs, columns=columns)
         return df
+
+# class ECRScraper(DynamicWebScraper):
+#     def collect(self, id, tag):
+#         #class="select-advanced__button"
+#         #class="select-advanced-content select-advanced-content--button"
+#         #class="select-advanced__item"
+#         # self.click("select-advanced__button", 0)
+#         self.click("select-advanced__button", 4)
+        
+#         return super().collect(id, tag)
+    
+#     def click(self, _class: str, i = 0):
+#         buttons = self.driver.find_elements_by_class_name(_class)
+
+#         if len(buttons) <= 0:
+#             raise RuntimeError("Unable to find the button.")
+        
+#         try:
+#             buttons[i].click()
+#         except ElementNotInteractableException:
+#             return self.click(_class, i+1)
+
+#         LOG.warning(i)
+
+#         # [LOG.warning(button.location) for button in buttons]
 
 class FantasyScraper(DynamicScraper):
     '''Yahoo Fantasy Football dynamic scraper'''
