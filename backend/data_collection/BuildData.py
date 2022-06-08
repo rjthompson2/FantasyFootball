@@ -73,6 +73,7 @@ def build_drafting_data(df:pd.DataFrame) -> pd.DataFrame:
 #     return teams
 
 def calculate_VOR(df:pd.DataFrame, final_df:pd.DataFrame, replacement_values:dict) -> pd.DataFrame:
+    LOG.warning(replacement_values)
     df['VOR'] = df.apply(
         lambda row: row['FPTS'] - replacement_values[row['POS']] if (row['POS'] != 'DST' and row['POS'] != 'K') else None, axis=1
     )

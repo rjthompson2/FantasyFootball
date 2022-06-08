@@ -32,8 +32,6 @@ def mp_bootstrap(player:str, fpts_df:pd.DataFrame):
     new_df = new_df.drop(columns=["PLAYER", "POS"])
     new_df = new_df.dropna(axis=1, how='all').dropna()
     if(len(new_df.values) <= 1):
-      LOG.warning(player)
-      LOG.warning(new_df.values)
       return None
     new_list = [new_df.values]
     output = calculate_ceiling_floor(arrays=new_list, player_names=[player], stdout=False)
