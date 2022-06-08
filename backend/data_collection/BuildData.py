@@ -24,7 +24,7 @@ def build_players(df:pd.DataFrame) -> Tuple[dict, dict]:
         replacement_players[position] = player
 
     for position, player in replacement_players.items():
-        if position.lower() in Positions:
+        if Positions.has_value(position.lower()):
             replacement_values[position] = df.loc[df['PLAYER'] == player].values[0, 2]
     
     return replacement_players, replacement_values
@@ -74,7 +74,7 @@ def build_drafting_data(df:pd.DataFrame) -> pd.DataFrame:
 
 def calculate_VOR(df:pd.DataFrame, final_df:pd.DataFrame, replacement_values:dict) -> pd.DataFrame:
     df['VOR'] = df.apply(
-        lambda row: row['FPTS'] - replacement_values[row['POS']] if row['POS'] != 'DST' and row['POS'] != 'K' else None, axis=1
+        lambda row: row['FPTS'] - replacement_values[row['POS']] if (row['POS'] != 'DST' and row['POS'] != 'K') else None, axis=1
     )
     df = df.sort_values(by='VOR', ascending=False)
     df['VALUERANK'] = df['VOR'].rank(ascending=False)

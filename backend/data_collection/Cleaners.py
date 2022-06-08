@@ -42,9 +42,7 @@ class FPTSCleaner():
             else:
                 df_list += [self.fpts_output(position.value, temp[position.value], ['k', 'dst'], 'FPTS') for position in Positions]
         
-        df_list = df_list
-        df = [df_list[0].append(current) if i != 0 else current for i, current in enumerate(df_list)][0]
-        # df = pd.concat(df_list)
+        df = pd.concat(df_list)
         df = df.sort_values(by='FPTS', ascending=False) #sort df in descending order on FPTS column
         return df
         

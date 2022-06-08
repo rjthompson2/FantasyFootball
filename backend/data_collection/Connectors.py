@@ -53,7 +53,7 @@ class DraftConnector():
         start_time = time.time()
 
         #Get a list of dictionaries with the player, mean, ceiling, floor, and standard deviation
-        LOG.warning(fpts_df.iloc[["PLAYER"=="Jonathan Taylor"]])
+        # LOG.warning(fpts_df.iloc[["PLAYER"=="Jonathan Taylor"]])
         data = get_bootstrap(fpts_df)
         print("Bootstrap--- %s seconds ---" % (time.time() - start_time))
         start_time = time.time()

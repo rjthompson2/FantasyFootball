@@ -110,3 +110,7 @@ class Positions(Enum):
 
     def __repr__(self):
         return self.value
+
+    @classmethod
+    def has_value(cls, value: str):
+        return value in cls._value2member_map_ 

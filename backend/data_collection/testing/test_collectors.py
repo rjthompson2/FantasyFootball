@@ -46,8 +46,12 @@ class TestCollectors():
         except WebDriverException:
             update_chrome_driver()
             df = fdc.collect_data()
+
         # LOG.warning(df)
         assert df
+        assert not df == {}
+        new_df = FPTSCleaner().clean_data(df)
+        assert not new_df.equals(df)
 
         df = None
         try:
@@ -55,8 +59,12 @@ class TestCollectors():
         except WebDriverException:
             update_chrome_driver()
             df = fdc.collect_data()
+
         # LOG.warning(df)
         assert df
+        assert not df == {}
+        new_df = FPTSCleaner().clean_data(df)
+        assert not new_df.equals(df)
 
         df = None
         try:
@@ -64,8 +72,10 @@ class TestCollectors():
         except WebDriverException:
             update_chrome_driver()
             df = fdc.collect_data()
+
         # LOG.warning(df)
         assert df
+        assert not df == {}
         new_df = FPTSCleaner().clean_data(df)
         assert not new_df.equals(df)
 
@@ -85,10 +95,10 @@ class TestCollectors():
             update_chrome_driver()
             df = fdc.collect_data()
 
-        # LOG.warning(df)
         assert df
         new_df = FPTSCleaner().clean_data(df)
         assert not new_df.equals(df)
+        # assert len(new_df.loc["PLAYER" == new_df.iloc[0]["PLAYER"]]) >= 3
 
     def test_injury_collection(self):
         year = get_season_year()
