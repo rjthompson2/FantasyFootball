@@ -1,4 +1,4 @@
-from backend.data_collection.BuildData import build_players, calculate_VOR
+from backend.data_collection.BuildData import build_players, calculate_VOR, fix_ecr
 from backend.data_collection.Collectors import Collector, FPTSDataCollector, InjuryDataCollector
 from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
 from backend.data_collection.utils import merge_list
@@ -60,7 +60,7 @@ class DraftConnector():
         #Merge the list into a single pandas dataframe
         cf_df = get_cf(data)
         pos_df = fpts_df[["PLAYER", "POS"]]
-        cf_df = pos_df.drop_duplicates(subset=['PLAYER']).merge(cf_df, on="PLAYER", copy=False)
+        cf_df = pos_df.drop_duplicates(subset=['PLAYER']).merge(cf_df, on="PLAYER", copy=False) # Ensures no duplicate players
         print("CF--- %s seconds ---" % (time.time() - start_time))
         start_time = time.time()
 

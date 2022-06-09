@@ -172,7 +172,7 @@ def rb_share(df:pd.DataFrame) -> pd.DataFrame:
 #=================================================================#
 #TODO move to ECRCleaner method??
 def fix_ecr(ecr_df, adp_df):
-    ecr_df['ECR'] = ecr_df['PLAYER'].apply(lambda x: calculate_ecr(ecr_df.loc['PLAYER' == x], adp_df.loc['PLAYER' == x]))
+    ecr_df['ECR'] = ecr_df['PLAYER'].apply(lambda x: calculate_ecr(ecr_df.loc[ecr_df['PLAYER'] == x], adp_df.loc[adp_df['PLAYER'] == x]))
     ecr_df = ecr_df[['PLAYER', 'ECR']]
     return ecr_df
 
