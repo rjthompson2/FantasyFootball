@@ -1,5 +1,5 @@
-from Connectors import DraftConnector
-from utils import get_season_year
+from backend.data_collection.Connectors import DraftConnector
+from backend.data_collection.utils import get_season_year
 
 def main():
     dc = DraftConnector(get_season_year())
