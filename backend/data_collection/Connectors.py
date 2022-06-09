@@ -53,16 +53,14 @@ class DraftConnector():
         start_time = time.time()
 
         #Get a list of dictionaries with the player, mean, ceiling, floor, and standard deviation
-        # LOG.warning(fpts_df.iloc[["PLAYER"=="Jonathan Taylor"]])
         data = get_bootstrap(fpts_df)
         print("Bootstrap--- %s seconds ---" % (time.time() - start_time))
         start_time = time.time()
 
         #Merge the list into a single pandas dataframe
         cf_df = get_cf(data)
-        LOG.warning(cf_df)
         pos_df = fpts_df[["PLAYER", "POS"]]
-        cf_df = pos_df.merge(cf_df, on="PLAYER")
+        cf_df = pos_df.drop_duplicates(subset=['PLAYER']).merge(cf_df, on="PLAYER", copy=False)
         print("CF--- %s seconds ---" % (time.time() - start_time))
         start_time = time.time()
 

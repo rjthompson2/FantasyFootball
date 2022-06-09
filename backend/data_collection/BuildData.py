@@ -15,13 +15,21 @@ LOG = logging.getLogger(__name__)
 def build_players(df:pd.DataFrame) -> Tuple[dict, dict]:
     replacement_players = {}
     replacement_values = {}
+    values = { #TODO need to tweak values for my league
+        'QB': 24, 
+        'RB': 48,
+        'WR': 48,
+        'TE': 24
+    }
 
-    #15 * total players
-    #146 default
-    for _, row in df[:146].iterrows():
-        position = row['POS']
-        player = row['PLAYER']
-        replacement_players[position] = player
+    df_list = [df.loc[df['POS']== x] for x in list(values.keys())]
+
+    for pos_df in df_list:
+        position = pos_df['POS'].unique()[0]
+        shortened_df = pos_df.iloc[:values[position]]
+        for _, row in shortened_df.iterrows():
+            player = row['PLAYER']
+            replacement_players[position] = player
 
     for position, player in replacement_players.items():
         if Positions.has_value(position.lower()):
@@ -73,7 +81,6 @@ def build_drafting_data(df:pd.DataFrame) -> pd.DataFrame:
 #     return teams
 
 def calculate_VOR(df:pd.DataFrame, final_df:pd.DataFrame, replacement_values:dict) -> pd.DataFrame:
-    LOG.warning(replacement_values)
     df['VOR'] = df.apply(
         lambda row: row['FPTS'] - replacement_values[row['POS']] if (row['POS'] != 'DST' and row['POS'] != 'K') else None, axis=1
     )
@@ -159,18 +166,22 @@ def rb_share(df:pd.DataFrame) -> pd.DataFrame:
     rush_df = rush_df.merge(df.groupby(['rusher_player_id'], as_index=False)[['rushing_yards', 'yards_gained', 'complete_pass', 'rush_touchdown', 'touchdown']].sum().assign(total_fpts = lambda x: round(x.yards_gained*0.1 + x.touchdown*6 + x.complete_pass, 1)), on='rusher_player_id').sort_values(by='total_fpts', ascending=False).drop(columns=[ 'rushing_yards', 'complete_pass', 'rush_touchdown'])
     rush_df = rush_df[[column for column in rush_df.columns if column != 'rusher_player_id']]
     return rush_df
+################################################
 
+
+#=================================================================#
+#TODO move to ECRCleaner method??
 def fix_ecr(ecr_df, adp_df):
-    #TODO calculate ECR from ECRDiff and ADP
     ecr_df['ECR'] = ecr_df['PLAYER'].apply(lambda x: calculate_ecr(ecr_df.loc['PLAYER' == x], adp_df.loc['PLAYER' == x]))
     ecr_df = ecr_df[['PLAYER', 'ECR']]
     return ecr_df
 
-def calculate_ecr(ecr_val, adp_val):
-    if ecr_val == None or ecr_val == '0':
+def calculate_ecr(ecr_diff_val, adp_val):
+    if ecr_diff_val == None or ecr_diff_val == '0':
         return int(adp_val)
      
-    if ecr_val[0] == '-':
-        return int(adp_val) - int(ecr_val[1:])
+    if ecr_diff_val[0] == '-':
+        return int(adp_val) - int(ecr_diff_val[1:])
     
-    return int(adp_val) + int(ecr_val[1:])
+    return int(adp_val) + int(ecr_diff_val[1:])
+#=================================================================#

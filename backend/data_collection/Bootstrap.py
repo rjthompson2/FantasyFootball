@@ -18,10 +18,9 @@ plt.close("all")
 def get_bootstrap(fpts_df:pd.DataFrame):
     data = []
     callback_list = []
-    players = fpts_df["PLAYER"].values
+    players = fpts_df["PLAYER"].unique()
     with multiprocessing.Pool() as pool:
-      data = pool.starmap_async(mp_bootstrap, zip(players, repeat(fpts_df)), callback=lambda x: callback_list.append(x))
-      data = data.get()
+      data = pool.starmap(mp_bootstrap, zip(players, repeat(fpts_df)))
       pool.close()
       pool.join()
       pool.terminate()
@@ -31,16 +30,15 @@ def mp_bootstrap(player:str, fpts_df:pd.DataFrame):
     new_df = fpts_df.loc[fpts_df["PLAYER"] == player]
     new_df = new_df.drop(columns=["PLAYER", "POS"])
     new_df = new_df.dropna(axis=1, how='all').dropna()
-    if(len(new_df.values) <= 1):
+    if(len(new_df.values.tolist()) <= 1):
       return None
-    new_list = [new_df.values]
+    new_list = [new_df.values.tolist()]
     output = calculate_ceiling_floor(arrays=new_list, player_names=[player], stdout=False)
     return output
 
 def get_cf(data:list) -> pd.DataFrame:
     '''Gets each player's ceiling and floor for the best/worst they might perform'''
     temp_df = []
-    cf_df = pd.DataFrame()
     for dictionary in data:
       if dictionary != None:
         values = [dictionary["player"], dictionary["mean"], dictionary["ceiling"], dictionary["floor"], dictionary["std"]]
@@ -90,7 +88,7 @@ def plot_kde(*args:tuple, figsize=(10, 8), **kwargs:dict) -> None:
 
 def calculate_ceiling_floor(arrays=[[]], player_names=None, stdout=False) -> dict:
   for i, arr in enumerate(arrays):
-    boot = calculate_bootstrap_df(arr).values
+    boot = calculate_bootstrap_df(arr, player_names=player_names).values
     mean = boot.mean() # find the mean of the means
 
     ceiling = np.percentile(boot, 95) # find the upper bound of the confidence interval
