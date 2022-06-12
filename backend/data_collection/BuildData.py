@@ -186,6 +186,8 @@ def calculate_ecr(ecr_diff_val, adp_val):
         adp_val = adp_val[0]
     
 
+    #TODO these values need to be floats
+    #TODO need to rank values so there are no decimals
     if ecr_diff_val == None or ecr_diff_val == '0':
         return int(adp_val)
     if ecr_diff_val[0] == '-':

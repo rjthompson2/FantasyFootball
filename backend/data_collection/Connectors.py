@@ -88,6 +88,6 @@ class DraftConnector():
         print("Total--- %s seconds ---" % (time.time() - total_time))
 
     def load(self, df:pd.DataFrame) -> None:
-        df = df.dropna(subset=["POS"])
         df = df.dropna(how='all')
+        df = df.dropna(subset=["POS"])
         df.to_csv(r'data/draft_order_'+str(self.year)+'.csv', index = False, header=True)
