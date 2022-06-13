@@ -1,11 +1,11 @@
 from os.path import exists
 from datetime import date
 import time
-import backend.data_collection.CollectDraftData as drft
-import backend.data_collection.CollectPlayerData as plyr
-import CollectPlayerDataTimeSeries as weeklyData
-import CorrelationMap as cm
-import PlotTeams as plotWeeklyData
+import backend.CollectDraftData as drft
+import backend.CollectPlayerData as plyr
+import backend.CollectPlayerDataTimeSeries as weeklyData
+import backend.CorrelationMap as cm
+import backend.PlotTeams as plotWeeklyData
 from enum import Enum
 from functools import partial
 
