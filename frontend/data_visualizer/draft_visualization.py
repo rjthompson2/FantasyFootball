@@ -1,6 +1,5 @@
 # from frontend.data_visualizer.visualizer import DraftVisualization
 from backend.data_collection.utils import get_season_year
-from backend.utils import find_in_data_folder
 # from backend import CollectDraftData #TODO collect data if not available
 import pandas as pd
 import plotly.express as px
@@ -10,7 +9,8 @@ import os
 @st.cache
 def get_data():
     year = get_season_year()
-    file_path = find_in_data_folder(f"draft_order_{year}.csv")
+    root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    file_path = f"/backend/data/draft_order_{year}.csv"
     path = root_dir + file_path
     #TODO collect data if not available
     # if not os.path.exists(path):
