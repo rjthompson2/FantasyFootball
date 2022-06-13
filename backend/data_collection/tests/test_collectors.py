@@ -17,7 +17,6 @@ class TestCollectors():
         assert not df.empty
         new_df = ADPCleaner().clean_data(df)
         assert not new_df.equals(df)
-        assert False
 
     def test_ecr_collection(self):
         ecr = Collector(ws=DynamicWebScraper(), url="https://www.fantasypros.com/nfl/rankings/ppr-cheatsheets.php", _id='id', tag='ranking-table')
