@@ -5,15 +5,15 @@ from backend.draft.WebScraper import FantasyScraper
 import BuildData as bd
 import time
 
-def main(args:list):
+def main(args: list):
     if args == None or len(args) < 3:
         total_teams = int(input("Enter total number of teams: "))
         pos = int(input("Enter draft position: "))
         url = input("Enter draft url: ")
     else:
-        total_teams = arg[0]
-        pos = arg[1]
-        url = arg[2]
+        total_teams = args[0]
+        pos = args[1]
+        url = args[2]
     year = get_season_year()
     file_path = find_in_data_folder(f'draft_order_{year}.csv')
     drft = Draft(pd.read_csv(file_path), total_teams)
