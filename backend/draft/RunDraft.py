@@ -1,8 +1,8 @@
 from backend.data_collection.utils import get_season_year
-from backend.draft.Draft import draft
-from backend.utils import find_in_data_folder
+from backend.draft.Draft import Draft
 from backend.draft.WebScraper import FantasyScraper
-import BuildData as bd
+from backend.utils import find_in_data_folder
+import backend.data_collection.BuildData as bd
 import time
 
 def main(args: list):
