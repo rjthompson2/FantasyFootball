@@ -67,3 +67,4 @@ class TestBuildData():
         adp_df = adp_cleaner.clean_data(adp_df)
 
         ecr_df = fix_ecr(ecr_df, adp_df)
+        assert set(ecr_df.columns) == set(["PLAYER", "ECR"])
