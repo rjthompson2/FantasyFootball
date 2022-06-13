@@ -1,4 +1,4 @@
-from frontend.data_visualizer.utils import find_parent_dir, find_in_data_folder
+from backend.utils import find_parent_dir, find_in_data_folder
 import logging
 
 
