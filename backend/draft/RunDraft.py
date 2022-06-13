@@ -1,5 +1,7 @@
-from Draft import *
-from WebScraper import *
+from backend.data_collection.utils import get_season_year
+from backend.draft.Draft import draft
+from backend.utils import find_in_data_folder
+from backend.draft.WebScraper import FantasyScraper
 import BuildData as bd
 import time
 
@@ -12,7 +14,9 @@ def main(args:list):
         total_teams = arg[0]
         pos = arg[1]
         url = arg[2]
-    drft = Draft(pd.read_csv(r'draft_order.csv'), total_teams)
+    year = get_season_year()
+    file_path = find_in_data_folder(f'draft_order_{year}.csv')
+    drft = Draft(pd.read_csv(file_path), total_teams)
     current_round = 1
 
     wp = FantasyScraper()
@@ -29,7 +33,8 @@ def main(args:list):
         if len(df.index) != 0:
             df = bd.build_drafting_data(df)
             drft.automated_draft(df, pos)
-            pd.DataFrame(drft.draft).to_csv(r'league_draft.csv', index = True, header=True)
+            file_path = find_in_data_folder(f'league_draft_{year}.csv')
+            pd.DataFrame(drft.draft).to_csv(file_path, index = True, header=True)
             current_round = drft.current_round
     wp.quit()
 
