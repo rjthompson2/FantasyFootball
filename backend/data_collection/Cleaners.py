@@ -55,6 +55,7 @@ class FPTSCleaner():
         df["FPTS"] = df[ftps]
         df['POS'] = position.upper() #add a position column
         df = df[['PLAYER', 'POS', 'FPTS']]
+        df = clean_name(df)
         return df
 
     def new_fpts_output(self, position:str, df:pd.DataFrame) -> pd.DataFrame:
@@ -62,6 +63,7 @@ class FPTSCleaner():
         df["FPTS"] = df[len(df.columns)-2]
         df['POS'] = position.upper() #add a position column
         df = df[['PLAYER', 'POS', 'FPTS']]
+        df = clean_name(df)
         return df
 
     def fpts_multi_index_output(self, position:str, df:pd.DataFrame) -> pd.DataFrame:
@@ -76,6 +78,7 @@ class FPTSCleaner():
         df["FPTS"] = df['fpts  Fantasy Points'].apply(lambda x: float(x))
         df = df[['PLAYER', 'POS', 'FPTS']]
         df = df.sort_values(by='FPTS', ascending=False)
+        df = clean_name(df)
         return df
 
 class InjuryCleaner():

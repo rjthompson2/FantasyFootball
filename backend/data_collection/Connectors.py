@@ -4,6 +4,7 @@ from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
 from backend.data_collection.utils import merge_list
 from backend.data_collection.Cleaners import ADPCleaner, ECRCleaner, FPTSCleaner, InjuryCleaner
 from backend.data_collection.Bootstrap import get_bootstrap, get_cf
+from backend.utils import find_in_data_folder
 from typing import Tuple
 import time
 import pandas as pd
@@ -88,6 +89,7 @@ class DraftConnector():
         print("Total--- %s seconds ---" % (time.time() - total_time))
 
     def load(self, df:pd.DataFrame) -> None:
+        file_path = find_in_data_folder(f'draft_order_{self.year}.csv')
         df = df.dropna(how='all')
         df = df.dropna(subset=["POS"])
-        df.to_csv(r'data/draft_order_'+str(self.year)+'.csv', index = False, header=True)
+        df.to_csv(file_path, index = False, header=True)
