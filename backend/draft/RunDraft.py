@@ -2,7 +2,10 @@ from backend.data_collection.utils import get_season_year
 from backend.draft.Draft import Draft
 from backend.draft.WebScraper import FantasyScraper
 from backend.utils import find_in_data_folder
+from backend.data_collection.utils import update_chrome_driver
+from selenium.common.exceptions import WebDriverException
 import backend.data_collection.BuildData as bd
+import pandas as pd
 import time
 
 def main(args: list):
@@ -20,7 +23,11 @@ def main(args: list):
     current_round = 1
 
     wp = FantasyScraper()
-    wp.start(url)
+    try:
+        wp.start(url)
+    except WebDriverException:
+        update_chrome_driver()
+        wp.start(url)
     wp.check_login()
     if pos == 1:
         drft.recommend()

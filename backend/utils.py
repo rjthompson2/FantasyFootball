@@ -12,13 +12,14 @@ def find_parent_dir(parent: str) -> str:
     if parent.startswith('/'):
         parent = parent[1:]
 
-    while not current.endswith('/'+parent):
-        current = os.path.dirname(current)
+    current = re.findall('/.*'+parent, current)[0]
+    if current == None:
+        raise RuntimeError
+
     return current
 
 
 def find_in_data_folder(file_path: str) -> str:
-    LOG.warning("First")
     if file_path != "" and not file_path.startswith('/'):
         file_path = '/'+file_path
     path = find_parent_dir("FantasyFootball")
