@@ -76,7 +76,7 @@ class DraftConnector():
         start_time = time.time()
         
         #Adds ECR from Fantasy Pros to data
-        ecr_df = fix_ecr(ecr_df, adp_df)
+        ecr_df = fix_ecr(ecr_df, df)
         df = df.merge(ecr_df, on='PLAYER', how='outer')
         print("ECR--- %s seconds ---" % (time.time() - start_time))
         start_time = time.time()

@@ -186,9 +186,15 @@ def calculate_ecr(ecr_diff_val, adp_val):
             return None
         adp_val = adp_val[0]
     
-    if ecr_diff_val == None or ecr_diff_val == '0':
+    if ecr_diff_val == None or ecr_diff_val in ['0', '', '-', '+']:
         return float(adp_val)
     if ecr_diff_val[0] == '-':
-        return float(adp_val) - float(ecr_diff_val[1:])
+        try:
+            return float(adp_val) - float(ecr_diff_val[1:])
+        except ValueError:
+            print(adp_val)
+            print(ecr_diff_val[1:])
+            # return float(adp_val) - float(ecr_diff_val[1:])
+            
     return float(adp_val) + float(ecr_diff_val[1:])
 #=================================================================#
