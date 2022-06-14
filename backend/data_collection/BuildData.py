@@ -173,6 +173,7 @@ def rb_share(df:pd.DataFrame) -> pd.DataFrame:
 #TODO move to ECRCleaner method??
 def fix_ecr(ecr_df, adp_df):
     ecr_df['ECR'] = ecr_df['PLAYER'].apply(lambda x: calculate_ecr(ecr_df.loc[ecr_df['PLAYER'] == x], adp_df.loc[adp_df['PLAYER'] == x]))
+    ecr_df['ECR'] = ecr_df['ECR'].rank(method='first')
     ecr_df = ecr_df[['PLAYER', 'ECR']]
     return ecr_df
 
@@ -185,12 +186,9 @@ def calculate_ecr(ecr_diff_val, adp_val):
             return None
         adp_val = adp_val[0]
     
-
-    #TODO these values need to be floats
-    #TODO need to rank values so there are no decimals
     if ecr_diff_val == None or ecr_diff_val == '0':
-        return int(adp_val)
+        return float(adp_val)
     if ecr_diff_val[0] == '-':
-        return int(adp_val) - int(ecr_diff_val[1:])
-    return int(adp_val) + int(ecr_diff_val[1:])
+        return float(adp_val) - float(ecr_diff_val[1:])
+    return float(adp_val) + float(ecr_diff_val[1:])
 #=================================================================#
