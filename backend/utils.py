@@ -7,7 +7,7 @@ LOG = logging.getLogger(__name__)
 
 
 def find_parent_dir(parent: str) -> str:
-    current = os.path.abspath(__file__)
+    current = os.getcwd()
 
     if parent.startswith('/'):
         parent = parent[1:]
