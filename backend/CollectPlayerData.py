@@ -1,6 +1,6 @@
-from WebScraper import *
+from backend.data_collection.WebScraper import WebScraper
 from datetime import date
-import BuildData as bd
+import backend.data_collection.BuildData as bd
 import nflfastpy as nfl
 import multiprocessing
 import time

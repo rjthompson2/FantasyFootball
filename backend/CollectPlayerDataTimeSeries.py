@@ -1,4 +1,4 @@
-import BuildData as bd
+import backend.data_collection.BuildData as bd
 import nflfastpy as nfl
 import pandas as pd
 import numpy as np

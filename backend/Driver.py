@@ -1,5 +1,5 @@
 import CollectData
-import RunDraft
+import backend.draft.RunDraft as RunDraft
 import TeamBuilder
 
 def main(choice) -> None:
