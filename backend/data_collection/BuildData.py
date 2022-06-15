@@ -15,7 +15,7 @@ LOG = logging.getLogger(__name__)
 def build_players(df:pd.DataFrame) -> Tuple[dict, dict]:
     replacement_players = {}
     replacement_values = {}
-    values = { #TODO need to tweak values for my league
+    values = {
         'QB': 24, 
         'RB': 48,
         'WR': 48,
@@ -161,7 +161,8 @@ def rb_share(df:pd.DataFrame) -> pd.DataFrame:
         'rusher_player_name': 'Rusher', 'posteam': 'Team'
     })
     # TODO need to create a value to figure out which RBs are the best (rushing + passing) ---- IT?!?!?!
-    #rec_df['Avg. WOPR'] = round((rec_df['Avg. Target Share']*1.5+rec_df['Avg. Air Yards Share']*0.7), 2)
+    # rush_df['IT'] = rush_df[RUSH_ATTEMPT] + rush_df[TARGETS]
+    
     # merging total FPTS scored in to our original df
     rush_df = rush_df.merge(df.groupby(['rusher_player_id'], as_index=False)[['rushing_yards', 'yards_gained', 'complete_pass', 'rush_touchdown', 'touchdown']].sum().assign(total_fpts = lambda x: round(x.yards_gained*0.1 + x.touchdown*6 + x.complete_pass, 1)), on='rusher_player_id').sort_values(by='total_fpts', ascending=False).drop(columns=[ 'rushing_yards', 'complete_pass', 'rush_touchdown'])
     rush_df = rush_df[[column for column in rush_df.columns if column != 'rusher_player_id']]
@@ -189,12 +190,7 @@ def calculate_ecr(ecr_diff_val, adp_val):
     if ecr_diff_val == None or ecr_diff_val in ['0', '', '-', '+']:
         return float(adp_val)
     if ecr_diff_val[0] == '-':
-        try:
-            return float(adp_val) - float(ecr_diff_val[1:])
-        except ValueError:
-            print(adp_val)
-            print(ecr_diff_val[1:])
-            # return float(adp_val) - float(ecr_diff_val[1:])
+        return float(adp_val) - float(ecr_diff_val[1:])
             
     return float(adp_val) + float(ecr_diff_val[1:])
 #=================================================================#
