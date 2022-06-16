@@ -103,8 +103,7 @@ class InjuryDataCollector(MultiProssCollector):
 
 
 class WebCrawlerCollector():
-    def __init__(self, ws, url):
-        self.ws = ws
+    def __init__(self, url):
         self.input = url
 
     def collect_data(self):
@@ -112,7 +111,9 @@ class WebCrawlerCollector():
 
 class ESPNCollector(WebCrawlerCollector):
     def collect_data(self):
-        last = self.ws.get_last()
+        espn = ESPNScraper()
+        espn.start(self.input, headless=True)
+        last = espn.get_last()
         try:
             with multiprocessing.Pool() as pool:
                 df_list = pool.starmap_async(self.get_site_data, zip(range(last)), callback=lambda x: callback_list.append(x))
@@ -126,6 +127,7 @@ class ESPNCollector(WebCrawlerCollector):
         raise NotImplementedError
 
     def get_site_data(self, i: int) -> pd.DataFrame:
-        ws = ESPNScraper(self.input)
+        ws = ESPNScraper()
+        ws.start(self.input, headless=True)
         df = ws.collect_page(i)
         return df

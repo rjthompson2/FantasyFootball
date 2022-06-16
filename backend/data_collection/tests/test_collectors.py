@@ -1,6 +1,6 @@
 import pytest
 import logging
-from backend.data_collection.Collectors import Collector, FPTSDataCollector, InjuryDataCollector
+from backend.data_collection.Collectors import Collector, FPTSDataCollector, ESPNCollector, InjuryDataCollector
 from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
 from backend.data_collection.Cleaners import ADPCleaner, ECRCleaner, FPTSCleaner, InjuryCleaner
 from backend.data_collection.utils import update_chrome_driver, get_season_year
@@ -101,6 +101,8 @@ class TestCollectors():
         # assert len(new_df.loc["PLAYER" == new_df.iloc[0]["PLAYER"]]) >= 3
     
     def test_espn_collection(self):
+        espn = ESPNCollector(url="https://fantasy.espn.com/football/players/projections")
+        espn.collect_data()
         assert False
 
     def test_injury_collection(self):

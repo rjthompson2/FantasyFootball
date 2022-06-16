@@ -136,7 +136,7 @@ class ESPNScraper(DivScraper):
         last = soup.findAll('a', {"class": "AnchorLink Pagination__list__item__link flex justify-center items-center"})[-1].text
         return int(last)
 
-    def next_page(self) -> None:
+    def next_page(self, i: int) -> None:
         raise NotImplementedError
 
 # class ECRScraper(DynamicWebScraper):
