@@ -5,6 +5,6 @@ def spedometer(function):
         start = time.time()
         function(*args, **kwargs)
         end = time.time()
-        print(f"{function.name} finished in {end-start} seconds")
+        print(f"{function.__name__} finished in {end-start} seconds")
     
     return radar
