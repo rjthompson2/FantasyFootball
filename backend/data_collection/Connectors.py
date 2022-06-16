@@ -25,7 +25,7 @@ class DraftConnector():
         self.fdc = FPTSDataCollector(
             aggr_sites={
                 'https://www.fantasypros.com/nfl/projections/{position}.php?week=draft&scoring=PPR&week=draft': ['data', 'id'], 
-                'https://www.cbssports.com/fantasy/football/stats/{position}/{year}/restofseason/projections/ppr/': ['TableBase-table',  'class'],
+                'https://www.cbssports.com/fantasy/football/stats/{position}/'str(year)+'/restofseason/projections/ppr/': ['TableBase-table',  'class'],
                 # 'https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/': ['projections',  'class'], #TODO website deprecated need to grab new data/deprecate
             }
         )
@@ -39,54 +39,35 @@ class DraftConnector():
         return adp_df, ecr_df, injury_df, fpts_df
 
     def run(self) -> None:
-        start_time = time.time()
-        total_time = time.time()
         adp_df, ecr_df, injury_df, fpts_df = self.collect_data()
-        print("Collected Data--- %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
 
         #Gets all data
         adp_df = self.adp_cleaner.clean_data(adp_df)
         ecr_df = self.ecr_cleaner.clean_data(ecr_df)
         fpts_df = self.fpts_cleaner.clean_data(fpts_df)
         injury_df = self.injury_cleaner.clean_data(injury_df)
-        print("Clean Data--- %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
 
         #Get a list of dictionaries with the player, mean, ceiling, floor, and standard deviation
         data = get_bootstrap(fpts_df)
-        print("Bootstrap--- %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
 
         #Merge the list into a single pandas dataframe
         cf_df = get_cf(data)
         pos_df = fpts_df[["PLAYER", "POS"]]
         cf_df = pos_df.drop_duplicates(subset=['PLAYER']).merge(cf_df, on="PLAYER", copy=False) # Ensures no duplicate players
-        print("CF--- %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
 
         #Get the replacemnet players and values for each position
         replacement_players, replacement_values = build_players(cf_df)
-        print("BuildPlayers--- %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
 
         #Calculate the ADP, VOR, and SleeperScore
         df = calculate_VOR(cf_df, adp_df, replacement_values)
-        print("VOR--- %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
         
         #Adds ECR from Fantasy Pros to data
         ecr_df = fix_ecr(ecr_df, df)
         df = df.merge(ecr_df, on='PLAYER', how='outer')
-        print("ECR--- %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
 
         df = df.merge(injury_df, on='PLAYER', how='outer')
-        print("Injury--- %s seconds ---" % (time.time() - start_time))
-        start_time = time.time()
 
         self.load(df)
-        print("Total--- %s seconds ---" % (time.time() - total_time))
 
     def load(self, df:pd.DataFrame) -> None:
         file_path = find_in_data_folder(f'draft_order_{self.year}.csv')
