@@ -1,4 +1,4 @@
-from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
+from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper, ESPNScraper
 from backend.data_collection.utils import clean_name, merge_list, list_to_dict, update_chrome_driver, change_team_name, Positions
 from selenium.common.exceptions import WebDriverException
 from itertools import repeat
@@ -52,7 +52,7 @@ class MultiProssCollector():
 
 '''TODO add sites later
     self.reg_sites = [
-        'https://fantasydata.com/nfl/fantasy-football-weekly-projections?season='+str(year)+'&seasontype=1&scope=1&scoringsystem=2&startweek=1&endweek=17'
+        'https://fantasydata.com/nfl/fantasy-football-weekly-projections?season={year}&seasontype=1&scope=1&scoringsystem=2&startweek=1&endweek=17'
     ]
     self.unique_sites = [
         'https://www.footballdiehards.com/fantasy-football-player-projections.cfm',
@@ -99,4 +99,33 @@ class InjuryDataCollector(MultiProssCollector):
         ws = DynamicWebScraper()
         ws.start(site, headless=True)
         df = ws.collect('class', 'sip-table')
+        return df
+
+
+class WebCrawlerCollector():
+    def __init__(self, ws, url):
+        self.ws = ws
+        self.input = url
+
+    def collect_data(self):
+        raise NotImplementedError
+
+class ESPNCollector(WebCrawlerCollector):
+    def collect_data(self):
+        last = self.ws.get_last()
+        try:
+            with multiprocessing.Pool() as pool:
+                df_list = pool.starmap_async(self.get_site_data, zip(range(last)), callback=lambda x: callback_list.append(x))
+                df_list = df_list.get()
+                pool.close()
+                pool.join()
+                pool.terminate()
+        except WebDriverException:
+            update_chrome_driver()
+            self.collect_data()
+        raise NotImplementedError
+
+    def get_site_data(self, i: int) -> pd.DataFrame:
+        ws = ESPNScraper(self.input)
+        df = ws.collect_page(i)
         return df

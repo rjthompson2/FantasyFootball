@@ -111,6 +111,34 @@ class DynamicWebScraper(DynamicScraper):
             df = pd.DataFrame(data=dfs, columns=columns)
         return df
 
+class DivScraper(DynamicScraper):
+    def collect(self, _id, data):
+        content = self.driver.page_source
+        soup = BS(content)
+        found_list = soup.findAll('div', {_id: data})
+        return [x.text for x in found_list]
+
+class ESPNScraper(DivScraper):
+    def collect_page(self, i:int) -> pd.DataFrame:
+        if i > 1:
+            self.next_page(i-1)
+        content = self.driver.page_source
+        soup = BS(content)
+        fpts = super().collect("class", "jsx-2810852873 table--cell tar")
+        names = super().collect("class", "jsx-2144864361 player-name")
+        data = {'PLAYER': names, 'FPTS': fpts}
+        df = pd.DataFrame(data)
+        return df
+
+    def get_last(self) -> int:
+        content = self.driver.page_source
+        soup = BS(content)
+        last = soup.findAll('a', {"class": "AnchorLink Pagination__list__item__link flex justify-center items-center"})[-1].text
+        return int(last)
+
+    def next_page(self) -> None:
+        raise NotImplementedError
+
 # class ECRScraper(DynamicWebScraper):
 #     def collect(self, id, tag):
 #         #class="select-advanced__button"
@@ -203,8 +231,3 @@ class InjuryScraper(DynamicScraper):
     def quit(self):
         '''Shuts down the browser'''
         self.driver.quit()
-
-
-#TODO Cookie-based webscraper
-class CookieScraper(ABC):
-    pass

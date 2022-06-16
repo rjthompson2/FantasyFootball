@@ -99,6 +99,9 @@ class TestCollectors():
         new_df = FPTSCleaner().clean_data(df)
         assert not new_df.equals(df)
         # assert len(new_df.loc["PLAYER" == new_df.iloc[0]["PLAYER"]]) >= 3
+    
+    def test_espn_collection(self):
+        assert False
 
     def test_injury_collection(self):
         year = get_season_year()

@@ -25,8 +25,8 @@ class DraftConnector():
         self.fdc = FPTSDataCollector(
             aggr_sites={
                 'https://www.fantasypros.com/nfl/projections/{position}.php?week=draft&scoring=PPR&week=draft': ['data', 'id'], 
-                'https://www.cbssports.com/fantasy/football/stats/{position}/'+str(year)+'/restofseason/projections/ppr/': ['TableBase-table',  'class'],
-                'https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/': ['projections',  'class']
+                'https://www.cbssports.com/fantasy/football/stats/{position}/{year}/restofseason/projections/ppr/': ['TableBase-table',  'class'],
+                # 'https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/': ['projections',  'class'], #TODO website deprecated need to grab new data/deprecate
             }
         )
         self.fpts_cleaner = FPTSCleaner()

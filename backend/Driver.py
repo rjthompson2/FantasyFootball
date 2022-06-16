@@ -8,7 +8,7 @@ def main(choice) -> None:
 #TODO distribution of recovery time per injury
 #TODO change all historic data from webscraper to nfl api (nflfastR/nflfastR_python and nflfastpy)
 #TODO save to SQL or google sheets instead of CSV
-#TODO look into arcparse package
+#TODO look into argparse package
 #TODO generative adversarial network for Drafting
 #TODO something like synthea data obsucation
 #TODO Faust event bus? 
