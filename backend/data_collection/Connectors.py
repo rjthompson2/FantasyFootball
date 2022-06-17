@@ -1,4 +1,4 @@
-from backend.data_collection.BuildData import build_players, calculate_VOR, fix_ecr
+from backend.data_collection.BuildData import build_players, calculate_VOR
 from backend.data_collection.Collectors import Collector, FPTSDataCollector, InjuryDataCollector
 from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
 from backend.data_collection.utils import merge_list
@@ -39,9 +39,10 @@ class DraftConnector():
         return adp_df, ecr_df, injury_df, fpts_df
 
     def run(self) -> None:
+        #Gets all data
         adp_df, ecr_df, injury_df, fpts_df = self.collect_data()
 
-        #Gets all data
+        #Cleans all data
         adp_df = self.adp_cleaner.clean_data(adp_df)
         ecr_df = self.ecr_cleaner.clean_data(ecr_df)
         fpts_df = self.fpts_cleaner.clean_data(fpts_df)
@@ -62,9 +63,9 @@ class DraftConnector():
         df = calculate_VOR(cf_df, adp_df, replacement_values)
         
         #Adds ECR from Fantasy Pros to data
-        ecr_df = fix_ecr(ecr_df, df)
         df = df.merge(ecr_df, on='PLAYER', how='outer')
 
+        #Adds injury data to the final dataframe
         df = df.merge(injury_df, on='PLAYER', how='outer')
 
         self.load(df)
