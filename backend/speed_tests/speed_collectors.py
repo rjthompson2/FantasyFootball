@@ -6,7 +6,7 @@ from backend.data_collection.utils import get_season_year
 
 def main():
     speed_test_adpcollector() #.31 great
-    speed_test_ecrcollector() #17 slow
+    speed_test_ecrcollector() #17 slow #TODO make faster
     speed_test_idccollector() #2.8 good
     speed_test_fptscollector() #5.35 okay
 
@@ -33,6 +33,7 @@ def speed_test_fptscollector():
         }
     )
     spedometer(fdc.collect_data)()
+
 
 if __name__ == "__main__":
     main()
