@@ -86,5 +86,6 @@ class InjuryCleaner():
     def clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
         df = df.rename(columns={'player-name':'PLAYER', 'injury-count':'CI', 'injury-percent':'IJ%', 'proj-games-missed':'PGM', 'prob-injury-per-game':'IPG%', 'durability-score':'D'})
         df["PLAYER"] = df["PLAYER"].apply(lambda x: x.split(",")[0])
+        df["IJ%"] = df["IJ%"].apply(lambda x: x.translate({ord(' '): None, ord('\n'): None}))
         df = clean_name(df)
         return df
