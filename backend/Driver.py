@@ -5,6 +5,7 @@ import TeamBuilder
 def main(choice) -> None:
     choice.main(None)
 
+#TODO ensure there are at least 3 websites where I'm gathering fpts from
 #TODO distribution of recovery time per injury
 #TODO change all historic data from webscraper to nfl api (nflfastR/nflfastR_python and nflfastpy)
 #TODO save to SQL or google sheets instead of CSV

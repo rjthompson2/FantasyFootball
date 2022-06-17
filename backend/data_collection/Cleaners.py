@@ -48,6 +48,7 @@ class FPTSCleaner():
         df = df.sort_values(by='FPTS', ascending=False) #sort df in descending order on FPTS column
         return df
         
+    #TODO better names
     def fpts_output(self, position:str, df:pd.DataFrame, check_array:List[str], ftps:str) -> pd.DataFrame:
         if position not in check_array:
             df.columns = df.columns.droplevel(level=0) #our data has a multi-level column index. The first column level is useless so let's drop it.
