@@ -18,7 +18,7 @@ class DraftConnector():
         self.year = year
         self.adp = Collector(ws=WebScraper(), url="https://www.fantasypros.com/nfl/adp/ppr-overall.php", _id='id', tag='data')
         self.adp_cleaner = ADPCleaner()
-        self.ecr = Collector(ws=DynamicWebScraper(), url="https://www.fantasypros.com/nfl/rankings/ppr-cheatsheets.php", _id='id', tag='ranking-table')
+        self.ecr = Collector(ws=DynamicWebScraper(), url="https://www.fantasypros.com/nfl/rankings/ppr-cheatsheets.php", _id='id', tag='ranking-table') #TODO have a version that collects it with a WebScraper
         self.ecr_cleaner = ECRCleaner()
         self.idc = InjuryDataCollector(url="https://www.draftsharks.com/injury-predictor/{position}")
         self.injury_cleaner = InjuryCleaner()

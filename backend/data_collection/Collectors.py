@@ -96,7 +96,7 @@ class InjuryDataCollector(MultiProssCollector):
         return df
     
     def get_site_data(self, site: str) -> pd.DataFrame:
-        ws = DynamicWebScraper()
+        ws = DynamicWebScraper() #TODO change to some form of WebScraper. this takes half the time it takes to run draft connector
         ws.start(site, headless=True)
         df = ws.collect('class', 'sip-table')
         return df
