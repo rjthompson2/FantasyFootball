@@ -21,7 +21,7 @@ class ADPCleaner():
 class ECRCleaner():
     '''Cleans the expert consensus rating for each player'''
     def clean_data(self, df):
-        df['ECR'] = range(1, len(df)+1)
+        df['ECR'] = range(0, len(df))
         df[['PLAYER', 'ECR']] = df[['Player Name', 'ECR']]
         df = df[['PLAYER', 'ECR']]
         df = df.dropna()
