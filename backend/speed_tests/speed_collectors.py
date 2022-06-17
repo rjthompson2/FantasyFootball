@@ -3,6 +3,7 @@ from backend.data_collection.Collectors import Collector, InjuryDataCollector, F
 from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
 from backend.data_collection.utils import get_season_year
 
+
 def main():
     speed_test_adpcollector() #.31 great
     speed_test_ecrcollector() #17 slow
