@@ -84,8 +84,7 @@ class FPTSCleaner():
 class InjuryCleaner():
     '''Cleans the injury data for each player'''
     def clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
-        df = df.rename(columns={'Player':'PLAYER', 'Career Injuries':'CI', 'Probability of Injury In the Season':'IJ%', 'Projected Games Missed':'PGM', 'Probability of Injury Per Game':'IPG%', 'Durability':'D'})
+        df = df.rename(columns={'player-name':'PLAYER', 'injury-count':'CI', 'injury-percent':'IJ%', 'proj-games-missed':'PGM', 'prob-injury-per-game':'IPG%', 'durability-score':'D'})
         df["PLAYER"] = df["PLAYER"].apply(lambda x: x.split(",")[0])
         df = clean_name(df)
-        df.drop('Proj. Points', axis=1, inplace=True)
         return df

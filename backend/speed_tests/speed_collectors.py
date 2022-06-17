@@ -4,10 +4,10 @@ from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
 from backend.data_collection.utils import get_season_year
 
 def main():
-    speed_test_adpcollector() #.33 good
-    speed_test_ecrcollector() #15 slow
-    speed_test_idccollector() #79 awful
-    speed_test_fptscollector() #8.9 okay
+    speed_test_adpcollector() #.31 great
+    speed_test_ecrcollector() #17 slow
+    speed_test_idccollector() #2.8 good
+    speed_test_fptscollector() #5.35 okay
 
 
 def speed_test_adpcollector():

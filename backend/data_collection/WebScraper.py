@@ -48,7 +48,7 @@ class AsyncWebScraper(Scraper):
         for read_table in read_tables:
             df = df.append(read_table)
         return df
-
+        
 class WebScraper(Scraper):
     '''Generalized scraper for collecting data from static webpages'''
     def collect(self, id, tag):
@@ -64,6 +64,31 @@ class WebScraper(Scraper):
         for read_table in read_tables:
             df = df.append(read_table)
         return df
+
+
+class FilterWebScraper(Scraper):
+    '''Generalized scraper for collecting data from static webpages'''
+    def collect(self, filters):
+        df = pd.DataFrame()
+        if self.driver == None or not self.driver.ok:
+            print("Could not connect.")
+            return pd.DataFrame()
+        
+        found_dict = {}
+        for find in filters:
+            soup = BS(self.driver.content, features='lxml')
+            table = soup.findAll('span', {'class': find})
+            if find == "player-name":
+                table = table[1::2]
+            found_dict.update({find: [x.text for x in table]})
+
+        df = pd.DataFrame.from_dict(found_dict)
+
+        return df
+    
+    def new_collect(self, url, filters):
+        self.start(url)
+        return self.collect(filters)
 
 class DynamicScraper(ABC):
     '''Generalized scraper for dynamic webpages'''

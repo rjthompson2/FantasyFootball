@@ -1,4 +1,4 @@
-from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper, ESPNScraper
+from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper, ESPNScraper, FilterWebScraper
 from backend.data_collection.utils import clean_name, merge_list, list_to_dict, update_chrome_driver, change_team_name, Positions
 from selenium.common.exceptions import WebDriverException
 from itertools import repeat
@@ -84,7 +84,8 @@ class FPTSDataCollector(MultiProssCollector):
 class InjuryDataCollector(MultiProssCollector):
     '''Collects the injury statistics for each player'''
     def __init__(self, url: str) -> None:
-        self.input = [url.format(position=position.value) for position in Positions]
+        self.input = [position for position in Positions if position.value not in ['k', 'dst']]
+        self.site = url
 
     def collect_data(self) -> pd.DataFrame:
         #Aggregate all data from the sites
@@ -95,10 +96,11 @@ class InjuryDataCollector(MultiProssCollector):
 
         return df
     
-    def get_site_data(self, site: str) -> pd.DataFrame:
-        ws = DynamicWebScraper() #TODO change to some form of WebScraper. this takes half the time it takes to run draft connector
-        ws.start(site, headless=True)
-        df = ws.collect('class', 'sip-table')
+    def get_site_data(self, position: str) -> pd.DataFrame:
+        site = self.site.format(position=position.value)
+        filters = ["player-name", "injury-count", "injury-percent", "proj-games-missed", "prob-injury-per-game", "durability-score"]
+        ws = FilterWebScraper()
+        df = ws.new_collect(site, filters)
         return df
 
 
