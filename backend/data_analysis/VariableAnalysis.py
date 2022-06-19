@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import re
 import multiprocessing
 
-#TODO figure out how to make it more generic
+#TODO figure out how to make it more generic. Arg parsing maybe
 def main(start_year, end_year, players, values):
     if players == 'all' or 'qb' in players:
         qb(start_year, end_year, values)

@@ -168,29 +168,3 @@ def rb_share(df:pd.DataFrame) -> pd.DataFrame:
     rush_df = rush_df[[column for column in rush_df.columns if column != 'rusher_player_id']]
     return rush_df
 ################################################
-
-
-# #=================================================================#
-# DEPRECATED
-# #TODO move to ECRCleaner method??
-# def fix_ecr(ecr_df, adp_df):
-#     ecr_df['ECR'] = ecr_df['PLAYER'].apply(lambda x: calculate_ecr(ecr_df.loc[ecr_df['PLAYER'] == x], adp_df.loc[adp_df['PLAYER'] == x]))
-#     ecr_df['ECR'] = ecr_df['ECR'].rank(method='first')
-#     ecr_df = ecr_df[['PLAYER', 'ECR']]
-#     return ecr_df
-
-# def calculate_ecr(ecr_diff_val, adp_val):
-#     if isinstance(ecr_diff_val, pd.DataFrame):
-#         ecr_diff_val = ecr_diff_val['ECRDiff'].values[0]
-#     if isinstance(adp_val, pd.DataFrame):
-#         adp_val = adp_val['AVG'].values
-#         if adp_val == None or len(adp_val) == 0:
-#             return None
-#         adp_val = adp_val[0]
-    
-#     if ecr_diff_val == None or ecr_diff_val in ['0', '', '-', '+']:
-#         return float(adp_val)
-#     if ecr_diff_val[0] == '-':
-#         return float(adp_val) - float(ecr_diff_val[1:])
-#     return float(adp_val) + float(ecr_diff_val[1:])
-# #=================================================================#

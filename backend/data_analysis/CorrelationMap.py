@@ -1,12 +1,12 @@
 from datetime import date
-import CollectPlayerData
+import backend.CollectPlayerData
 import pandas as pd
 import seaborn as sn
 import matplotlib.pyplot as plt
 import re
 import multiprocessing
 
-#TODO figure out how to make it more generic
+
 def main(start_year, end_year):
     with multiprocessing.Pool() as pool:
         pool.apply_async(qb(start_year, end_year))
