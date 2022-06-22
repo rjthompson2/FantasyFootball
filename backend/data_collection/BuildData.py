@@ -3,7 +3,6 @@ from backend.data_collection.utils import Positions
 # from Teams import *
 from typing import Tuple, List
 import pandas as pd
-import nflfastpy as nfl
 import re
 import logging
 

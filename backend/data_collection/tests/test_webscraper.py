@@ -19,3 +19,12 @@ class TestWebscrapers():
         ws.collect_page(1)
         last = ws.get_last()
         assert last == 22
+
+    
+    def test_espnscraper_next(self):
+        ws = ESPNScraper()
+        ws.start(f"https://fantasy.espn.com/football/players/projections", headless=True)
+        first = ws.collect_page(1)
+        second = ws.collect_page(2)
+        assert not second.empty()
+        assert first.values() != second.values()

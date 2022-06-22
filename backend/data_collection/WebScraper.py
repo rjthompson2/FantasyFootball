@@ -144,11 +144,12 @@ class DivScraper(DynamicScraper):
         return [x.text for x in found_list]
 
 class ESPNScraper(DivScraper):
-    def collect_page(self, i:int) -> pd.DataFrame:
-        if i > 1:
-            self.next_page(i-1)
-        content = self.driver.page_source
-        soup = BS(content)
+    def __init(self):
+        self.soup = BS(self.driver.page_source, features="lxml")
+
+    def collect_page(self, page_num:int) -> pd.DataFrame:
+        if page_num > 1:
+            self.next_page(page_num-1)
         fpts = super().collect("class", "jsx-2810852873 table--cell tar")
         names = super().collect("class", "jsx-2144864361 player-name")
         data = {'PLAYER': names, 'FPTS': fpts}
@@ -156,13 +157,16 @@ class ESPNScraper(DivScraper):
         return df
 
     def get_last(self) -> int:
-        content = self.driver.page_source
-        soup = BS(content)
-        last = soup.findAll('a', {"class": "AnchorLink Pagination__list__item__link flex justify-center items-center"})[-1].text
+        last = self.soup.findAll('a', {"class": "AnchorLink Pagination__list__item__link flex justify-center items-center"})[-1].text
         return int(last)
 
-    def next_page(self, i: int) -> None:
-        raise NotImplementedError
+    def next_page(self, loops: int) -> None:
+        #//*[@id="fitt-analytics"]/div/div[5]/div[2]/div[3]/div/div/div/div/nav/button[2]
+        for _ in range(loops):
+            LOG.warning(self.soup.findAll('button', {'class': 'Pagination__Button--next'}))
+            # self.driver.find_elements_by_class_name("Button Button--default Button--icon-noLabel Pagination__Button Pagination__Button--next")[0].click()
+            # self.soup = BS(self.driver.page_source, features="lxml")
+        # raise NotImplementedError
 
 # class ECRScraper(DynamicWebScraper):
 #     def collect(self, id, tag):
