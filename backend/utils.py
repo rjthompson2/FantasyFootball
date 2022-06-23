@@ -26,6 +26,7 @@ def find_in_data_folder(file_path: str) -> str:
     path = find_parent_dir("FantasyFootball")
     return f"{path}/backend/data{file_path}"
 
+
 class Teams(Enum):
     ARI = 'ARI'
     ATL = 'ATL'
