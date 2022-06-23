@@ -1,4 +1,4 @@
-from backend.utils import find_parent_dir, find_in_data_folder
+from backend.utils import find_parent_dir, find_in_data_folder, Teams
 import logging
 
 
@@ -18,3 +18,6 @@ class TestUtils:
         assert result.endswith("/FantasyFootball/backend/data/test")
         result = find_in_data_folder(f"/test")
         assert result.endswith("/FantasyFootball/backend/data/test")
+
+    def test_teams(self):
+        assert Teams.length() == 32
