@@ -18,17 +18,6 @@ class ADPCleaner():
         df = df[['PLAYER', 'POS', 'AVG']].sort_values(by='AVG')
         return df
 
-class ECRCleaner():
-    '''Cleans the expert consensus rating for each player'''
-    def clean_data(self, df):
-        df['ECR'] = range(0, len(df))
-        df[['PLAYER', 'ECR']] = df[['Player Name', 'ECR']]
-        df = df[['PLAYER', 'ECR']]
-        df = df.dropna()
-        df['PLAYER'] = df['PLAYER'].apply(lambda x: re.sub('\s\(.*', '', x))
-        df = clean_name(df)
-        return df
-
 class FPTSCleaner():
     '''Cleans the predicted Fantasy Points for each player'''
     def clean_data(self, df_dict: dict) -> pd.DataFrame:
@@ -100,3 +89,15 @@ class ESPNCleaner():
         names = [data["player"]["fullName"] for data in data_list]
         fpts = [data["player"]["stats"][-1]["appliedTotal"] for data in data_list]
         return pd.DataFrame({"PLAYER": names, "FPTS": fpts})
+
+class ECRCleaner():
+    '''Cleans the injury data for each player'''
+    def clean_data(self, data: dict) -> pd.DataFrame:
+        data_list = data["players"]
+        names = [data["player_name"] for data in data_list]
+        ranks = [data["rank_ecr"] for data in data_list]
+        df = pd.DataFrame({"PLAYER": names, "ECR": ranks})
+        df = df.dropna()
+        df['PLAYER'] = df['PLAYER'].apply(lambda x: re.sub('\s\(.*', '', x))
+        df = clean_name(df)
+        return df

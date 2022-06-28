@@ -19,17 +19,28 @@ class TestCollectors():
         assert not new_df.equals(df)
 
     def test_ecr_collection(self):
-        ecr = Collector(ws=DynamicWebScraper(), url="https://www.fantasypros.com/nfl/rankings/ppr-cheatsheets.php", _id='id', tag='ranking-table')
-        
-        try:
-            df = ecr.collect_data()
-        except WebDriverException:
-            update_chrome_driver()
-            df = ecr.collect_data()
+        headers = {
+            "Host": "api.fantasypros.com",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0",
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept-Encoding": "gzip, deflate, br",
+            "x-api-key": "zjxN52G3lP4fORpHRftGI2mTU8cTwxVNvkjByM3j",
+            "Origin": "https://www.fantasypros.com",
+            "DNT": "1",
+            "Connection": "keep-alive",
+            "Referer": "https://www.fantasypros.com/",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-site",
+        }
+        api = APICollector(url="https://api.fantasypros.com/v2/json/nfl/2022/consensus-rankings?type=draft&scoring=PPR&position=ALL&week=0&experts=available", params=headers)
+        data = api.collect_data()
 
+        assert data
+        assert not data == {}
+        df = ECRCleaner().clean_data(data)
         assert not df.empty
-        new_df = ECRCleaner().clean_data(df)
-        assert not new_df.equals(df)
 
     def test_ftps_collection_individual(self):
         year = get_season_year()
@@ -101,6 +112,7 @@ class TestCollectors():
         # assert len(new_df.loc["PLAYER" == new_df.iloc[0]["PLAYER"]]) >= 3
     
     def test_espn_collection(self):
+        #original url: https://fantasy.espn.com/football/players/projections
         year = get_season_year()
         headers = {
             "Host": "fantasy.espn.com",

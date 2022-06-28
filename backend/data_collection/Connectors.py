@@ -20,7 +20,22 @@ class DraftConnector():
         self.year = year
         self.adp = Collector(ws=WebScraper(), url="https://www.fantasypros.com/nfl/adp/ppr-overall.php", _id='id', tag='data')
         self.adp_cleaner = ADPCleaner()
-        self.ecr = Collector(ws=DynamicWebScraper(), url="https://www.fantasypros.com/nfl/rankings/ppr-cheatsheets.php", _id='id', tag='ranking-table') #TODO have a version that collects it with a WebScraper
+        ecr_headers = {
+            "Host": "api.fantasypros.com",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0",
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept-Encoding": "gzip, deflate, br",
+            "x-api-key": "zjxN52G3lP4fORpHRftGI2mTU8cTwxVNvkjByM3j",
+            "Origin": "https://www.fantasypros.com",
+            "DNT": "1",
+            "Connection": "keep-alive",
+            "Referer": "https://www.fantasypros.com/",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-site",
+        }
+        self.ecr = APICollector(url="https://api.fantasypros.com/v2/json/nfl/2022/consensus-rankings?type=draft&scoring=PPR&position=ALL&week=0&experts=available", params=ecr_headers)
         self.ecr_cleaner = ECRCleaner()
         self.idc = InjuryDataCollector(url="https://www.draftsharks.com/injury-predictor/{position}")
         self.injury_cleaner = InjuryCleaner()
@@ -32,8 +47,7 @@ class DraftConnector():
             }
         )
         self.fpts_cleaner = FPTSCleaner()
-
-        headers = {
+        espn_headers = {
             "Host": "fantasy.espn.com",
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0",
             "Accept": "application/json",
@@ -51,8 +65,7 @@ class DraftConnector():
             "Sec-Fetch-Site": "same-origin",
             "If-None-Match": 'W/"0e4940690e8c2869b89702c401e93ff75"',
         }
-
-        self.espn = APICollector(url='https://fantasy.espn.com/apis/v3/games/ffl/seasons/2022/segments/0/leaguedefaults/3?view=kona_player_info', params=headers)
+        self.espn = APICollector(url='https://fantasy.espn.com/apis/v3/games/ffl/seasons/2022/segments/0/leaguedefaults/3?view=kona_player_info', params=espn_headers)
         self.espn_cleaner = ESPNCleaner()
 
 
