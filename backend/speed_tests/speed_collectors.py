@@ -17,6 +17,7 @@ def speed_test_adpcollector():
     spedometer(adp.collect_data)()
 
 def speed_test_ecrcollector():
+    year = get_season_year()
     ecr_headers = {
         "Host": "api.fantasypros.com",
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0",
@@ -32,7 +33,7 @@ def speed_test_ecrcollector():
         "Sec-Fetch-Mode": "cors",
         "Sec-Fetch-Site": "same-site",
     }
-    ecr = APICollector(url="https://api.fantasypros.com/v2/json/nfl/2022/consensus-rankings?type=draft&scoring=PPR&position=ALL&week=0&experts=available", params=ecr_headers)
+    ecr = APICollector(url="https://api.fantasypros.com/v2/json/nfl/"+str(year)+"/consensus-rankings?type=draft&scoring=PPR&position=ALL&week=0&experts=available", params=ecr_headers)
     spedometer(ecr.collect_data)()
 
 def speed_test_idccollector():
