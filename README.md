@@ -10,8 +10,6 @@ So I decided to make an algorithm to win. I needed something to guide me when pi
 
 # TODOs
 
-fix espn cleaner and draft connector
-
 accuracy metric for fantasy predictions
 
 normal distribution of recovery time per injury
