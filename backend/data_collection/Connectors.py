@@ -35,14 +35,14 @@ class DraftConnector():
             "Sec-Fetch-Mode": "cors",
             "Sec-Fetch-Site": "same-site",
         }
-        self.ecr = APICollector(url="https://api.fantasypros.com/v2/json/nfl/2022/consensus-rankings?type=draft&scoring=PPR&position=ALL&week=0&experts=available", params=ecr_headers)
+        self.ecr = APICollector(url="https://api.fantasypros.com/v2/json/nfl/"+str(self.year)+"/consensus-rankings?type=draft&scoring=PPR&position=ALL&week=0&experts=available", params=ecr_headers)
         self.ecr_cleaner = ECRCleaner()
         self.idc = InjuryDataCollector(url="https://www.draftsharks.com/injury-predictor/{position}")
         self.injury_cleaner = InjuryCleaner()
         self.fdc = FPTSDataCollector(
             aggr_sites={
                 'https://www.fantasypros.com/nfl/projections/{position}.php?week=draft&scoring=PPR&week=draft': ['data', 'id'], 
-                'https://www.cbssports.com/fantasy/football/stats/{position}/'+str(year)+'/restofseason/projections/ppr/': ['TableBase-table',  'class'],
+                'https://www.cbssports.com/fantasy/football/stats/{position}/'+str(self.year)+'/restofseason/projections/ppr/': ['TableBase-table',  'class'],
                 # 'https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/': ['projections',  'class'], #TODO website deprecated need to grab new data/deprecate
             }
         )
@@ -54,7 +54,7 @@ class DraftConnector():
             "Accept-Language": "en-US,en;q=0.5",
             "Accept-Encoding": "gzip, deflate, br",
             "X-Fantasy-Source": "kona",
-            "X-Fantasy-Filter": '{"players":{"filterStatsForExternalIds":{"value":['+str(year-1)+','+str(year)+']},"filterSlotIds":{"value":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,23,24]},"filterStatsForSourceIds":{"value":[0,1]},"useFullProjectionTable":{"value":true},"sortAppliedStatTotal":{"sortAsc":false,"sortPriority":3,"value":"102022"},"sortDraftRanks":{"sortPriority":2,"sortAsc":true,"value":"PPR"},"sortPercOwned":{"sortPriority":4,"sortAsc":false},"limit":1000,"filterRanksForSlotIds":{"value":[0,2,4,6,17,16]},"filterStatsForTopScoringPeriodIds":{"value":2,"additionalValue":["002022","102022","002021","022022"]}}}',
+            "X-Fantasy-Filter": '{"players":{"filterStatsForExternalIds":{"value":['+str(self.year-1)+','+str(self.year)+']},"filterSlotIds":{"value":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,23,24]},"filterStatsForSourceIds":{"value":[0,1]},"useFullProjectionTable":{"value":true},"sortAppliedStatTotal":{"sortAsc":false,"sortPriority":3,"value":"102022"},"sortDraftRanks":{"sortPriority":2,"sortAsc":true,"value":"PPR"},"sortPercOwned":{"sortPriority":4,"sortAsc":false},"limit":1000,"filterRanksForSlotIds":{"value":[0,2,4,6,17,16]},"filterStatsForTopScoringPeriodIds":{"value":2,"additionalValue":["002022","102022","002021","022022"]}}}',
             "X-Fantasy-Platform": "kona-PROD-6daa0c838b3e2ff0192c0d7d1d24be52e5811609",
             "DNT": "1",
             "Connection": "keep-alive",

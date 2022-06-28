@@ -20,6 +20,7 @@ class TestCollectors():
 
     def test_ecr_collection(self):
         #original url: https://www.fantasypros.com/nfl/rankings/ppr-cheatsheets.php
+        year = get_season_year()
         headers = {
             "Host": "api.fantasypros.com",
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0",
@@ -35,7 +36,7 @@ class TestCollectors():
             "Sec-Fetch-Mode": "cors",
             "Sec-Fetch-Site": "same-site",
         }
-        api = APICollector(url="https://api.fantasypros.com/v2/json/nfl/2022/consensus-rankings?type=draft&scoring=PPR&position=ALL&week=0&experts=available", params=headers)
+        api = APICollector(url="https://api.fantasypros.com/v2/json/nfl/"+str(year)+"/consensus-rankings?type=draft&scoring=PPR&position=ALL&week=0&experts=available", params=headers)
         data = api.collect_data()
 
         assert data
