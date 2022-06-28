@@ -5,11 +5,11 @@ from backend.data_collection.utils import get_season_year
 
 
 def main():
-    speed_test_adpcollector() #.39 great
-    speed_test_ecrcollector() #17.29 slow #TODO make faster
-    speed_test_idccollector() #3.01 good
-    speed_test_fptscollector() #4.18 okay
-    speed_test_espncollector() #.40 great
+    speed_test_adpcollector() #.33 great
+    speed_test_ecrcollector() #.44 great
+    speed_test_idccollector() #3.17 good
+    speed_test_fptscollector() #5.70 okay
+    speed_test_espncollector() #.34 great
 
 
 def speed_test_adpcollector():
