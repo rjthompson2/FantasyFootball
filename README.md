@@ -11,9 +11,15 @@ So I decided to make an algorithm. I needed something to guide me when picking p
 # TODOs
 
 fix espn cleaner and draft connector
+
 accuracy metric for fantasy predictions
+
 normal distribution of recovery time per injury
+
 save to SQL or google sheets instead of CSV
+
 look into argparse package
+
 look into Faust event bus
+
 add decision trees after adding events
