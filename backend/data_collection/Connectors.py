@@ -4,6 +4,7 @@ from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
 from backend.data_collection.utils import merge_list
 from backend.data_collection.Cleaners import ADPCleaner, ECRCleaner, FPTSCleaner, InjuryCleaner
 from backend.data_collection.Bootstrap import get_bootstrap, get_cf
+from backend.data_analysis.accuracy import *
 from backend.utils import find_in_data_folder
 from typing import Tuple
 import time
@@ -12,6 +13,7 @@ import logging
 
 
 LOG = logging.getLogger(__name__)
+
 
 class DraftConnector():
     def __init__(self, year: int):
@@ -72,6 +74,32 @@ class DraftConnector():
 
     def load(self, df:pd.DataFrame) -> None:
         file_path = find_in_data_folder(f'draft_order_{self.year}.csv')
+        df = df.dropna(how='all')
+        df = df.dropna(subset=["POS"])
+        df.to_csv(file_path, index = False, header=True)
+
+class AccuracyConnector():
+    def __init__(self, year: int):
+        self.year = year
+
+    def collect_data(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        prediction = pd.read_csv(find_in_data_folder(f'draft_order_{self.year-1}.csv'))
+        actual = None
+        return prediction, actual
+
+    def run(self) -> None:
+        #Gets all data
+        prediction, actual = self.collect_data()
+
+        #Calculates average error in predicted points # % and std
+        accuracy.error_calculator(prediction, actual, on="FPTS")
+
+        #TODO need some metric for ranking ECR, ADP, and VOR based on how close they were to actual best draft order
+
+        self.load(df)
+
+    def load(self, df:pd.DataFrame) -> None:
+        file_path = find_in_data_folder(f'accuracy_{self.year}.csv')
         df = df.dropna(how='all')
         df = df.dropna(subset=["POS"])
         df.to_csv(file_path, index = False, header=True)
