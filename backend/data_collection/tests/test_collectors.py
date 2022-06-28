@@ -19,6 +19,7 @@ class TestCollectors():
         assert not new_df.equals(df)
 
     def test_ecr_collection(self):
+        #original url: https://www.fantasypros.com/nfl/rankings/ppr-cheatsheets.php
         headers = {
             "Host": "api.fantasypros.com",
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0",
