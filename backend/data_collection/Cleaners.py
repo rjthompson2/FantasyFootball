@@ -91,3 +91,12 @@ class InjuryCleaner():
         df["IJ%"] = df["IJ%"].apply(lambda x: x.translate({ord(' '): None, ord('\n'): None}))
         df = clean_name(df)
         return df
+
+
+class ESPNCleaner():
+    '''Cleans the injury data for each player'''
+    def clean_data(self, data: dict) -> pd.DataFrame:
+        data_list = data["players"]
+        names = [data["player"]["fullName"] for data in data_list]
+        fpts = [data["player"]["stats"][-1]["appliedTotal"] for data in data_list]
+        return pd.DataFrame({"PLAYER": names, "FPTS": fpts})

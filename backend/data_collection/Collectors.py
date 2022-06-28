@@ -1,4 +1,4 @@
-from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper, ESPNScraper, FilterWebScraper
+from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper, FilterWebScraper
 from backend.data_collection.utils import clean_name, merge_list, list_to_dict, update_chrome_driver, change_team_name, Positions
 from selenium.common.exceptions import WebDriverException
 from itertools import repeat
@@ -6,6 +6,7 @@ from typing import List
 import pandas as pd
 import multiprocessing
 import re
+import requests
 import logging
 
 
@@ -111,25 +112,11 @@ class WebCrawlerCollector():
     def collect_data(self):
         raise NotImplementedError
 
-class ESPNCollector(WebCrawlerCollector):
-    def collect_data(self):
-        espn = ESPNScraper()
-        espn.start(self.input, headless=True)
-        last = espn.get_last()
-        try:
-            with multiprocessing.Pool() as pool:
-                df_list = pool.starmap_async(self.get_site_data, zip(range(last)), callback=lambda x: callback_list.append(x))
-                df_list = df_list.get()
-                pool.close()
-                pool.join()
-                pool.terminate()
-        except WebDriverException:
-            update_chrome_driver()
-            self.collect_data()
-        raise NotImplementedError
+class APICollector():
+    def __init__(self, url, params=None):
+        self.input = url
+        self.params = params
 
-    def get_site_data(self, i: int) -> pd.DataFrame:
-        ws = ESPNScraper()
-        ws.start(self.input, headless=True)
-        df = ws.collect_page(i)
-        return df
+    def collect_data(self):
+        response = requests.get(self.input, headers=self.params)
+        return response.json()
