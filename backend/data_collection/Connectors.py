@@ -76,7 +76,7 @@ class DraftConnector():
         espn_df = self.espn_cleaner.clean_data(espn_data)
 
         #Merges fantasy point prediction data into singular df
-        fpts_df.merge(espn_df, on=["PLAYER"])
+        fpts_df = fpts_df.append(espn_df)
 
         #Get a list of dictionaries with the player, mean, ceiling, floor, and standard deviation
         data = get_bootstrap(fpts_df)
