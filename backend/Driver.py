@@ -5,17 +5,13 @@ import TeamBuilder
 def main(choice) -> None:
     choice.main(None)
 
-#TODO ensure there are at least 3 websites where I'm gathering fpts from
+#TODO fix espn cleaner and draft connector
 #TODO accuracy metric for fantasy predictions
 #TODO distribution of recovery time per injury
-#TODO change all historic data from webscraper to nfl api (nflfastR/nflfastR_python and nflfastpy)
 #TODO save to SQL or google sheets instead of CSV
 #TODO look into argparse package
-#TODO generative adversarial network for Drafting
-#TODO something like synthea data obsucation
 #TODO Faust event bus? 
 #TODO Decision trees after adding events
-#TODO Documenting and typing
 
 if __name__ == '__main__':
     choices = {
