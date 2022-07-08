@@ -34,11 +34,15 @@ position = st.sidebar.multiselect(
     default = df["POS"].unique(),
 )
 
-players_removed = st.sidebar.multiselect(
-    label = "Select Player's Name to Remove:",
-    options = df["PLAYER"].unique(),
-    default = None,
-)
+# TODO find a way to get removed players
+# TODO potentially add a class that players_removed gets it's values from and the front end sends the values to 
+players_removed = []
+# players_removed = st.sidebar.multiselect(
+#     label = "Select Player's Name to Remove:",
+#     options = df["PLAYER"].unique(),
+#     default = None,
+# )
+
 players = [player for player in df["PLAYER"].unique() if player not in players_removed]
 
 df_selection = df.query("POS == @position & PLAYER == @players")
