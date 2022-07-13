@@ -1,7 +1,5 @@
 from multiprocessing import Pool
 import subprocess
-import os
-path = os.path.abspath(os.getcwd())
 
 codes = ['./commands/run_data_visualization.sh', './commands/run_drafter_gui.sh', 'python webapp/app.py']
 
