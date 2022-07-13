@@ -11,6 +11,8 @@ def run_bash(code:str) -> None:
 
 
 if __name__ == '__main__':
-    p = Pool(5)
-    p.map(run_bash, codes)
-    p.join()
+    try:
+        p = Pool(5)
+        p.map(run_bash, codes)
+    except KeyboardInterrupt:
+        p.close()
