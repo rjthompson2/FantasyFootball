@@ -4,7 +4,6 @@ import subprocess
 codes = ['./commands/run_data_visualization.sh', './commands/run_drafter_gui.sh', 'python webapp/app.py']
 
 def run_bash(code:str) -> None:
-    print(code)
     subprocess.run(code.split())
 
 
