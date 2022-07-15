@@ -1,4 +1,5 @@
 from backend.data_collection.WebScraper import DynamicScraper
+from backend.utils import find_in_data_folder
 
 
 class FantasyScraper(DynamicScraper):
@@ -52,7 +53,7 @@ class FantasyScraper(DynamicScraper):
     
     def get_user(self):
         '''Gets the username and password from UserInfo'''
-        f = open("data/UserInfo.txt", "r")
+        f = open(find_in_data_folder("UserInfo.txt"), "r")
         words = f.read().split() 
         return words[2].translate({ord('"'): None}), words[5].translate({ord('"'): None})
         
