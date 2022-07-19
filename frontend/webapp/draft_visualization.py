@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, current_app
 from backend.draft.RunDraft import rundraft_webapp
 import selenium
 
@@ -13,8 +13,11 @@ def drafter():
         #TODO add check for cross site scripting and potential SQL injections
         if url and url != '':
             try:
+                current_app.logger.info("Running backend")
                 rundraft_webapp(url)
+                current_app.logger.info("Backend finished")
             except selenium.common.exceptions.InvalidArgumentException:
+                current_app.logger.warning("Selenium exception")
                 return render_template("draft.html", error="Please enter a valid url!")
     return render_template("draft.html")
 

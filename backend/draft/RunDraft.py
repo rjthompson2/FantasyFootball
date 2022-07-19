@@ -1,12 +1,17 @@
 from backend.data_collection.utils import get_season_year
 from backend.draft.Draft import Draft
-from backend.draft.WebScraper import FantasyScraper
+from backend.draft.WebScraper import FantasyScraper, FantasyTeamScraper
 from backend.utils import find_in_data_folder
 from backend.data_collection.utils import update_chrome_driver
 from selenium.common.exceptions import WebDriverException
 import backend.data_collection.BuildData as bd
 import pandas as pd
 import time
+import logging
+
+
+LOG = logging.getLogger(__name__)
+
 
 def main(args: list):
     if args == None or len(args) < 3:
@@ -59,18 +64,22 @@ def rundraft_webapp(url: str) -> None:
         wp.quit()
         raise selenium.common.exceptions.InvalidArgumentException
     wp.check_login()
-    return
+    LOG.warning("DONE")
     
     # Initializes all the values
-    #TODO get total teams and the position from the webscraper
     year = get_season_year()
-    # total_teams = ?
+    #TODO get total teams and the position from the webscraper
+    LOG.warning("NEW SCRAPER")
+    ts = FantasyTeamScraper()
+    LOG.warning("NEW SCRAPER DONE")
+    ts.start("https://pub-api.fantasysports.yahoo.com/fantasy/v3/teams/nfl/7496502?format=rawjson")
+    total_teams = ts.get_total_teams()
     # position = ?
     file_path = find_in_data_folder(f'draft_order_{year}.csv')
     # drft = Draft(pd.read_csv(file_path), total_teams)
     current_round = 1
+    LOG.warning("END")
 
-    
 
     # #Runs the draft
     # if pos == 1:
@@ -87,7 +96,7 @@ def rundraft_webapp(url: str) -> None:
     #         file_path = find_in_data_folder(f'league_draft_{year}.csv')
     #         pd.DataFrame(drft.draft).to_csv(file_path, index = True, header=True)
     #         current_round = drft.current_round
-    # wp.quit()
+    wp.quit()
 
 
 if __name__ == '__main__':
