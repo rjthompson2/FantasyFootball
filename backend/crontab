@@ -1,0 +1,2 @@
+#Collect draft data every two days
+0 */12 * * * python CollectDraftData.py
