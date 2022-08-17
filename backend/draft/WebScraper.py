@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup as BS
 import os
 import time
+import re
 
 class FantasyScraper(DynamicScraper):
     '''Yahoo Fantasy Football dynamic scraper'''
@@ -51,8 +52,8 @@ class FantasyScraper(DynamicScraper):
             password[0].send_keys(self.password)
             self.driver.find_elements_by_xpath('//*[@id="login-signin"]')[0].click()
 
-        # time.sleep(5)
-        # self.driver.find_elements_by_xpath('//*[@id="modalContent"]/a')[0].click() #Clicks out of the popup
+        time.sleep(5)
+        self.driver.find_elements_by_xpath('//*[@id="modalContent"]/a')[0].click() #Clicks out of the popup
     
     def get_user(self):
         '''Gets the username and password from UserInfo'''
@@ -64,12 +65,18 @@ class FantasyScraper(DynamicScraper):
         '''Shuts down the browser'''
         self.driver.quit()
 
-class FantasyTeamScraper(DynamicScraper):
     def get_total_teams(self):
         '''gets the total number of teams from an api'''
-        content = self.driver.page_source
-        soup = BS(content)
-        found_list = soup.findAll('pre')
-        print("!!!!!!!!!!!!!!!!!!!")
-        print(found_list)
-        return 0
+        soup = BS(self.driver.page_source, features='lxml')
+        # found_list = soup.findAll('li', {'class': 'Grid D-tb Cur-p ys-order-pick ys-team ys-order-user Fw-b'})
+        found_list = soup.findAll('div', {'class': 'Grid-U Va-m Fz-s Ell'})
+        i = 0
+        previous = None
+        
+        while True:
+            found_list[i] = re.sub('<.*?>', "", str(found_list[i]))
+            if found_list[i] != previous:
+                previous = found_list[i]
+            else:
+                return i, found_list[:i]
+            i+=1
