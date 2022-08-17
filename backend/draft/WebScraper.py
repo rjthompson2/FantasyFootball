@@ -2,6 +2,8 @@ from backend.data_collection.WebScraper import DynamicScraper
 from backend.utils import find_in_data_folder
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup as BS
+from typing import Tuple
+import pandas as pd
 import os
 import time
 import re
@@ -11,7 +13,7 @@ class FantasyScraper(DynamicScraper):
     def __init__(self):
         self.username, self.password = self.get_user()
 
-    def collect(self, tag):
+    def collect(self, tag:str) -> pd.DataFrame:
         '''Collects the draft order data from the webpage'''
         df = pd.DataFrame()
         try:
@@ -24,14 +26,14 @@ class FantasyScraper(DynamicScraper):
         except Exception:
             return pd.DataFrame()
     
-    def check_login(self):
+    def check_login(self) -> None:
         '''Checks to see if logged in and logs in if not'''
         soup_file = self.driver.page_source
         soup = BS(soup_file, features="lxml")
         if soup.find(text="Please sign in to your Yahoo account to draft") != None:
             self.login()
 
-    def login(self):
+    def login(self) -> None:
         '''Logs in given the information in UserInfo'''
         self.driver.find_elements_by_xpath('//*[@id="connecting"]/div/div/div[2]/div[3]/a')[0].click() #Clicks to be taken to the login
 
@@ -55,18 +57,18 @@ class FantasyScraper(DynamicScraper):
         time.sleep(5)
         self.driver.find_elements_by_xpath('//*[@id="modalContent"]/a')[0].click() #Clicks out of the popup
     
-    def get_user(self):
+    def get_user(self) -> str:
         '''Gets the username and password from UserInfo'''
         f = open(find_in_data_folder("UserInfo.txt"), "r")
         words = f.read().split() 
         return words[2].translate({ord('"'): None}), words[5].translate({ord('"'): None})
         
-    def quit(self):
+    def quit(self) -> None:
         '''Shuts down the browser'''
         self.driver.quit()
 
-    def get_total_teams(self):
-        '''gets the total number of teams from an api'''
+    def get_total_teams(self) -> Tuple[int, list]:
+        '''gets the total number of teams'''
         soup = BS(self.driver.page_source, features='lxml')
         # found_list = soup.findAll('li', {'class': 'Grid D-tb Cur-p ys-order-pick ys-team ys-order-user Fw-b'})
         found_list = soup.findAll('div', {'class': 'Grid-U Va-m Fz-s Ell'})
@@ -80,3 +82,12 @@ class FantasyScraper(DynamicScraper):
             else:
                 return i, found_list[:i]
             i+=1
+
+    def find_round(self) -> int:
+        '''gets the current round'''
+        #<li class="W-100 Py-6 Ta-c Fz-s Fw-b ys-order-round">Round 1</li>
+        soup = BS(self.driver.page_source, features='lxml')
+        found_list = soup.findAll('li', {'class': 'W-100 Py-6 Ta-c Fz-s Fw-b ys-order-round'})
+        current_round = re.sub('<.*?>', "", str(found_list[0]))
+        current_round = re.sub('Round ', "", str(current_round))
+        return int(current_round)

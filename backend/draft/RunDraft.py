@@ -51,9 +51,9 @@ def main(args: list):
     wp.quit()
 
 
-def rundraft_webapp(url: str) -> None:
+def rundraft_webapp(url:str, wait_time=30) -> None:
     #TODO need to change up the values to autofill position in the draft and total teams, and run the draft smoothly
-    # #Loading from the webpage
+    # Loading from the webpage
     wp = FantasyScraper()
     try:
         wp.start(url)
@@ -68,33 +68,39 @@ def rundraft_webapp(url: str) -> None:
     
     # Initializes all the values
     year = get_season_year()
-    print("getting total teams")
     total_teams, names = wp.get_total_teams()
-    print(total_teams)
-    #TODO get the position from names (and/or current turn)
-    # position = ?
+    draft_round = wp.find_round()
+    #TODO make find_pos more general
+    pos = find_pos(names, 'Riley', draft_round)
     file_path = find_in_data_folder(f'draft_order_{year}.csv')
     drft = Draft(pd.read_csv(file_path), total_teams)
     current_round = 1
     LOG.warning("END")
 
+    #TODO work on getting the drafter to work
+    # Run the draft
+    if pos == 1:
+        drft.recommend()
+        time.sleep(wait_time)
+    while current_round < total_teams * 15:
+        if drft.current_team + drft.increment == pos:
+            drft.recommend()
+            time.sleep(wait_time)
+        df = wp.collect('results-by-round')
+        if len(df.index) != 0:
+            df = bd.build_drafting_data(df)
+            drft.automated_draft(df, pos)
+            file_path = find_in_data_folder(f'league_draft_{year}.csv')
+            pd.DataFrame(drft.draft).to_csv(file_path, index = True, header=True)
+            current_round = drft.current_round
+    wp.quit()
 
-    # #Runs the draft
-    # if pos == 1:
-    #     drft.recommend()
-    #     time.sleep(30)
-    # while current_round < total_teams * 15:
-    #     if drft.current_team + drft.increment == pos:
-    #         drft.recommend()
-    #         time.sleep(30)
-    #     df = wp.collect('results-by-round')
-    #     if len(df.index) != 0:
-    #         df = bd.build_drafting_data(df)
-    #         drft.automated_draft(df, pos)
-    #         file_path = find_in_data_folder(f'league_draft_{year}.csv')
-    #         pd.DataFrame(drft.draft).to_csv(file_path, index = True, header=True)
-    #         current_round = drft.current_round
-    # wp.quit()
+def find_pos(names:list, you:str, draft_round:int):
+    'Gets the current position from the current round and where you are drafting from'
+    if draft_round%2 != 0:
+        return names.index(you)
+    else:
+        return len(names) - names.index(you) + 1
 
 
 if __name__ == '__main__':
