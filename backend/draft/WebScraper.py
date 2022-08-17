@@ -61,7 +61,7 @@ class FantasyScraper(DynamicScraper):
         '''Gets the username and password from UserInfo'''
         f = open(find_in_data_folder("UserInfo.txt"), "r")
         words = f.read().split() 
-        return words[2].translate({ord('"'): None}), words[5].translate({ord('"'): None}), words[5].translate({ord('"'): None})
+        return words[2].translate({ord('"'): None}), words[5].translate({ord('"'): None}), words[8].translate({ord('"'): None})
         
     def quit(self) -> None:
         '''Shuts down the browser'''

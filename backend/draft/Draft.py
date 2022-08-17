@@ -2,12 +2,16 @@ import pandas as pd
 import re
 
 class Draft():
-    def __init__(self, df:pd.DataFrame, total_teams:int) -> None:
+    def __init__(self, df:pd.DataFrame, total_teams:int, copy=True) -> None:
         self.increment = 1
         self.current_round = 1
         self.current_team = 1
         self.total_teams = total_teams
-        self.mock = df.copy()
+        if copy:
+            self.mock = df.copy()
+        else:
+            #TODO need to change to the actual file so it updates
+            self.mock = df
         self.draft = {'PLAYER': [],'POS': [], 'TEAM': [], 'ORDER': [], 'VOR': []}
 
     def draft_player(self, player:str) -> None:
@@ -17,16 +21,20 @@ class Draft():
             player (str): The name of the player that's being added
         '''
         if player in self.mock.values:
+            #TODO need to remove 'Jr'/'Sr' tags
+
             self.draft['PLAYER'] += [player]
             self.draft['POS'].append(self.mock.loc[self.mock['PLAYER'] == player].iloc[0, 1])
             self.draft['TEAM'] += [self.current_team]
             self.draft['ORDER'] += [self.current_round]
             self.draft['VOR'].append(self.mock.loc[self.mock['PLAYER'] == player].iloc[0, 3].tolist())
 
+            #TODO need to remove drafted players instead
             self.mock = self.mock.loc[self.mock['PLAYER'] != player]
 
             self.current_round+=1
             self.current_team = self.snake_increment(self.current_team)
+            print(player + " was drafted!") #TODO remove after
         else:
             print(player + " is not a valid player!")
 

@@ -8,6 +8,7 @@ import backend.data_collection.BuildData as bd
 import pandas as pd
 import time
 import logging
+import shutil
 
 
 LOG = logging.getLogger(__name__)
@@ -52,7 +53,6 @@ def main(args: list):
 
 
 def rundraft_webapp(url:str, wait_time=30) -> None:
-    #TODO need to change up the values to autofill position in the draft and total teams, and run the draft smoothly
     # Loading from the webpage
     wp = FantasyScraper()
     try:
@@ -64,20 +64,20 @@ def rundraft_webapp(url:str, wait_time=30) -> None:
         wp.quit()
         raise selenium.common.exceptions.InvalidArgumentException
     wp.check_login()
-    LOG.warning("DONE")
     
     # Initializes all the values
     year = get_season_year()
     total_teams, names = wp.get_total_teams()
     draft_round = wp.find_round()
-    print(wp.user)
     pos = find_pos(names, wp.user, draft_round)
-    file_path = find_in_data_folder(f'draft_order_{year}.csv')
-    drft = Draft(pd.read_csv(file_path), total_teams)
+    print(pos)
+    file_path = find_in_data_folder(f'draft_order_{year}_copy.csv')
+    drft = Draft(pd.read_csv(file_path), total_teams, copy=False)
     current_round = 1
     LOG.warning("END")
 
-    #TODO work on getting the drafter to work
+    #TODO getting the drafter to work
+    #TODO need to add a way to automatically collect and update players who have already been picked
     # Run the draft
     if pos == 1:
         drft.recommend()
@@ -97,7 +97,7 @@ def rundraft_webapp(url:str, wait_time=30) -> None:
 
 def find_pos(names:list, you:str, draft_round:int):
     'Gets the current position from the current round and where you are drafting from'
-    if draft_round%2 != 0:
+    if draft_round%2 == 0:
         return names.index(you)
     else:
         return len(names) - names.index(you) + 1

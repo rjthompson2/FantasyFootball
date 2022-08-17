@@ -1,6 +1,9 @@
 from flask import Blueprint, render_template, request, current_app
 from backend.draft.RunDraft import rundraft_webapp
+from backend.utils import find_in_data_folder, find_parent_dir
+from backend.data_collection.utils import get_season_year
 import selenium
+import shutil
 
 draft = Blueprint(__name__, "draft")
 
@@ -14,6 +17,12 @@ def drafter():
         if url and url != '':
             try:
                 current_app.logger.info("Running backend")
+                #Creates a copy of the drafting data
+                year = get_season_year()
+                path = find_in_data_folder(f"draft_order_{year}.csv")
+                shutil.copyfile(path, find_parent_dir("FantasyFootball")+f'/backend/data/draft_order_{year}_copy.csv')
+                path = find_in_data_folder(f'draft_order_{year}.csv')
+                #Runs draft
                 rundraft_webapp(url)
                 current_app.logger.info("Backend finished")
             except selenium.common.exceptions.InvalidArgumentException:
