@@ -70,8 +70,8 @@ def rundraft_webapp(url:str, wait_time=30) -> None:
     year = get_season_year()
     total_teams, names = wp.get_total_teams()
     draft_round = wp.find_round()
-    #TODO make find_pos more general
-    pos = find_pos(names, 'Riley', draft_round)
+    print(wp.user)
+    pos = find_pos(names, wp.user, draft_round)
     file_path = find_in_data_folder(f'draft_order_{year}.csv')
     drft = Draft(pd.read_csv(file_path), total_teams)
     current_round = 1

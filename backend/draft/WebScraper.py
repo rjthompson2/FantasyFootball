@@ -11,7 +11,7 @@ import re
 class FantasyScraper(DynamicScraper):
     '''Yahoo Fantasy Football dynamic scraper'''
     def __init__(self):
-        self.username, self.password = self.get_user()
+        self.username, self.password, self.user = self.get_user()
 
     def collect(self, tag:str) -> pd.DataFrame:
         '''Collects the draft order data from the webpage'''
@@ -61,7 +61,7 @@ class FantasyScraper(DynamicScraper):
         '''Gets the username and password from UserInfo'''
         f = open(find_in_data_folder("UserInfo.txt"), "r")
         words = f.read().split() 
-        return words[2].translate({ord('"'): None}), words[5].translate({ord('"'): None})
+        return words[2].translate({ord('"'): None}), words[5].translate({ord('"'): None}), words[5].translate({ord('"'): None})
         
     def quit(self) -> None:
         '''Shuts down the browser'''
