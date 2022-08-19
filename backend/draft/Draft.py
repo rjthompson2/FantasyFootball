@@ -1,3 +1,4 @@
+from backend.data_collection.utils import clean_name_str
 import pandas as pd
 import re
 
@@ -16,9 +17,9 @@ class Draft():
         Args:
             player (str): The name of the player that's being added
         '''
+        player = clean_name_str(clean_name_str)
         if player in self.mock.values:
-            #TODO need to remove 'Jr'/'Sr' tags
-
+            #TODO change name into correct name
             self.draft['PLAYER'] += [player]
             self.draft['POS'].append(self.mock.loc[self.mock['PLAYER'] == player].iloc[0, 1])
             self.draft['TEAM'] += [self.current_team]
@@ -97,16 +98,13 @@ class Draft():
 
 
 class AutomatedDraft(Draft):
-    def __init__(self, df:pd.DataFrame, total_teams:int, copy=True) -> None:
+    def __init__(self, file_path:str, total_teams:int) -> None:
         self.increment = 1
         self.current_round = 1
         self.current_team = 1
         self.total_teams = total_teams
-        if copy:
-            self.mock = df.copy()
-        else:
-            #TODO need to change to the actual file so it updates
-            self.mock = df
+        self.file_path = file_path
+        self.mock = pd.read_csv(file_path)
         self.draft = {'PLAYER': [],'POS': [], 'TEAM': [], 'ORDER': [], 'VOR': []}
 
     def draft_player(self, player:str) -> None:
@@ -115,20 +113,5 @@ class AutomatedDraft(Draft):
         Args:
             player (str): The name of the player that's being added
         '''
-        if player in self.mock.values:
-            #TODO need to remove 'Jr'/'Sr' tags
-
-            self.draft['PLAYER'] += [player]
-            self.draft['POS'].append(self.mock.loc[self.mock['PLAYER'] == player].iloc[0, 1])
-            self.draft['TEAM'] += [self.current_team]
-            self.draft['ORDER'] += [self.current_round]
-            self.draft['VOR'].append(self.mock.loc[self.mock['PLAYER'] == player].iloc[0, 3].tolist())
-
-            #TODO need to remove drafted players instead
-            self.mock = self.mock.loc[self.mock['PLAYER'] != player]
-
-            self.current_round+=1
-            self.current_team = self.snake_increment(self.current_team)
-            print(player + " was drafted!") #TODO remove after
-        else:
-            print(player + " is not a valid player!")
+        super().draft_player(player)
+        self.mock.to_csv(self.file_path)

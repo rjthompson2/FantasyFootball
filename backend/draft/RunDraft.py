@@ -1,5 +1,5 @@
 from backend.data_collection.utils import get_season_year
-from backend.draft.Draft import Draft
+from backend.draft.Draft import AutomatedDraft, Draft
 from backend.draft.WebScraper import FantasyScraper
 from backend.utils import find_in_data_folder
 from backend.data_collection.utils import update_chrome_driver
@@ -68,13 +68,13 @@ def rundraft_webapp(url:str, wait_time=30) -> None:
     # Initializes all the values
     year = get_season_year()
     total_teams, names = wp.get_total_teams()
+    #TODO need a better way to get the pos
     draft_round = wp.find_round()
     pos = find_pos(names, wp.user, draft_round)
     print(pos)
     file_path = find_in_data_folder(f'draft_order_{year}_copy.csv')
-    drft = Draft(pd.read_csv(file_path), total_teams, copy=False)
+    drft = AutomatedDraft(file_path, total_teams)
     current_round = 1
-    LOG.warning("END")
 
     #TODO getting the drafter to work
     #TODO need to add a way to automatically collect and update players who have already been picked
@@ -94,6 +94,7 @@ def rundraft_webapp(url:str, wait_time=30) -> None:
             pd.DataFrame(drft.draft).to_csv(file_path, index = True, header=True)
             current_round = drft.current_round
     wp.quit()
+    LOG.warning("END")
 
 def find_pos(names:list, you:str, draft_round:int):
     'Gets the current position from the current round and where you are drafting from'

@@ -54,6 +54,12 @@ def get_season_year() -> int:
         year -= 1
     return year
 
+def clean_name_str(name:str) -> str:
+    name = re.sub("\s[IVX]*$", "", name)
+    name = re.sub("\s[JS]r\.?$", "", name)
+    name = re.sub("\.", "", name)
+    return name
+
 def clean_name(df:pd.DataFrame) -> pd.DataFrame:
     df["PLAYER"] = df["PLAYER"].apply(lambda x: re.sub("\s[IVX]*$", "", x))
     df["PLAYER"] = df["PLAYER"].apply(lambda x: re.sub("\s[JS]r\.?$", "", x))
