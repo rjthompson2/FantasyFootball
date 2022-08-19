@@ -12,8 +12,6 @@ So I decided to make an algorithm to win. I needed something to guide me when pi
 
 accuracy metric for fantasy predictions
 
-interface for drafting
-
 normal distribution of recovery time per injury
 
 save to SQL or google sheets instead of CSV
