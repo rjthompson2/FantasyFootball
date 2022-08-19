@@ -6,7 +6,7 @@ They cut my hair to look like a monk.
 
 That slight will not go unpunished.
 
-So I decided to make an algorithm to win. I needed something to guide me when picking players during the draft, who to start/sit, and who to trade. The next season I got third place, but was in first until the finals. My system won me great trades such as getting Johnathan Taylor for Ezekiel Elliot week 3. While I did not win first, this showed improvement and encouraged me to keep working on it.
+So I decided to make an algorithm to win. I needed something to guide me when picking players during the draft, who to start/sit, and who to trade. The next season (2021) I got third place, but was in first until the finals. My system won me great trades such as getting Johnathan Taylor for Ezekiel Elliot week 3. While I did not win first, this showed improvement and encouraged me to keep working on it.
 
 # TODOs
 
