@@ -1,4 +1,4 @@
-from backend.data_collection.utils import clean_name_str, change_player_name
+from backend.data_collection.utils import clean_name_str, change_player_name, change_team_name_str
 import pandas as pd
 import re
 
@@ -19,6 +19,7 @@ class Draft():
         '''
         player = clean_name_str(player)
         player = change_player_name(player)
+        player = change_team_name_str(player)
         if player in self.mock.values:
             self.draft['PLAYER'] += [player]
             self.draft['POS'].append(self.mock.loc[self.mock['PLAYER'] == player].iloc[0, 1])

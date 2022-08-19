@@ -3,6 +3,7 @@ from backend.draft.RunDraft import rundraft_webapp
 from backend.utils import find_in_data_folder, find_parent_dir
 from backend.data_collection.utils import get_season_year
 import pandas as pd
+import os
 import selenium
 import shutil
 
@@ -21,9 +22,10 @@ def drafter():
                 #Creates a copy of the drafting data
                 year = get_season_year()
                 copy = pd.read_csv(find_in_data_folder(f"draft_order_{year}.csv"))
-                copy.to_csv(find_in_data_folder(f'draft_order_{year}_copy.csv'))
+                new_path = find_in_data_folder(f'draft_order_{year}_copy.csv')
+                copy.to_csv(new_path, index=False)
                 #Runs draft
-                rundraft_webapp(url)
+                rundraft_webapp(url, 15)
                 current_app.logger.info("Backend finished")
             except selenium.common.exceptions.InvalidArgumentException:
                 current_app.logger.warning("Selenium exception")

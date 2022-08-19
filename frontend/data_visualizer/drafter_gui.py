@@ -46,6 +46,8 @@ quick_find = st.sidebar.multiselect(
 if quick_find:
     df_selection = df.query("PLAYER == @quick_find")
 
+st.sidebar.button("Update")
+
 st.dataframe(df_selection)
 
 new_selection = df_selection.dropna(subset=["VOR"]).reset_index()

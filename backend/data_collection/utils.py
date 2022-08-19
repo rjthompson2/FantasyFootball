@@ -45,8 +45,9 @@ team_name_changes = {
     'New England': 'New England Patriots'
 }
 
+#TODO fix defenses
 player_name_changes = {
-    'Eli Mitchell': 'Elijah Mitchell'
+    'Eli Mitchell': 'Elijah Mitchell',
 }
 
 def get_season_year() -> int:
@@ -58,7 +59,6 @@ def get_season_year() -> int:
     return year
 
 def clean_name_str(name:str) -> str:
-    print(name)
     name = re.sub("\s[IVX]*$", "", name)
     name = re.sub("\s[JS]r\.?$", "", name)
     name = re.sub("\.", "", name)
@@ -103,6 +103,11 @@ def update_chrome_driver() -> None:
     os.remove(latest_driver_zip)
 
     os.chmod(join(os.getcwd(), 'chromedriver'), 0o755)
+
+def change_team_name_str(name:str) -> str:
+    if name in team_name_changes:
+        return team_name_changes[name]
+    return name
 
 def change_team_name(df_series:pd.Series) -> pd.Series:
     '''Changes the team name so all data has the same values for teams'''
