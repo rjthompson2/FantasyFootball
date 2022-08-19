@@ -7,16 +7,13 @@ import streamlit as st
 import os
 
 @st.cache
-def get_data():
+def save_data():
     year = get_season_year()
-    path = find_in_data_folder(f"draft_order_{year}.csv")
+    path = find_in_data_folder(f"draft_order_{year}_copy.csv")
     #collect data if not available
     if not os.path.exists(path):
         CollectDraftData().main()
-
-    df = pd.read_csv(path)
-    df = df.dropna(subset=["POS"])
-    return df
+    return path
 
 
 st.set_page_config(
@@ -25,7 +22,9 @@ st.set_page_config(
     layout = "wide",
 )
 
-df = get_data()
+path = save_data()
+df = pd.read_csv(path)
+df = df.dropna(subset=["POS"])
 
 st.sidebar.header("Filter here: ")
 position = st.sidebar.multiselect(
@@ -34,16 +33,8 @@ position = st.sidebar.multiselect(
     default = df["POS"].unique(),
 )
 
-# TODO find a way to get removed players
-# TODO potentially add a class that players_removed gets it's values from and the front end sends the values to 
-players_removed = []
-# players_removed = st.sidebar.multiselect(
-#     label = "Select Player's Name to Remove:",
-#     options = df["PLAYER"].unique(),
-#     default = None,
-# )
 
-players = [player for player in df["PLAYER"].unique() if player not in players_removed]
+players = df["PLAYER"].unique()
 
 df_selection = df.query("POS == @position & PLAYER == @players")
 

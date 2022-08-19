@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, current_app
 from backend.draft.RunDraft import rundraft_webapp
 from backend.utils import find_in_data_folder, find_parent_dir
 from backend.data_collection.utils import get_season_year
+import pandas as pd
 import selenium
 import shutil
 
@@ -19,9 +20,8 @@ def drafter():
                 current_app.logger.info("Running backend")
                 #Creates a copy of the drafting data
                 year = get_season_year()
-                path = find_in_data_folder(f"draft_order_{year}.csv")
-                shutil.copyfile(path, find_parent_dir("FantasyFootball")+f'/backend/data/draft_order_{year}_copy.csv')
-                path = find_in_data_folder(f'draft_order_{year}.csv')
+                copy = pd.read_csv(find_in_data_folder(f"draft_order_{year}.csv"))
+                copy.to_csv(find_in_data_folder(f'draft_order_{year}_copy.csv'))
                 #Runs draft
                 rundraft_webapp(url)
                 current_app.logger.info("Backend finished")

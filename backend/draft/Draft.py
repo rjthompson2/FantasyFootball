@@ -1,4 +1,4 @@
-from backend.data_collection.utils import clean_name_str
+from backend.data_collection.utils import clean_name_str, change_player_name
 import pandas as pd
 import re
 
@@ -17,9 +17,9 @@ class Draft():
         Args:
             player (str): The name of the player that's being added
         '''
-        player = clean_name_str(clean_name_str)
+        player = clean_name_str(player)
+        player = change_player_name(player)
         if player in self.mock.values:
-            #TODO change name into correct name
             self.draft['PLAYER'] += [player]
             self.draft['POS'].append(self.mock.loc[self.mock['PLAYER'] == player].iloc[0, 1])
             self.draft['TEAM'] += [self.current_team]
@@ -32,6 +32,14 @@ class Draft():
             self.current_team = self.snake_increment(self.current_team)
         else:
             print(player + " is not a valid player!")
+            self.draft['PLAYER'] += [player]
+            self.draft['POS'] += ["?"]
+            self.draft['TEAM'] += ["?"]
+            self.draft['ORDER'] += ["?"]
+            self.draft['VOR'] += ["?"]
+
+            self.current_round+=1
+            self.current_team = self.snake_increment(self.current_team)
 
     def automated_draft(self, df:pd.DataFrame, pos:str) -> None:
         '''Drafts players until none more left to add to self.draft
@@ -114,4 +122,4 @@ class AutomatedDraft(Draft):
             player (str): The name of the player that's being added
         '''
         super().draft_player(player)
-        self.mock.to_csv(self.file_path)
+        self.mock.to_csv(self.file_path, index=False)

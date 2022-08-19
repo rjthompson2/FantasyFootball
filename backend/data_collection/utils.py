@@ -45,6 +45,9 @@ team_name_changes = {
     'New England': 'New England Patriots'
 }
 
+player_name_changes = {
+    'Eli Mitchell': 'Elijah Mitchell'
+}
 
 def get_season_year() -> int:
     '''Gets the current year of the season'''
@@ -55,15 +58,14 @@ def get_season_year() -> int:
     return year
 
 def clean_name_str(name:str) -> str:
+    print(name)
     name = re.sub("\s[IVX]*$", "", name)
     name = re.sub("\s[JS]r\.?$", "", name)
     name = re.sub("\.", "", name)
     return name
 
 def clean_name(df:pd.DataFrame) -> pd.DataFrame:
-    df["PLAYER"] = df["PLAYER"].apply(lambda x: re.sub("\s[IVX]*$", "", x))
-    df["PLAYER"] = df["PLAYER"].apply(lambda x: re.sub("\s[JS]r\.?$", "", x))
-    df['PLAYER'] = df['PLAYER'].apply(lambda x: re.sub("\.", "", x))
+    df["PLAYER"] = df["PLAYER"].apply(lambda x: clean_name_str(x))
     return df
 
 
@@ -105,6 +107,11 @@ def update_chrome_driver() -> None:
 def change_team_name(df_series:pd.Series) -> pd.Series:
     '''Changes the team name so all data has the same values for teams'''
     return df_series.apply(lambda x: team_name_changes[x] if x in team_name_changes else x)
+
+def change_player_name(player:str) -> str:
+    if player in player_name_changes:
+        return player_name_changes[player]
+    return player
 
 class Positions(Enum):
     RB = 'rb'

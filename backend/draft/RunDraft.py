@@ -76,8 +76,6 @@ def rundraft_webapp(url:str, wait_time=30) -> None:
     drft = AutomatedDraft(file_path, total_teams)
     current_round = 1
 
-    #TODO getting the drafter to work
-    #TODO need to add a way to automatically collect and update players who have already been picked
     # Run the draft
     if pos == 1:
         drft.recommend()
@@ -99,7 +97,7 @@ def rundraft_webapp(url:str, wait_time=30) -> None:
 def find_pos(names:list, you:str, draft_round:int):
     'Gets the current position from the current round and where you are drafting from'
     if draft_round%2 == 0:
-        return names.index(you)
+        return names.index(you) + 1
     else:
         return len(names) - names.index(you) + 1
 
