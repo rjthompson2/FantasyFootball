@@ -67,22 +67,6 @@ class FantasyScraper(DynamicScraper):
         '''Shuts down the browser'''
         self.driver.quit()
 
-    # def get_total_teams(self) -> Tuple[int, list]:
-    #     '''gets the total number of teams'''
-    #     soup = BS(self.driver.page_source, features='lxml')
-    #     # found_list = soup.findAll('li', {'class': 'Grid D-tb Cur-p ys-order-pick ys-team ys-order-user Fw-b'})
-    #     found_list = soup.findAll('div', {'class': 'Grid-U Va-m Fz-s Ell'})
-    #     i = 0
-    #     previous = None
-        
-    #     while True:
-    #         found_list[i] = re.sub('<.*?>', "", str(found_list[i]))
-    #         if found_list[i] != previous:
-    #             previous = found_list[i]
-    #         else:
-    #             return i, found_list[:i]
-    #         i+=1
-
     def find_round(self) -> int:
         '''gets the current round'''
         soup = BS(self.driver.page_source, features='lxml')
@@ -96,6 +80,6 @@ class FantasyScraper(DynamicScraper):
         self.driver.find_elements_by_xpath('//*[@id="draft"]/div[5]/ul/li[2]')[0].click()
         soup = BS(self.driver.page_source, features='lxml')
         players = soup.findAll('option')
-        print(players)
+        self.driver.find_elements_by_xpath('//*[@id="draft"]/div[5]/ul/li[3]')[0].click()
         players = [re.sub('<.*?>', "", str(player)) for player in players]
         return players

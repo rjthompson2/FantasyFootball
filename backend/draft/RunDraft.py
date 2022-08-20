@@ -70,9 +70,9 @@ def rundraft_webapp(url:str, wait_time=30) -> None:
     draft_round = wp.find_round()
     names = wp.find_order()
     pos = find_pos(names, wp.user)
-    print(pos)
+    total_teams = len(names)
     file_path = find_in_data_folder(f'draft_order_{year}_copy.csv')
-    drft = AutomatedDraft(file_path, len(names))
+    drft = AutomatedDraft(file_path, total_teams)
     current_round = 1
 
     # Run the draft

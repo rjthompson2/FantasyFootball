@@ -21,6 +21,7 @@ class Draft():
         player = change_player_name(player)
         player = change_team_name_str(player)
         if player in self.mock.values:
+            print(player)
             self.draft['PLAYER'] += [player]
             self.draft['POS'].append(self.mock.loc[self.mock['PLAYER'] == player].iloc[0, 1])
             self.draft['TEAM'] += [self.current_team]
