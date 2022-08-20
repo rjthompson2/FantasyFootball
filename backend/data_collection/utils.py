@@ -45,7 +45,6 @@ team_name_changes = {
     'New England': 'New England Patriots'
 }
 
-#TODO fix defenses
 player_name_changes = {
     'Eli Mitchell': 'Elijah Mitchell',
 }

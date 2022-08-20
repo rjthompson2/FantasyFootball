@@ -67,13 +67,12 @@ def rundraft_webapp(url:str, wait_time=30) -> None:
     
     # Initializes all the values
     year = get_season_year()
-    total_teams, names = wp.get_total_teams()
-    #TODO need a better way to get the pos
     draft_round = wp.find_round()
-    pos = find_pos(names, wp.user, draft_round)
+    names = wp.find_order()
+    pos = find_pos(names, wp.user)
     print(pos)
     file_path = find_in_data_folder(f'draft_order_{year}_copy.csv')
-    drft = AutomatedDraft(file_path, total_teams)
+    drft = AutomatedDraft(file_path, len(names))
     current_round = 1
 
     # Run the draft
@@ -94,12 +93,12 @@ def rundraft_webapp(url:str, wait_time=30) -> None:
     wp.quit()
     LOG.warning("END")
 
-def find_pos(names:list, you:str, draft_round:int):
+def find_pos(names:list, you:str):#, draft_round:int):
     'Gets the current position from the current round and where you are drafting from'
-    if draft_round%2 == 0:
+    if you in names:
         return names.index(you) + 1
-    else:
-        return len(names) - names.index(you) + 1
+    print("ERROR")
+    return len(you)
 
 
 if __name__ == '__main__':

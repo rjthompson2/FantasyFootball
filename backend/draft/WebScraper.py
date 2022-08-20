@@ -67,27 +67,35 @@ class FantasyScraper(DynamicScraper):
         '''Shuts down the browser'''
         self.driver.quit()
 
-    def get_total_teams(self) -> Tuple[int, list]:
-        '''gets the total number of teams'''
-        soup = BS(self.driver.page_source, features='lxml')
-        # found_list = soup.findAll('li', {'class': 'Grid D-tb Cur-p ys-order-pick ys-team ys-order-user Fw-b'})
-        found_list = soup.findAll('div', {'class': 'Grid-U Va-m Fz-s Ell'})
-        i = 0
-        previous = None
+    # def get_total_teams(self) -> Tuple[int, list]:
+    #     '''gets the total number of teams'''
+    #     soup = BS(self.driver.page_source, features='lxml')
+    #     # found_list = soup.findAll('li', {'class': 'Grid D-tb Cur-p ys-order-pick ys-team ys-order-user Fw-b'})
+    #     found_list = soup.findAll('div', {'class': 'Grid-U Va-m Fz-s Ell'})
+    #     i = 0
+    #     previous = None
         
-        while True:
-            found_list[i] = re.sub('<.*?>', "", str(found_list[i]))
-            if found_list[i] != previous:
-                previous = found_list[i]
-            else:
-                return i, found_list[:i]
-            i+=1
+    #     while True:
+    #         found_list[i] = re.sub('<.*?>', "", str(found_list[i]))
+    #         if found_list[i] != previous:
+    #             previous = found_list[i]
+    #         else:
+    #             return i, found_list[:i]
+    #         i+=1
 
     def find_round(self) -> int:
         '''gets the current round'''
-        #<li class="W-100 Py-6 Ta-c Fz-s Fw-b ys-order-round">Round 1</li>
         soup = BS(self.driver.page_source, features='lxml')
         found_list = soup.findAll('li', {'class': 'W-100 Py-6 Ta-c Fz-s Fw-b ys-order-round'})
         current_round = re.sub('<.*?>', "", str(found_list[0]))
         current_round = re.sub('Round ', "", str(current_round))
         return int(current_round)
+    
+    def find_order(self) -> list:
+        '''gets the names of every player in draft order'''
+        self.driver.find_elements_by_xpath('//*[@id="draft"]/div[5]/ul/li[2]')[0].click()
+        soup = BS(self.driver.page_source, features='lxml')
+        players = soup.findAll('option')
+        print(players)
+        players = [re.sub('<.*?>', "", str(player)) for player in players]
+        return players
