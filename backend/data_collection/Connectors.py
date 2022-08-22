@@ -4,7 +4,7 @@ from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
 from backend.data_collection.utils import merge_list
 from backend.data_collection.Cleaners import ADPCleaner, ECRCleaner, FPTSCleaner, InjuryCleaner, ESPNCleaner
 from backend.data_collection.Bootstrap import get_bootstrap, get_cf
-from backend.data_analysis.accuracy import *
+from backend.data_analysis.accuracy import error_calculator
 from backend.utils import find_in_data_folder
 from typing import Tuple
 import time
@@ -125,22 +125,37 @@ class AccuracyConnector():
 
     def collect_data(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
         prediction = pd.read_csv(find_in_data_folder(f'draft_order_{self.year-1}.csv'))
-        actual = None
+        # actual = pd.read_csv(find_in_data_folder(f'draft_order_{self.year-1}.csv'))
+        url = f'https://www.fantasypros.com/nfl/reports/leaders/ppr.php?year={self.year-1}&start=1&end=18'
+        collector = Collector(ws=WebScraper(), url=url, _id='id', tag='data')
+        actual = collector.collect_data()
+        # actual = None
         return prediction, actual
 
     def run(self) -> None:
         #Gets all data
         prediction, actual = self.collect_data()
+        actual = actual.rename(columns={'Points':"FPTS"})
+        print(actual['FPTS'])
+        print(prediction['FPTS'])
 
         #Calculates average error in predicted points # % and std
-        accuracy.error_calculator(prediction, actual, on="FPTS")
+        #TODO need ot match points to player name
+        df = error_calculator(prediction, actual, on="FPTS")
+        df = pd.DataFrame(df)
+        df['PLAYER'] = prediction['PLAYER']
+        df['POS'] = prediction['POS']
+        #TODO need ot match points to player name
+        df['Expected'] = prediction['FPTS']
+        df['Actual'] = actual['FPTS']
+        df = df[['PLAYER', 'POS', 'Accuracy', 'Numeric', 'Expected', 'Actual']]
 
         #TODO need some metric for ranking ECR, ADP, and VOR based on how close they were to actual best draft order
 
         self.load(df)
 
     def load(self, df:pd.DataFrame) -> None:
-        file_path = find_in_data_folder(f'accuracy_{self.year}.csv')
+        file_path = find_in_data_folder(f'accuracy_{self.year-1}.csv')
         df = df.dropna(how='all')
-        df = df.dropna(subset=["POS"])
+        # df = df.dropna(subset=["POS"])
         df.to_csv(file_path, index = False, header=True)
