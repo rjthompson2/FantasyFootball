@@ -17,7 +17,7 @@ def error_calculator(prediction: pd.DataFrame, actual: pd.DataFrame, on:list, ke
         difference_num = round(difference_df.sum()/len(new) , 2)
         #subtract all rows, get the absolute value, divide by original, multiply by 100, then gets the total, and averages it
         accuracy_df = round(100-abs(new[on+'_x'].sub(new[on+'_y'])).div(new[on+'_x']).mul(100), 2)
-        accuracy_df = accuracy_df.apply(lambda x: 0 if x < 0 else x)
+        accuracy_df = accuracy_df.apply(lambda x: 0 if x < 0 or x > 100 else x)
         avg_accuracy = round(accuracy_df.sum()/len(new), 2)
         print(avg_accuracy)
 
