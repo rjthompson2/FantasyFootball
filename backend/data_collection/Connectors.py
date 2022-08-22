@@ -135,20 +135,14 @@ class AccuracyConnector():
     def run(self) -> None:
         #Gets all data
         prediction, actual = self.collect_data()
-        actual = actual.rename(columns={'Points':"FPTS"})
-        print(actual['FPTS'])
-        print(prediction['FPTS'])
+        actual = actual.rename(columns={'Points':"FPTS", 'Player': "PLAYER"})
+        actual = actual[['PLAYER', 'FPTS', 'Games', 'Avg', 'Rank']]
 
         #Calculates average error in predicted points # % and std
-        #TODO need ot match points to player name
+        #TODO need to match points to player name
         df = error_calculator(prediction, actual, on="FPTS")
         df = pd.DataFrame(df)
-        df['PLAYER'] = prediction['PLAYER']
-        df['POS'] = prediction['POS']
-        #TODO need ot match points to player name
-        df['Expected'] = prediction['FPTS']
-        df['Actual'] = actual['FPTS']
-        df = df[['PLAYER', 'POS', 'Accuracy', 'Numeric', 'Expected', 'Actual']]
+        df = df[['PLAYER', 'POS', 'FPTSAccuracy', 'FPTSNumeric', 'Expected', 'Actual', 'ECR', 'ADP', 'ActualRank']]
 
         #TODO need some metric for ranking ECR, ADP, and VOR based on how close they were to actual best draft order
 
