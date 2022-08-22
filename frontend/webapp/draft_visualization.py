@@ -25,7 +25,7 @@ def drafter():
                 new_path = find_in_data_folder(f'draft_order_{year}_copy.csv')
                 copy.to_csv(new_path, index=False)
                 #Runs draft
-                rundraft_webapp(url, 15)
+                rundraft_webapp(url, 1)
                 current_app.logger.info("Backend finished")
             except selenium.common.exceptions.InvalidArgumentException:
                 current_app.logger.warning("Selenium exception")

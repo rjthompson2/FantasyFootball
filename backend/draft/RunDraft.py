@@ -80,9 +80,6 @@ def rundraft_webapp(url:str, wait_time=30) -> None:
         drft.recommend()
         time.sleep(wait_time)
     while current_round < total_teams * 15:
-        if drft.current_team + drft.increment == pos:
-            drft.recommend()
-            time.sleep(wait_time)
         df = wp.collect('results-by-round')
         if len(df.index) != 0:
             df = bd.build_drafting_data(df)
@@ -93,7 +90,7 @@ def rundraft_webapp(url:str, wait_time=30) -> None:
     wp.quit()
     LOG.warning("END")
 
-def find_pos(names:list, you:str):#, draft_round:int):
+def find_pos(names:list, you:str):
     'Gets the current position from the current round and where you are drafting from'
     if you in names:
         return names.index(you) + 1
