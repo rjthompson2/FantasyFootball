@@ -10,7 +10,7 @@ So I decided to make an algorithm to win. I needed something to guide me when pi
 
 # TODOs
 
-accuracy metric for fantasy predictions
+accuracy metric for ECR, ADP, and VOR fantasy predictions
 
 normal distribution of recovery time per injury
 
