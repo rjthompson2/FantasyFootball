@@ -148,8 +148,9 @@ class AccuracyConnector():
         #prints averages
         total_players = 12*(15-2) # -2 to remove K and DST
         avg_accuracy = round(df['FPTSAccuracy'].iloc[:total_players].sum()/len(df.iloc[:total_players]), 2) 
-        difference_num = round(df['FPTSNumeric'].sum()/len(df) , 2)
+        avg_num = round(df['FPTSNumeric'].iloc[:total_players].sum()/len(df.iloc[:total_players]) , 2)
         print(avg_accuracy)
+        print(avg_num)
 
         #Loads data
         self.load(df)
