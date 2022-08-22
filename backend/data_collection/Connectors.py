@@ -143,7 +143,13 @@ class AccuracyConnector():
         df = error_calculator(prediction, actual, on="FPTS", keep=['PLAYER', 'POS', 'FPTS', 'ECR', 'ADPRANK', 'Rank'])
         df = pd.DataFrame(df)
         df = df.rename(columns={'Rank':'ActualRank', 'PLAYER':'Player', 'ADPRANK':'ADP'})
-        df = df[['Player', 'POS', 'FPTSAccuracy', 'FPTSNumeric', 'Expected', 'Actual', 'ECR', 'ADP', 'ActualRank']]
+        df = df[['Player', 'POS', 'FPTSNumeric', 'FPTSAccuracy', 'Expected', 'Actual', 'ECR', 'ADP', 'ActualRank']]
+
+        #prints averages
+        total_players = 12*(15-2) # -2 to remove K and DST
+        avg_accuracy = round(df['FPTSAccuracy'].iloc[:total_players].sum()/len(df.iloc[:total_players]), 2) 
+        difference_num = round(df['FPTSNumeric'].sum()/len(df) , 2)
+        print(avg_accuracy)
 
         #Loads data
         self.load(df)
