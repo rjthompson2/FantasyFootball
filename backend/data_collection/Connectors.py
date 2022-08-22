@@ -139,17 +139,17 @@ class AccuracyConnector():
         actual = actual[['PLAYER', 'FPTS', 'Games', 'Avg', 'Rank']]
 
         #Calculates average error in predicted points # % and std
+        #TODO need some metric for ranking ECR, ADP, and VOR based on how close they were to actual best draft order
         df = error_calculator(prediction, actual, on="FPTS", keep=['PLAYER', 'POS', 'FPTS', 'ECR', 'ADPRANK', 'Rank'])
         df = pd.DataFrame(df)
         df = df.rename(columns={'Rank':'ActualRank', 'PLAYER':'Player', 'ADPRANK':'ADP'})
         df = df[['Player', 'POS', 'FPTSAccuracy', 'FPTSNumeric', 'Expected', 'Actual', 'ECR', 'ADP', 'ActualRank']]
 
-        #TODO need some metric for ranking ECR, ADP, and VOR based on how close they were to actual best draft order
-
+        #Loads data
         self.load(df)
 
     def load(self, df:pd.DataFrame) -> None:
         file_path = find_in_data_folder(f'accuracy_{self.year-1}.csv')
         df = df.dropna(how='all')
-        # df = df.dropna(subset=["POS"])
+        df = df.dropna(subset=["POS"])
         df.to_csv(file_path, index = False, header=True)
