@@ -101,7 +101,7 @@ def opportunity(df:pd.DataFrame) -> pd.DataFrame:
 ################################################
 #TODO overlap with other functions, make generic
 def flex_wopr(df:pd.DataFrame) -> pd.DataFrame:
-    rec_df = df.groupby(['receiver_player_id', 'posteam', 'game_id'], as_index=False)[['pass_attempt', 'yards_gained', 'air_yards', 'complete_pass', 'pass_touchdown']].sum().assign(raw_rec_fpts = lambda x: x.yards_gained * 0.1 + x.complete_pass + x.pass_touchdown*6)
+    rec_df = df.groupby(['receiver_player_id', 'posteam', 'game_id'], as_index=False)[['pass_attempt', 'yards_gained', 'air_yards', 'complete_pass', 'pass_touchdown', 'touchdown']].sum().assign(raw_rec_fpts = lambda x: x.yards_gained * 0.1 + x.complete_pass + x.pass_touchdown*6)
     team_stats = df.loc[(df['pass_attempt'] == 1) & (df['receiver_player_id'].notnull())].groupby(['game_id', 'posteam'], as_index=False)[['air_yards', 'pass_attempt']].sum()
     rec_df = rec_df.merge(team_stats, on=['game_id', 'posteam'], suffixes=('_player', '_team'))
     rec_df['target_share'] = round((rec_df['pass_attempt_player']/rec_df['pass_attempt_team'])*100, 2)
@@ -129,24 +129,27 @@ def flex_wopr(df:pd.DataFrame) -> pd.DataFrame:
     rec_df['Avg. WOPR'] = round((rec_df['Avg. Target Share']*1.5+rec_df['Avg. Air Yards Share']*0.7), 2)
 
     # merging total FPTS scored in to our original df
-    rec_df = rec_df.merge(df.groupby(['receiver_player_id'], as_index=False)[['yards_gained', 'complete_pass', 'pass_touchdown']].sum().assign(total_fpts = lambda x: round(x.yards_gained*0.1 + x.touchdown*6 + x.complete_pass, 1)), on='receiver_player_id').sort_values(by='total_fpts', ascending=False).drop(columns=[ 'yards_gained', 'complete_pass', 'pass_touchdown'])
+    rec_df = rec_df.merge(df.groupby(['receiver_player_id'], as_index=False)[['yards_gained', 'complete_pass', 'touchdown']].sum().assign(total_fpts = lambda x: round(x.yards_gained*0.1 + (x.touchdown)*6 + x.complete_pass, 1)), on='receiver_player_id').sort_values(by='total_fpts', ascending=False).drop(columns=[ 'yards_gained', 'complete_pass', 'touchdown'])
     rec_df = rec_df[[column for column in rec_df.columns if column != 'receiver_player_id']]
 
     return rec_df
 
 def rb_share(df:pd.DataFrame) -> pd.DataFrame:
-    rush_df = df.groupby(['rusher_player_id', 'posteam', 'game_id'], as_index=False)[['rush_attempt', 'yards_gained', 'complete_pass', 'rushing_yards', 'rush_touchdown', 'touchdown']].sum().assign(raw_rush_fpts = lambda x: x.yards_gained * 0.1 + x.complete_pass + x.touchdown*6)
-    team_stats = df.loc[(df['rush_attempt'] == 1) & (df['rusher_player_id'].notnull())].groupby(['game_id', 'posteam'], as_index=False)[['rushing_yards', 'rush_attempt']].sum()
+    rush_df = df.groupby(['rusher_player_id', 'posteam', 'game_id'], as_index=False)[['rush_attempt', 'pass_attempt', 'yards_gained', 'complete_pass', 'rushing_yards', 'rush_touchdown', 'touchdown']].sum().assign(raw_rush_fpts = lambda x: x.yards_gained * 0.1 + x.complete_pass + x.touchdown*6)
+    team_stats = df.loc[(df['rush_attempt'] == 1) & (df['rusher_player_id'].notnull())].groupby(['game_id', 'posteam'], as_index=False)[['rushing_yards', 'rush_attempt', 'pass_attempt']].sum()
     rush_df = rush_df.merge(team_stats, on=['game_id', 'posteam'], suffixes=('_player', '_team'))
     rush_df['rush_share'] = round((rush_df['rush_attempt_player']/rush_df['rush_attempt_team'])*100, 2)
     rush_df['rushing_yards_share'] = round((rush_df['rushing_yards_player']/rush_df['rushing_yards_team'])*100, 2)
+    print(rush_df['rush_attempt_player'])
+    rush_df['implied_touches'] = rush_df['rush_attempt_player'] + rush_df['pass_attempt_player'] #TODO why am i getting decimal??
     rush_df = rush_df.groupby(['rusher_player_id'], as_index=False).mean().sort_values(by='raw_rush_fpts', ascending=False)
-    rush_df = rush_df[['rusher_player_id',  'raw_rush_fpts', 'rush_attempt_player', 'rushing_yards_player','rush_share', 'rushing_yards_share']].rename(columns={
+    rush_df = rush_df[['rusher_player_id',  'raw_rush_fpts', 'rush_attempt_player', 'rushing_yards_player','rush_share', 'rushing_yards_share', 'implied_touches']].rename(columns={
         'rush_attempt_player': 'Avg. Rushing Attempt',
         'rushing_yards_player': 'Avg. Rushing Yards',
         'raw_rush_fpts': 'Avg. Raw Fpts',
         'rushing_yards_share': 'Avg. Rushing Yards Share',
-        'rush_share': 'Avg. Rushing Share'
+        'rush_share': 'Avg. Rushing Share',
+        'implied_touches': 'Implied Touches'
     })
     rz = df.loc[(df['rush_attempt'] == 1) & (df['rusher_player_id'].notnull()), ['rusher_player_id', 'rushing_yards', 'yardline_100', 'rush_touchdown']].assign(
         rush_loc = lambda x: x.yardline_100 - x.rushing_yards,
@@ -157,7 +160,8 @@ def rb_share(df:pd.DataFrame) -> pd.DataFrame:
     #reorganizing some columns after merging
     rush_df = rush_df.merge(player_id_table, on='rusher_player_id')[['rusher_player_name', 'posteam'] + rush_df.columns.tolist()]
     rush_df = rush_df.rename(columns={
-        'rusher_player_name': 'Rusher', 'posteam': 'Team'
+        'rusher_player_name': 'Rusher', 
+        'posteam': 'Team'
     })
     # TODO need to create a value to figure out which RBs are the best (rushing + passing) ---- IT?!?!?!
     # rush_df['IT'] = rush_df[RUSH_ATTEMPT] + rush_df[TARGETS]

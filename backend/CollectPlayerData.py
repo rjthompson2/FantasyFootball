@@ -8,7 +8,6 @@ import time
 
 #Collects player data for each position using multiprocessing
 def get_player_data(year):
-    print(year)
     total_time = time.time()
     with multiprocessing.Pool() as pool:
         pool.apply_async(qb_data(year))
@@ -43,38 +42,29 @@ def flex_data(year):
 
 #Collects adv data wr and te
 def flex_adv_data(year):
-    try:
-        start_time = time.time()
-        flex_df = bd.flex_wopr(nfl.import_pbp_data([year]))
-        flex_df.to_csv(find_in_data_folder('HistoricData/wr-te_wopr_'+str(year)+'.csv'), index = False, header=True)
-        print("Flex Adv--- %s seconds ---" % (time.time() - start_time))
-    except:
-        print("ADV FLEX Exception")
+    start_time = time.time()
+    flex_df = bd.flex_wopr(nfl.import_pbp_data([year]))
+    flex_df.to_csv(find_in_data_folder('HistoricData/wr-te_wopr_'+str(year)+'.csv'), index = False, header=True)
+    print("Flex Adv--- %s seconds ---" % (time.time() - start_time))
 
 #Collects rb data for a specific year
 def rb_data(year):
-    try:
-        start_time = time.time()
-        ws = WebScraper()
-        rb_df = bd.player_data("https://www.fantasypros.com/nfl/stats/{position}.php?year="+str(year)+"&scoring=PPR", 'data', ws, ['rb'])
-        rb_df['IT'] = rb_df['RUSHING ATT'] + rb_df['TGT']
-        rb_df['IT/G'] = rb_df['IT']/rb_df['G']
-        rb_df.to_csv(find_in_data_folder('HistoricData/rb_data_'+str(year)+'.csv'), index = False, header=True)
-        rb_df = bd.opportunity(rb_df)
-        rb_df.to_csv(find_in_data_folder('HistoricData/rb_opportunity_'+str(year)+'.csv'), index = False, header=True)
-        print("RB--- %s seconds ---" % (time.time() - start_time))
-    except:
-        print("RB Exception")
+    start_time = time.time()
+    ws = WebScraper()
+    rb_df = bd.player_data("https://www.fantasypros.com/nfl/stats/{position}.php?year="+str(year)+"&scoring=PPR", 'data', ws, ['rb'])
+    rb_df['IT'] = rb_df['RUSHING ATT'] + rb_df['TGT']
+    rb_df['IT/G'] = rb_df['IT']/rb_df['G']
+    rb_df.to_csv(find_in_data_folder('HistoricData/rb_data_'+str(year)+'.csv'), index = False, header=True)
+    rb_df = bd.opportunity(rb_df)
+    rb_df.to_csv(find_in_data_folder('HistoricData/rb_opportunity_'+str(year)+'.csv'), index = False, header=True)
+    print("RB--- %s seconds ---" % (time.time() - start_time))
 
 #Collects adv data rb
 def rb_adv_data(year):
-    try:
-        start_time = time.time()
-        rb_df = bd.rb_share(nfl.import_pbp_data([year]))
-        rb_df.to_csv(find_in_data_folder('HistoricData/rb_share_'+str(year)+'.csv'), index = False, header=True)
-        print("RB Adv--- %s seconds ---" % (time.time() - start_time))
-    except:
-        print("RB ADV Exception")
+    start_time = time.time()
+    rb_df = bd.rb_share(nfl.import_pbp_data([year]))
+    rb_df.to_csv(find_in_data_folder('HistoricData/rb_share_'+str(year)+'.csv'), index = False, header=True)
+    print("RB Adv--- %s seconds ---" % (time.time() - start_time))
 
 #Collects all data from a start year and an end year
 def collect_all_data(start, end):

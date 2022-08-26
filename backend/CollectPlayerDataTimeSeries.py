@@ -5,7 +5,7 @@ import numpy as np
 from datetime import date
 
 def main(year):
-    df = nfl.import_pbp_data([year]))
+    df = nfl.import_pbp_data([year])
 
     weeks = df.week.unique()
     rb_data_list = []
