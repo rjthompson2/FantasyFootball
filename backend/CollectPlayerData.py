@@ -45,8 +45,7 @@ def flex_data(year):
 def flex_adv_data(year):
     try:
         start_time = time.time()
-        print(year)
-        flex_df = bd.flex_wopr(nfl.import_pbp_data(year))
+        flex_df = bd.flex_wopr(nfl.import_pbp_data([year]))
         flex_df.to_csv(find_in_data_folder('HistoricData/wr-te_wopr_'+str(year)+'.csv'), index = False, header=True)
         print("Flex Adv--- %s seconds ---" % (time.time() - start_time))
     except:
@@ -71,7 +70,7 @@ def rb_data(year):
 def rb_adv_data(year):
     try:
         start_time = time.time()
-        rb_df = bd.rb_share(nfl.import_pbp_data(year))
+        rb_df = bd.rb_share(nfl.import_pbp_data([year]))
         rb_df.to_csv(find_in_data_folder('HistoricData/rb_share_'+str(year)+'.csv'), index = False, header=True)
         print("RB Adv--- %s seconds ---" % (time.time() - start_time))
     except:

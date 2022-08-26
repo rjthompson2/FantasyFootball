@@ -1,11 +1,11 @@
 import backend.data_collection.BuildData as bd
-import nflfastpy as nfl
+import nfl_data_py as nfl
 import pandas as pd
 import numpy as np
 from datetime import date
 
 def main(year):
-    df = nfl.load_pbp_data(year)
+    df = nfl.import_pbp_data([year]))
 
     weeks = df.week.unique()
     rb_data_list = []
