@@ -95,7 +95,9 @@ def opportunity(df:pd.DataFrame) -> pd.DataFrame:
     df['TGT/G'] = round(df['TGT']/df['G'], 2)
     df['RA/G'] = round(df['RUSHING ATT']/df['G'], 2)
     df['COMPLETION %'] = round((df['REC']/df['TGT'])*100, 2)
-    df = df[['PLAYER', 'POS', 'TGT', 'TGT/G', 'COMPLETION %', 'RUSHING ATT', 'RA/G', 'G', 'FPTS', 'FPTS/G']]
+    df['IT'] = df['TGT'] + df['RUSHING ATT']
+    df['IT/G'] = round(df['IT']/df['G'], 2)
+    df = df[['PLAYER', 'POS', 'TGT', 'TGT/G', 'COMPLETION %', 'RUSHING ATT', 'RA/G', 'G', 'FPTS', 'FPTS/G', 'IT', 'IT/G']]
     return df
 
 ################################################
@@ -129,7 +131,7 @@ def flex_wopr(df:pd.DataFrame) -> pd.DataFrame:
     rec_df['Avg. WOPR'] = round((rec_df['Avg. Target Share']*1.5+rec_df['Avg. Air Yards Share']*0.7), 2)
 
     # merging total FPTS scored in to our original df
-    rec_df = rec_df.merge(df.groupby(['receiver_player_id'], as_index=False)[['yards_gained', 'complete_pass', 'touchdown']].sum().assign(total_fpts = lambda x: round(x.yards_gained*0.1 + (x.touchdown)*6 + x.complete_pass, 1)), on='receiver_player_id').sort_values(by='total_fpts', ascending=False).drop(columns=[ 'yards_gained', 'complete_pass', 'touchdown'])
+    rec_df = rec_df.merge(df.groupby(['receiver_player_id'], as_index=False)[['yards_gained', 'complete_pass', 'touchdown']].sum().assign(total_fpts = lambda x: round(x.yards_gained*0.1 + x.touchdown*6 + x.complete_pass, 1)), on='receiver_player_id').sort_values(by='total_fpts', ascending=False).drop(columns=[ 'yards_gained', 'complete_pass', 'touchdown'])
     rec_df = rec_df[[column for column in rec_df.columns if column != 'receiver_player_id']]
 
     return rec_df
