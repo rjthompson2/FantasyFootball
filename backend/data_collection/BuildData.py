@@ -97,7 +97,7 @@ def opportunity(df:pd.DataFrame) -> pd.DataFrame:
     df['COMPLETION %'] = round((df['REC']/df['TGT'])*100, 2)
     df['IT'] = df['TGT'] + df['RUSHING ATT']
     df['IT/G'] = round(df['IT']/df['G'], 2)
-    df = df[['PLAYER', 'POS', 'TGT', 'TGT/G', 'COMPLETION %', 'RUSHING ATT', 'RA/G', 'G', 'FPTS', 'FPTS/G', 'IT', 'IT/G']]
+    df = df[['PLAYER', 'POS', 'TGT', 'TGT/G', 'COMPLETION %', 'RUSHING ATT', 'RA/G', 'G', 'IT', 'IT/G', 'FPTS', 'FPTS/G']]
     return df
 
 ################################################
