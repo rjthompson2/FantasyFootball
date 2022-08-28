@@ -19,8 +19,6 @@ The next week Taylor barely beat Elliots 20.3 points by .1 point. After that, it
 
 # TODOs
 
-Bug found in CollectPlayerData. Need to fix or help nflfastpy api work
-
 Add implied touches and Fantasy Points to weekly stats
 
 accuracy metric for ECR, ADP, and VOR fantasy predictions
