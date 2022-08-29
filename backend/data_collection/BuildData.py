@@ -142,7 +142,6 @@ def rb_share(df:pd.DataFrame) -> pd.DataFrame:
     rush_df = rush_df.merge(team_stats, on=['game_id', 'posteam'], suffixes=('_player', '_team'))
     rush_df['rush_share'] = round((rush_df['rush_attempt_player']/rush_df['rush_attempt_team'])*100, 2)
     rush_df['rushing_yards_share'] = round((rush_df['rushing_yards_player']/rush_df['rushing_yards_team'])*100, 2)
-    print(rush_df['rush_attempt_player'])
     rush_df['implied_touches'] = rush_df['rush_attempt_player'] + rush_df['pass_attempt_player'] #TODO why am i getting decimal??
     rush_df = rush_df.groupby(['rusher_player_id'], as_index=False).mean().sort_values(by='raw_rush_fpts', ascending=False)
     rush_df = rush_df[['rusher_player_id',  'raw_rush_fpts', 'rush_attempt_player', 'rushing_yards_player','rush_share', 'rushing_yards_share', 'implied_touches']].rename(columns={
