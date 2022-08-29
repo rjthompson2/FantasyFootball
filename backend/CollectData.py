@@ -6,14 +6,15 @@ from datetime import date
 import backend.CollectDraftData as drft
 import backend.CollectPlayerData as plyr
 import backend.CollectPlayerDataTimeSeries as weeklyData
-import backend.CorrelationMap as cm
-import backend.PlotTeams as plotWeeklyData
+import backend.data_analysis.CorrelationMap as cm
+import backend.data_analysis.PlotTeams as plotWeeklyData
 import time
 
 today = date.today()
 year = today.year
 if(today.month < 8 and today.month > 1):
     year -= 1
+year-=1
 
 class Functions(Enum):
     draft = lambda: drft.main(year) if not exists(find_in_data_folder("draft_order_"+str(year)+".csv")) else next(),

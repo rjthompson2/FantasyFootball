@@ -3,6 +3,7 @@ import nfl_data_py as nfl
 import pandas as pd
 import numpy as np
 from datetime import date
+from backend.utils import find_in_data_folder
 
 def main(year):
     df = nfl.import_pbp_data([year])
@@ -19,9 +20,9 @@ def main(year):
     df_rush_yards = build(rb_data_list, 'Rusher', 'Avg. Rushing Yards Share')
     df_wopr = build(flex_data_list, 'Receiver', 'Avg. WOPR')
 
-    df_rush_share.to_csv(r'data/rush_share_'+str(year)+'.csv', index = False, header=True)
-    df_rush_yards.to_csv(r'data/rush_yards_share_'+str(year)+'.csv', index = False, header=True)
-    df_wopr.to_csv(r'data/wopr_'+str(year)+'.csv', index = False, header=True)
+    df_rush_share.to_csv(find_in_data_folder('rush_share_'+str(year)+'.csv'), header=True, index = False)
+    df_rush_yards.to_csv(find_in_data_folder('rush_yards_share_'+str(year)+'.csv'), header=True, index = False)
+    df_wopr.to_csv(find_in_data_folder('wopr_'+str(year)+'.csv'), header=True, index = False)
 
 def build(data_list, player_type, value):
     delta_df = pd.DataFrame()
