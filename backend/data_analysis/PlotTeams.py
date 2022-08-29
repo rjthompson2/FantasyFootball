@@ -1,17 +1,18 @@
+from datetime import date
+from backend.utils import find_in_data_folder
 import re
 import pandas as pd
 import matplotlib.pyplot as plt
-from datetime import date
 
 def main(year):
-    df_rush_share = pd.read_csv('data/rush_share_'+str(year)+'.csv')
-    df_rush_yards = pd.read_csv('data/rush_yards_share_'+str(year)+'.csv')
-    df_wopr = pd.read_csv('data/wopr_'+str(year)+'.csv')
+    df_rush_share = pd.read_csv(find_in_data_folder('rush_share_'+str(year)+'.csv'))
+    df_rush_yards = pd.read_csv(find_in_data_folder('rush_yards_share_'+str(year)+'.csv'))
+    df_wopr = pd.read_csv(find_in_data_folder('wopr_'+str(year)+'.csv'))
 
     for team in df_rush_share['TEAM'].unique():
-        plot(df_rush_share, team, value='Rushing Share', year)
-        plot(df_rush_yards, team, value='Rushing Yards Share', year)
-        plot(df_wopr, team, value='WOPR', year)
+        plot(df_rush_share, team, value='Rushing Share', year=year)
+        plot(df_rush_yards, team, value='Rushing Yards Share', year=year)
+        plot(df_wopr, team, value='WOPR', year=year)
 
 def plot(df, team, value, year=None):
     colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
@@ -42,9 +43,9 @@ def plot(df, team, value, year=None):
     plt.ylabel(value)
     plt.legend()
     if year:
-        plt.savefig('data/WeeklyTeam/'+year+re.sub(' ', '', value)+'/'+team+'_'+re.sub(' ', '_', value.lower())+'.png')
+        plt.savefig(find_in_data_folder('WeeklyTeam/'+year+re.sub(' ', '', value)+'/'+team+'_'+re.sub(' ', '_', value.lower())+'.png'))
     else:
-        plt.savefig('data/WeeklyTeam'+re.sub(' ', '', value)+'/'+team+'_'+re.sub(' ', '_', value.lower())+'.png')
+        plt.savefig(find_in_data_folder('WeeklyTeam'+re.sub(' ', '', value)+'/'+team+'_'+re.sub(' ', '_', value.lower())+'.png'))
     plt.close()
 
 if __name__ == '__main__':
