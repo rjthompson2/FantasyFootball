@@ -43,7 +43,7 @@ def plot(df, team, value, year=None):
     plt.ylabel(value)
     plt.legend()
     if year:
-        plt.savefig(find_in_data_folder('WeeklyTeam/'+year+re.sub(' ', '', value)+'/'+team+'_'+re.sub(' ', '_', value.lower())+'.png'))
+        plt.savefig(find_in_data_folder('WeeklyTeam'+re.sub(' ', '', value)+'/'+str(year)+'_'+team+'_'+re.sub(' ', '_', value.lower())+'.png'))
     else:
         plt.savefig(find_in_data_folder('WeeklyTeam'+re.sub(' ', '', value)+'/'+team+'_'+re.sub(' ', '_', value.lower())+'.png'))
     plt.close()
@@ -53,4 +53,4 @@ if __name__ == '__main__':
     year = today.year
     if(today.month == 1):
         year -= 1
-    main(year)
+    main(year=2021)
