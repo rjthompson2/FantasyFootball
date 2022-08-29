@@ -14,7 +14,6 @@ today = date.today()
 year = today.year
 if(today.month < 8 and today.month > 1):
     year -= 1
-year-=1
 
 class Functions(Enum):
     draft = lambda: drft.main(year) if not exists(find_in_data_folder("draft_order_"+str(year)+".csv")) else next(),
