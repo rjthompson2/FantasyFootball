@@ -42,7 +42,7 @@ def plot(df, team, value, year=None):
     plt.ylabel(value)
     plt.legend()
     if year:
-        plt.savefig('data/WeeklyTeam'+re.sub(' ', '', value)+'/'+team+'_'+re.sub(' ', '_', value.lower())+year+'.png')
+        plt.savefig('data/WeeklyTeam/'+year+re.sub(' ', '', value)+'/'+team+'_'+re.sub(' ', '_', value.lower())+'.png')
     else:
         plt.savefig('data/WeeklyTeam'+re.sub(' ', '', value)+'/'+team+'_'+re.sub(' ', '_', value.lower())+'.png')
     plt.close()
