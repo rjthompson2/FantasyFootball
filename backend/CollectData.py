@@ -1,13 +1,14 @@
+from backend.utils import find_in_data_folder
+from enum import Enum
+from functools import partial
 from os.path import exists
 from datetime import date
-import time
 import backend.CollectDraftData as drft
 import backend.CollectPlayerData as plyr
 import backend.CollectPlayerDataTimeSeries as weeklyData
 import backend.CorrelationMap as cm
 import backend.PlotTeams as plotWeeklyData
-from enum import Enum
-from functools import partial
+import time
 
 today = date.today()
 year = today.year
@@ -15,7 +16,7 @@ if(today.month < 8 and today.month > 1):
     year -= 1
 
 class Functions(Enum):
-    draft = lambda: drft.get_draft_data(year) if not exists("data/draft_order_"+str(year)+".csv") else next(),
+    draft = lambda: drft.main(year) if not exists(find_in_data_folder("draft_order_"+str(year)+".csv")) else next(),
     player = lambda: plyr.get_player_data(year),
     corr_map = lambda: cm.main(2002, year),
     weekly = lambda: weeklyData.main(year),
