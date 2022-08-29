@@ -9,11 +9,11 @@ def main(year):
     df_wopr = pd.read_csv('data/wopr_'+str(year)+'.csv')
 
     for team in df_rush_share['TEAM'].unique():
-        plot(df_rush_share, team, value='Rushing Share')
-        plot(df_rush_yards, team, value='Rushing Yards Share')
-        plot(df_wopr, team, value='WOPR')
+        plot(df_rush_share, team, value='Rushing Share', year)
+        plot(df_rush_yards, team, value='Rushing Yards Share', year)
+        plot(df_wopr, team, value='WOPR', year)
 
-def plot(df, team, value):
+def plot(df, team, value, year=None):
     colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
     patterns = ['.', 'x', '*', '^', 's']
     c = 0
@@ -41,7 +41,10 @@ def plot(df, team, value):
     plt.xlabel("Week")
     plt.ylabel(value)
     plt.legend()
-    plt.savefig('data/WeeklyTeam'+re.sub(' ', '', value)+'/'+team+'_'+re.sub(' ', '_', value.lower())+'.png')
+    if year:
+        plt.savefig('data/WeeklyTeam'+re.sub(' ', '', value)+'/'+team+'_'+re.sub(' ', '_', value.lower())+year+'.png')
+    else:
+        plt.savefig('data/WeeklyTeam'+re.sub(' ', '', value)+'/'+team+'_'+re.sub(' ', '_', value.lower())+'.png')
     plt.close()
 
 if __name__ == '__main__':
