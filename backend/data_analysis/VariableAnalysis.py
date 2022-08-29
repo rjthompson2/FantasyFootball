@@ -1,5 +1,6 @@
 from datetime import date
 from backend import CollectPlayerData
+from backend.utils import find_in_data_folder
 import pandas as pd
 import seaborn as sn
 import matplotlib.pyplot as plt
@@ -20,7 +21,7 @@ def main(start_year, end_year, players, values):
 def qb(start_year, end_year, values):
     df = pd.DataFrame()
     for year in range(start_year, end_year+1):
-        qb_df = pd.read_csv('data/HistoricData/qb_data_'+str(year)+'.csv')
+        qb_df = pd.read_csv(find_in_data_folder('HistoricData/qb_data_'+str(year)+'.csv'))
         qb_df = qb_df.drop('RANK', axis=1)
         df = df.append(qb_df)
     
@@ -29,9 +30,9 @@ def qb(start_year, end_year, values):
 def rb(start_year, end_year, values):
     df = pd.DataFrame()
     for year in range(start_year, end_year+1):
-        rb_df = pd.read_csv('data/HistoricData/rb_data_'+str(year)+'.csv')
-        rb_op_df = pd.read_csv('data/HistoricData/rb_opportunity_'+str(year)+'.csv')
-        rb_share_df = pd.read_csv('data/HistoricData/rb_share_'+str(year)+'.csv')
+        rb_df = pd.read_csv(find_in_data_folder('HistoricData/rb_data_'+str(year)+'.csv'))
+        rb_op_df = pd.read_csv(find_in_data_folder('HistoricData/rb_opportunity_'+str(year)+'.csv'))
+        rb_share_df = pd.read_csv(find_in_data_folder('HistoricData/rb_share_'+str(year)+'.csv'))
 
         added_values = rb_op_df['RA/G']
         rb_df = rb_df.join(added_values)
@@ -47,13 +48,13 @@ def rb(start_year, end_year, values):
 def wr(start_year, end_year, values):
     final_wr_df = pd.DataFrame()
     for year in range(start_year, end_year+1):
-        df = pd.read_csv('data/HistoricData/wr-te_data_'+str(year)+'.csv')
+        df = pd.read_csv(find_in_data_folder('HistoricData/wr-te_data_'+str(year)+'.csv'))
         df = df.drop('20+', axis=1)
 
         wr_df = df.loc[df['POS'] == 'WR']
         wr_df = get_players(wr_df)
 
-        share_df = pd.read_csv('data/HistoricData/wr-te_wopr_'+str(year)+'.csv')
+        share_df = pd.read_csv(find_in_data_folder('HistoricData/wr-te_wopr_'+str(year)+'.csv'))
         share_df['PLAYER'] = share_df['Receiver']
 
         wr_df = merge(wr_df, share_df)
@@ -66,13 +67,13 @@ def te(start_year, end_year, values):
     final_wr_df = pd.DataFrame()
     final_te_df = pd.DataFrame()
     for year in range(start_year, end_year+1):
-        df = pd.read_csv('data/HistoricData/wr-te_data_'+str(year)+'.csv')
+        df = pd.read_csv(find_in_data_folder('HistoricData/wr-te_data_'+str(year)+'.csv'))
         df = df.drop('20+', axis=1)
 
         te_df = df.loc[df['POS'] == 'TE']
         te_df = get_players(te_df)
 
-        share_df = pd.read_csv('data/HistoricData/wr-te_wopr_'+str(year)+'.csv')
+        share_df = pd.read_csv(find_in_data_folder('HistoricData/wr-te_wopr_'+str(year)+'.csv'))
         share_df['PLAYER'] = share_df['Receiver']
 
         te_df = merge(te_df, share_df)
