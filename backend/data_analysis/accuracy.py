@@ -25,7 +25,6 @@ def error_calculator(prediction: pd.DataFrame, actual: pd.DataFrame, on:list, ke
         for item in keep:
             if item not in diff_df:
                 if item == on:
-                    #TODO need to make more generic
                     diff_df['Expected'] = new[item+'_y'] #prediction FPTS
                     diff_df['Actual'] = new[item+'_x'] #actual FPTS
                 else:
