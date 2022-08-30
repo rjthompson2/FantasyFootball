@@ -76,4 +76,4 @@ if __name__ == '__main__':
     year = today.year
     # if(today.month == 1):
     #     year -= 1
-    get_player_data(year-1)
+    get_player_data(year)
