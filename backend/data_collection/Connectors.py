@@ -164,11 +164,9 @@ class AccuracyConnector:
 
     def collect_data(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
         prediction = pd.read_csv(find_in_data_folder(f"draft_order_{self.year-1}.csv"))
-        # actual = pd.read_csv(find_in_data_folder(f'draft_order_{self.year-1}.csv'))
         url = f"https://www.fantasypros.com/nfl/reports/leaders/ppr.php?year={self.year-1}&start=1&end=18"
         collector = Collector(ws=WebScraper(), url=url, _id="id", tag="data")
         actual = collector.collect_data()
-        # actual = None
         return prediction, actual
 
     def run(self) -> None:
