@@ -1,5 +1,6 @@
 from abc import ABC
 
+
 class FFPlayer(ABC):
     players = []
     lineup = []
@@ -15,17 +16,17 @@ class FFPlayer(ABC):
     flex = None
     weekly_ftps = 0
 
-    def __init__(self, team_name:str) -> None:
+    def __init__(self, team_name: str) -> None:
         self.team_name = team_name
 
-    def pick(self, add_player:Player, remove_player=None) -> None:
+    def pick(self, add_player: Player, remove_player=None) -> None:
         if len(self.players) >= MAX_PLAYERS:
             raise RuntimeError("Unable to add player")
         self.players += add_player
         if remove_player != None:
             self.players -= remove_player
 
-    def start(self, add_player:Player, remove_player=None) -> None:
+    def start(self, add_player: Player, remove_player=None) -> None:
         if remove_player == None:
             if self.pos_avail[add_player.pos] > 0:
                 self.pos_avail[add_player.pos] -= 1
@@ -44,7 +45,7 @@ class FFPlayer(ABC):
             self.lineup += add_player
             self.lineup -= remove_player
 
-    def trade(self, Team, add_player:Player, remove_player:Player) -> None:
+    def trade(self, Team, add_player: Player, remove_player: Player) -> None:
         if add_player in Team.players and remove_player in self.players:
             self.players += add_player
             self.players -= remove_player
@@ -55,14 +56,15 @@ class FFPlayer(ABC):
         self.weekly_ftps = 0
         for player in self.lineup:
             self.weekly_ftps += player.ftps
-        
+
 
 class Player(ABC):
     self.ftps = 0
-    def __init__(self, name:str, position:str, data) -> None:
+
+    def __init__(self, name: str, position: str, data) -> None:
         self.name = name
         self.pos = position
         self.data = data
 
-    def update(self, ftps:float) -> None:
+    def update(self, ftps: float) -> None:
         self.ftps = ftps

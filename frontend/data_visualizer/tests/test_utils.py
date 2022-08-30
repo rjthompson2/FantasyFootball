@@ -12,7 +12,6 @@ class TestUtils:
         result = find_parent_dir("/FantasyFootball")
         assert result.endswith("/FantasyFootball")
 
-    
     def test_find_in_data_folder(self):
         result = find_in_data_folder(f"test")
         assert result.endswith("/FantasyFootball/backend/data/test")

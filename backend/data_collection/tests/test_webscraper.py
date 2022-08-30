@@ -7,15 +7,19 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-class TestWebscrapers():
+class TestWebscrapers:
     def test_divscraper(self):
         try:
             ws = DivScraper()
-            ws.start(f"https://fantasy.espn.com/football/players/projections", headless=True)
+            ws.start(
+                f"https://fantasy.espn.com/football/players/projections", headless=True
+            )
             fpts = ws.collect("class", "jsx-2810852873 table--cell tar")
         except:
             update_chrome_driver()
             ws = DivScraper()
-            ws.start(f"https://fantasy.espn.com/football/players/projections", headless=True)
+            ws.start(
+                f"https://fantasy.espn.com/football/players/projections", headless=True
+            )
             fpts = ws.collect("class", "jsx-2810852873 table--cell tar")
         assert fpts != [] or fpts != None

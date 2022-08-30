@@ -2,7 +2,8 @@ from backend.data_analysis.accuracy import error_calculator
 import pandas as pd
 import pytest
 
-class TestAccuracy():
+
+class TestAccuracy:
     prediction = pd.DataFrame({"FPTS": [390, 384, 372, 365]})
     accuracy = pd.DataFrame({"FPTS": [400, 280, 350, 360]})
 

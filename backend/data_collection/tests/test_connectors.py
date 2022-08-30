@@ -9,9 +9,10 @@ LOG = logging.getLogger(__name__)
 
 
 class TestDraftConnector(DraftConnector):
-    def load(self, df:pd.DataFrame) -> None:
+    def load(self, df: pd.DataFrame) -> None:
         return
 
-class TestConnectors():
+
+class TestConnectors:
     def test_draft_connector(self):
         TestDraftConnector(get_season_year()).run()

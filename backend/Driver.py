@@ -2,14 +2,16 @@ import CollectData
 from backend.draft import RunDraft
 from backend.draft import TeamBuilder
 
+
 def main(choice) -> None:
     choice.main(None)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     choices = {
-        '0': CollectData,
-        '1': RunDraft,
-        '2': TeamBuilder,
+        "0": CollectData,
+        "1": RunDraft,
+        "2": TeamBuilder,
     }
 
     while True:
@@ -18,7 +20,7 @@ if __name__ == '__main__':
         print("Enter '2' for post-draft trading suggestions")
         print("Enter 'exit' to exit the program")
         choice = input("")
-        if choice == 'exit':
+        if choice == "exit":
             quit()
         if choice in choices:
             main(choices[choice])

@@ -12,13 +12,21 @@ LOG = logging.getLogger(__name__)
 YEAR = get_season_year()
 
 
-class TestBuildData():
+class TestBuildData:
     def test_build_players(self):
         fdc = FPTSDataCollector(
             aggr_sites={
-                'https://www.fantasypros.com/nfl/projections/{position}.php?week=draft&scoring=PPR&week=draft': ['data', 'id'], 
-                'https://www.cbssports.com/fantasy/football/stats/{position}/'+str(YEAR)+'/restofseason/projections/ppr/': ['TableBase-table',  'class'],
-                'https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/': ['projections',  'class']
+                "https://www.fantasypros.com/nfl/projections/{position}.php?week=draft&scoring=PPR&week=draft": [
+                    "data",
+                    "id",
+                ],
+                "https://www.cbssports.com/fantasy/football/stats/{position}/"
+                + str(YEAR)
+                + "/restofseason/projections/ppr/": ["TableBase-table", "class"],
+                "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/": [
+                    "projections",
+                    "class",
+                ],
             }
         )
 
@@ -31,9 +39,17 @@ class TestBuildData():
     def test_build_players_full(self):
         fdc = FPTSDataCollector(
             aggr_sites={
-                'https://www.fantasypros.com/nfl/projections/{position}.php?week=draft&scoring=PPR&week=draft': ['data', 'id'], 
-                'https://www.cbssports.com/fantasy/football/stats/{position}/'+str(YEAR)+'/restofseason/projections/ppr/': ['TableBase-table',  'class'],
-                'https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/': ['projections',  'class']
+                "https://www.fantasypros.com/nfl/projections/{position}.php?week=draft&scoring=PPR&week=draft": [
+                    "data",
+                    "id",
+                ],
+                "https://www.cbssports.com/fantasy/football/stats/{position}/"
+                + str(YEAR)
+                + "/restofseason/projections/ppr/": ["TableBase-table", "class"],
+                "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/": [
+                    "projections",
+                    "class",
+                ],
             }
         )
         cleaner = FPTSCleaner()
@@ -44,12 +60,14 @@ class TestBuildData():
         data = get_bootstrap(fpts_df)
         cf_df = get_cf(data)
         pos_df = fpts_df[["PLAYER", "POS"]]
-        cf_df = pos_df.drop_duplicates(subset=['PLAYER']).merge(cf_df, on="PLAYER", copy=False)
+        cf_df = pos_df.drop_duplicates(subset=["PLAYER"]).merge(
+            cf_df, on="PLAYER", copy=False
+        )
         all_positions = cf_df["POS"].unique()
-        assert 'QB' in all_positions
-        assert 'RB' in all_positions
-        assert 'WR' in all_positions
-        assert 'TE' in all_positions
+        assert "QB" in all_positions
+        assert "RB" in all_positions
+        assert "WR" in all_positions
+        assert "TE" in all_positions
         assert len(cf_df["PLAYER"].values) == len((cf_df["PLAYER"].unique()))
 
         replacement_players, replacement_values = build_players(cf_df)
