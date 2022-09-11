@@ -60,9 +60,7 @@ class FantasyScraper(DynamicScraper):
             self.driver.find_element('xpath', '//*[@id="login-signin"]').click()
 
         time.sleep(5)
-        self.driver.find_element('xpath', '//*[@id="modalContent"]/a')[
-            0
-        ].click()  # Clicks out of the popup
+        self.driver.find_element('xpath', '//*[@id="modalContent"]/a').click()  # Clicks out of the popup
 
     def get_user(self) -> str:
         """Gets the username and password from UserInfo"""
