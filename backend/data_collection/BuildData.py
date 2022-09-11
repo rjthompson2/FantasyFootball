@@ -145,6 +145,8 @@ def opportunity(df: pd.DataFrame) -> pd.DataFrame:
 ################################################
 # TODO overlap with other functions, make generic
 def flex_wopr(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty:
+        raise Exception("DataFrame Empty")
     rec_df = (
         df.groupby(["receiver_player_id", "posteam", "game_id"], as_index=False)[
             [
@@ -255,6 +257,8 @@ def flex_wopr(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def rb_share(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty:
+        raise Exception("DataFrame Empty")
     rush_df = (
         df.groupby(["rusher_player_id", "posteam", "game_id"], as_index=False)[
             [

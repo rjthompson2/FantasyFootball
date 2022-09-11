@@ -7,7 +7,9 @@ from backend.utils import find_in_data_folder
 
 
 def main(year):
-    df = nfl.import_pbp_data([year])
+    df = nfl.import_weekly_data([year])
+    # print(nfl.see_weekly_cols())
+    # print(df.head())
 
     weeks = df.week.unique()
     rb_data_list = []

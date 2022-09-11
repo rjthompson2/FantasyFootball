@@ -130,4 +130,9 @@ if __name__ == "__main__":
     year = today.year
     # if(today.month == 1):
     #     year -= 1
-    get_player_data(year)
+    df = nfl.import_pbp_data([1999, 2021])
+
+    df = nfl.import_pbp_data([1999, 2021])
+    print(nfl.see_pbp_cols())
+    print(df.head())
+    # get_player_data(2020)

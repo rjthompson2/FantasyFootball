@@ -1,6 +1,7 @@
 from backend.data_collection.WebScraper import DynamicScraper
 from backend.utils import find_in_data_folder
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup as BS
 from typing import Tuple
 import pandas as pd
@@ -37,31 +38,29 @@ class FantasyScraper(DynamicScraper):
 
     def login(self) -> None:
         """Logs in given the information in UserInfo"""
-        self.driver.find_elements_by_xpath(
+        self.driver.find_element('xpath', 
             '//*[@id="connecting"]/div/div/div[2]/div[3]/a'
-        )[
-            0
-        ].click()  # Clicks to be taken to the login
+        ).click()  # Clicks to be taken to the login
 
         # Enters the username
-        username = self.driver.find_elements_by_xpath('//*[@id="login-username"]')
-        username[0].send_keys(self.username)
-        self.driver.find_elements_by_xpath('//*[@id="login-signin"]')[0].click()
+        username = self.driver.find_element('xpath', '//*[@id="login-username"]')
+        username.send_keys(self.username)
+        self.driver.find_element('xpath', '//*[@id="login-signin"]').click()
 
         time.sleep(1)
         # Tries to enter the password, catches the exception thrown when the captcha appears so the user can complete it and return to the program
         try:
-            password = self.driver.find_elements_by_xpath('//*[@id="login-passwd"]')
-            password[0].send_keys(self.password)
-            self.driver.find_elements_by_xpath('//*[@id="login-signin"]')[0].click()
+            password = self.driver.find_element('xpath', '//*[@id="login-passwd"]')
+            password.send_keys(self.password)
+            self.driver.find_element('xpath', '//*[@id="login-signin"]').click()
         except Exception:
             input("Press return after completing the Captcha")
-            password = self.driver.find_elements_by_xpath('//*[@id="login-passwd"]')
-            password[0].send_keys(self.password)
-            self.driver.find_elements_by_xpath('//*[@id="login-signin"]')[0].click()
+            password = self.driver.find_element('xpath', '//*[@id="login-passwd"]')
+            password.send_keys(self.password)
+            self.driver.find_element('xpath', '//*[@id="login-signin"]').click()
 
         time.sleep(5)
-        self.driver.find_elements_by_xpath('//*[@id="modalContent"]/a')[
+        self.driver.find_element('xpath', '//*[@id="modalContent"]/a')[
             0
         ].click()  # Clicks out of the popup
 
@@ -91,12 +90,12 @@ class FantasyScraper(DynamicScraper):
 
     def find_order(self) -> list:
         """gets the names of every player in draft order"""
-        self.driver.find_elements_by_xpath('//*[@id="draft"]/div[5]/ul/li[2]')[
+        self.driver.find_element('xpath', '//*[@id="draft"]/div[5]/ul/li[2]')[
             0
         ].click()
         soup = BS(self.driver.page_source, features="lxml")
         players = soup.findAll("option")
-        self.driver.find_elements_by_xpath('//*[@id="draft"]/div[5]/ul/li[3]')[
+        self.driver.find_element('xpath', '//*[@id="draft"]/div[5]/ul/li[3]')[
             0
         ].click()
         players = [re.sub("<.*?>", "", str(player)) for player in players]

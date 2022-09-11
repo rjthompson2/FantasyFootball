@@ -17,6 +17,9 @@ lxml = "*"
 typing = "*"
 fantasyfootball = {path = "."}
 nfl-data-py = "*"
+flask = "*"
+streamlit = "*"
+plotly = "*"
 
 [dev-packages]
 
