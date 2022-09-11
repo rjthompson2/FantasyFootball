@@ -88,13 +88,9 @@ class FantasyScraper(DynamicScraper):
 
     def find_order(self) -> list:
         """gets the names of every player in draft order"""
-        self.driver.find_element('xpath', '//*[@id="draft"]/div[5]/ul/li[2]')[
-            0
-        ].click()
+        self.driver.find_element('xpath', '//*[@id="draft"]/div[5]/ul/li[2]').click()
         soup = BS(self.driver.page_source, features="lxml")
         players = soup.findAll("option")
-        self.driver.find_element('xpath', '//*[@id="draft"]/div[5]/ul/li[3]')[
-            0
-        ].click()
+        self.driver.find_element('xpath', '//*[@id="draft"]/div[5]/ul/li[3]').click()
         players = [re.sub("<.*?>", "", str(player)) for player in players]
         return players
