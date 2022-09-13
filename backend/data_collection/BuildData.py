@@ -294,9 +294,6 @@ def rb_share(df: pd.DataFrame) -> pd.DataFrame:
     rush_df["rushing_yards_share"] = round(
         (rush_df["rushing_yards_player"] / rush_df["rushing_yards_team"]) * 100, 2
     )
-    rush_df["implied_touches"] = (
-        rush_df["rush_attempt_player"] + rush_df["pass_attempt_player"]
-    )  # TODO why am i getting decimal??
     rush_df = (
         rush_df.groupby(["rusher_player_id"], as_index=False)
         .mean()
@@ -310,7 +307,6 @@ def rb_share(df: pd.DataFrame) -> pd.DataFrame:
             "rushing_yards_player",
             "rush_share",
             "rushing_yards_share",
-            "implied_touches",
         ]
     ].rename(
         columns={
@@ -319,7 +315,6 @@ def rb_share(df: pd.DataFrame) -> pd.DataFrame:
             "raw_rush_fpts": "Avg. Raw Fpts",
             "rushing_yards_share": "Avg. Rushing Yards Share",
             "rush_share": "Avg. Rushing Share",
-            "implied_touches": "Implied Touches",
         }
     )
     rz = (

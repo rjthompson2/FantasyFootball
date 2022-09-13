@@ -7,9 +7,7 @@ from backend.utils import find_in_data_folder
 
 
 def main(year):
-    df = nfl.import_weekly_data([year])
-    # print(nfl.see_weekly_cols())
-    # print(df.head())
+    df = nfl.import_pbp_data([year])
 
     weeks = df.week.unique()
     rb_data_list = []
@@ -21,7 +19,13 @@ def main(year):
 
     df_rush_share = build(rb_data_list, "Rusher", "Avg. Rushing Share")
     df_rush_yards = build(rb_data_list, "Rusher", "Avg. Rushing Yards Share")
+    df_rush_attempt = build(rb_data_list, "Rusher", "Avg. Rushing Attempt")
     df_wopr = build(flex_data_list, "Receiver", "Avg. WOPR")
+    df_tgt = build(flex_data_list, "Receiver", "Avg. Targets")
+    # df_it = df_rush_attempt.append(df_tgt)#.fillna(0)
+    # df_it = df_it.apply(lambda x: print(x))
+    # print(df_it)
+    # return
 
     df_rush_share.to_csv(
         find_in_data_folder("rush_share_" + str(year) + ".csv"),
@@ -33,8 +37,18 @@ def main(year):
         header=True,
         index=False,
     )
+    df_rush_attempt.to_csv(
+        find_in_data_folder("rush_attempts_" + str(year) + ".csv"),
+        header=True,
+        index=False,
+    )
     df_wopr.to_csv(
         find_in_data_folder("wopr_" + str(year) + ".csv"), header=True, index=False
+    )
+    df_tgt.to_csv(
+        find_in_data_folder("reciever_tgts_" + str(year) + ".csv"),
+        header=True,
+        index=False,
     )
 
 
@@ -63,6 +77,6 @@ def get_values(data_list, i, player_type, value):
 if __name__ == "__main__":
     today = date.today()
     year = today.year
-    if today.month == 1:
-        year -= 1
+    # if today.month == 1:
+    #     year -= 1
     main(year)

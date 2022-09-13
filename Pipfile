@@ -20,6 +20,7 @@ nfl-data-py = "*"
 flask = "*"
 streamlit = "*"
 plotly = "*"
+nflfastpy = "*"
 
 [dev-packages]
 
