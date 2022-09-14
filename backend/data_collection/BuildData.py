@@ -385,4 +385,5 @@ def df_combine(
         for value in on:
             final_df[value] = df1[value]
     final_df = df1.apply(lambda x: x[merge_values]+df2.loc[df2['PLAYER']==x['PLAYER']][merge_values] if x['PLAYER'] in df2['PLAYER'] else x, axis=1)
+    final_df["AVG"] = final_df.mean(axis=1)
     return final_df
