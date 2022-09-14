@@ -385,5 +385,4 @@ def df_combine(
         for value in on:
             final_df[value] = df1[value]
     final_df = df1.apply(lambda x: x[merge_values]+df2.loc[df2['PLAYER']==x['PLAYER']][merge_values] if x['PLAYER'] in df2['PLAYER'] else x, axis=1)
-    print(final_df)
     return final_df
