@@ -132,7 +132,12 @@ class ESPNCleaner:
     def clean_data(self, data: dict) -> pd.DataFrame:
         data_list = data["players"]
         names = [data["player"]["fullName"] for data in data_list]
-        fpts = [data["player"]["stats"][-1]["appliedTotal"] if "stats" in data["player"] else None for data in data_list]
+        fpts = [
+            data["player"]["stats"][-1]["appliedTotal"]
+            if "stats" in data["player"]
+            else None
+            for data in data_list
+        ]
         return pd.DataFrame({"PLAYER": names, "FPTS": fpts})
 
 

@@ -1,5 +1,6 @@
 from backend.data_collection.WebScraper import Scraper
 from backend.data_collection.utils import Positions
+
 # from Teams import *
 from typing import Tuple, List
 import pandas as pd
@@ -375,7 +376,10 @@ def rb_share(df: pd.DataFrame) -> pd.DataFrame:
 
 ################################################
 
-def df_combine(df1:pd.DataFrame, df2:pd.DataFrame, on:List[str], merge_values:List[str]):
+
+def df_combine(
+    df1: pd.DataFrame, df2: pd.DataFrame, on: List[str], merge_values: List[str]
+):
     final_df = pd.DataFrame()
     if on:
         for value in on:
@@ -383,7 +387,6 @@ def df_combine(df1:pd.DataFrame, df2:pd.DataFrame, on:List[str], merge_values:Li
     df1 = df1[merge_values]
     df2 = df2[merge_values]
     for i in merge_values:
-        final_df[i] = df1[i]+df2[i]
+        final_df[i] = df1[i] + df2[i]
     final_df["AVG"] = final_df.mean(axis=1)
     return final_df
-    

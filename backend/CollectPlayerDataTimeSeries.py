@@ -22,7 +22,12 @@ def main(year):
     df_rush_attempt = build(rb_data_list, "Rusher", "Avg. Rushing Attempt")
     df_wopr = build(flex_data_list, "Receiver", "Avg. WOPR")
     df_tgt = build(flex_data_list, "Receiver", "Avg. Targets")
-    df_it = bd.df_combine(df_rush_attempt, df_tgt, on=['PLAYER', 'TEAM'], merge_values=df_rush_attempt.columns.to_list()[2:-1])
+    df_it = bd.df_combine(
+        df_rush_attempt,
+        df_tgt,
+        on=["PLAYER", "TEAM"],
+        merge_values=df_rush_attempt.columns.to_list()[2:-1],
+    )
 
     df_rush_share.to_csv(
         find_in_data_folder("rush_share_" + str(year) + ".csv"),

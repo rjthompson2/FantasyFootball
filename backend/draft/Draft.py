@@ -18,7 +18,7 @@ class Draft:
 
     def draft_player(self, player: str) -> None:
         """Drafts a single player by adding them to self.draft
-        
+
         Args:
             player (str): The name of the player that's being added
         """
@@ -54,7 +54,7 @@ class Draft:
 
     def automated_draft(self, df: pd.DataFrame, pos: str) -> None:
         """Drafts players until none more left to add to self.draft
-        
+
         Args:
             df (DataFrame): The dataframe used to get the player
             pos (str): Unused??
@@ -65,7 +65,7 @@ class Draft:
 
     def snake_increment(self, i: int) -> int:
         """Increments to mimic a snaking draft
-        
+
         Args:
             i (int): The current position of the draft
 
@@ -128,7 +128,7 @@ class AutomatedDraft(Draft):
 
     def draft_player(self, player: str) -> None:
         """Drafts a single player by adding them to self.draft
-        
+
         Args:
             player (str): The name of the player that's being added
         """

@@ -21,7 +21,9 @@ def get_data():
 
 
 st.set_page_config(
-    page_title="Draft Data", page_icon=":football:", layout="wide",
+    page_title="Draft Data",
+    page_icon=":football:",
+    layout="wide",
 )
 
 df = get_data()
@@ -43,7 +45,9 @@ players = [player for player in df["PLAYER"].unique() if player not in players_r
 df_selection = df.query("POS == @position & PLAYER == @players")
 
 quick_find = st.sidebar.multiselect(
-    label="Quickly Lookup a Player:", options=df["PLAYER"].unique(), default=None,
+    label="Quickly Lookup a Player:",
+    options=df["PLAYER"].unique(),
+    default=None,
 )
 if quick_find:
     df_selection = df.query("PLAYER == @quick_find")
