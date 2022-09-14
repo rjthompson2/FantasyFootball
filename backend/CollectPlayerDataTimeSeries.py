@@ -48,7 +48,7 @@ def main(year):
         index=False,
     )
     df_it.to_csv(
-        find_in_data_folder("rusher_it_" + str(year) + ".csv"),
+        find_in_data_folder("rush_it_" + str(year) + ".csv"),
         header=True,
         index=False,
     )
