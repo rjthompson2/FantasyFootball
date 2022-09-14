@@ -13,13 +13,13 @@ def main(year):
     df_wopr = pd.read_csv(find_in_data_folder("wopr_" + str(year) + ".csv"))
     # df_rush_attempt = pd.read_csv(find_in_data_folder("rush_attempts_" + str(year) + ".csv"))
     # df_targets = pd.read_csv(find_in_data_folder("reciever_tgts_" + str(year) + ".csv"))
-    # df_it = pd.read_csv(find_in_data_folder("rush_it_" + str(year) + ".csv"))
+    df_it = pd.read_csv(find_in_data_folder("rush_it_" + str(year) + ".csv"))
 
     for team in df_rush_share["TEAM"].unique():
         plot(df_rush_share, team, value="Rushing Share", year=year)
         plot(df_rush_yards, team, value="Rushing Yards Share", year=year)
         plot(df_wopr, team, value="WOPR", year=year)
-        # plot(df_it, team, value="Implied Touches", year=year)
+        plot(df_it, team, value="Implied Touches", year=year)
 
 
 def plot(df, team, value, year=None):
