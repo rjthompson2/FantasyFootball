@@ -379,7 +379,6 @@ def df_combine(
     df1: pd.DataFrame, df2: pd.DataFrame, on: List[str], merge_values: List[str], convert_to=None
 ):
     final_df = pd.DataFrame()
-    print(df1['PLAYER'].to_list())
     
     if convert_to:
         for value in merge_values:
@@ -390,14 +389,16 @@ def df_combine(
     values = []
     for i, player in enumerate(df1['PLAYER']):
         if player in player_list:
-            values.append(df1.iloc[i].loc[merge_values].add(df2.loc[df2["PLAYER"] == player][merge_values], fill_value=0).reset_index(drop=True))
+            value = df1.iloc[i].loc[merge_values].fillna(0).add(df2.loc[df2["PLAYER"] == player][merge_values].fillna(0))
         else:
-            values.append(df1.iloc[i].loc[merge_values].fillna(0).reset_index(drop=True))
+            value = df1.iloc[i].loc[merge_values].fillna(0)
+        value["PLAYER"] = player
+        values.append(value)
     
-    final_df = pd.concat(values, axis=0, ignore_index=True).reset_index(drop=True)
-    final_df = final_df.join(df1[on])
+    final_df = pd.concat(values)
+    final_df = final_df.join(df1[on[1:]])
     final_df = final_df[on+merge_values]
     final_df = final_df[final_df['PLAYER'].notna()]
-    
+
     final_df["AVG"] = final_df.mean(axis=1)
     return final_df
