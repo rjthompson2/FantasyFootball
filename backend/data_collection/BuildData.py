@@ -379,6 +379,9 @@ def df_combine(
     df1: pd.DataFrame, df2: pd.DataFrame, on: List[str], merge_values: List[str], convert_to=None
 ):
     final_df = pd.DataFrame()
+    # find_player = "A.Kamara"
+    # print(df1['PLAYER'].to_list())
+    # print(find_player in df1['PLAYER'].to_list())
     
     if convert_to:
         for value in merge_values:
@@ -387,18 +390,27 @@ def df_combine(
             
     player_list = df2['PLAYER'].to_list()
     values = []
-    for i, player in enumerate(df1['PLAYER']):
+    for i in range(len(df1)):
+        player = df1['PLAYER'][i]
         if player in player_list:
             value = df1.iloc[i].loc[merge_values].fillna(0).add(df2.loc[df2["PLAYER"] == player][merge_values].fillna(0))
         else:
             value = df1.iloc[i].loc[merge_values].fillna(0)
-        value["PLAYER"] = player
+        for column in on:
+            value[column] = df1[column][i]
         values.append(value)
+        # if player == find_player:
+        #     print(value)
     
     final_df = pd.concat(values)
-    final_df = final_df.join(df1[on[1:]])
+    # print(final_df)
     final_df = final_df[on+merge_values]
     final_df = final_df[final_df['PLAYER'].notna()]
 
     final_df["AVG"] = final_df.mean(axis=1)
+
+    # print(find_player in final_df['PLAYER'].to_list())
+    # print(final_df.loc[final_df['PLAYER'] == find_player])
+    # print(df1.loc[df1['PLAYER'] == find_player])
+    # print(df2.loc[df2['PLAYER'] == find_player])
     return final_df
