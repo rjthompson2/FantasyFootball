@@ -379,7 +379,7 @@ def df_combine(
     df1: pd.DataFrame, df2: pd.DataFrame, on: List[str], merge_values: List[str], convert_to=None
 ):
     final_df = pd.DataFrame()
-    find_player = "T.Hill"
+    # find_player = "T.Hill"
     # print(df1['PLAYER'].to_list())
     # print(find_player in df1['PLAYER'].to_list())
     
