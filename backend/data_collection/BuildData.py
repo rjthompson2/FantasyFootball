@@ -342,8 +342,6 @@ def rb_share(df: pd.DataFrame) -> pd.DataFrame:
     rush_df = rush_df.rename(
         columns={"rusher_player_name": "Rusher", "posteam": "Team"}
     )
-    # TODO need to create a value to figure out which RBs are the best (rushing + passing) ---- IT?!?!?!
-    # rush_df['IT'] = rush_df[RUSH_ATTEMPT] + rush_df[TARGETS]
 
     # merging total FPTS scored in to our original df
     rush_df = (
@@ -378,12 +376,18 @@ def rb_share(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def df_combine(
-    df1: pd.DataFrame, df2: pd.DataFrame, on: List[str], merge_values: List[str]
+    df1: pd.DataFrame, df2: pd.DataFrame, on: List[str], merge_values: List[str], convert_to=None
 ):
     final_df = pd.DataFrame()
     if on:
         for value in on:
             final_df[value] = df1[value]
-    final_df = df1.apply(lambda x: x[merge_values]+df2.loc[df2['PLAYER']==x['PLAYER']][merge_values] if x['PLAYER'] in df2['PLAYER'] else x, axis=1)
+
+    if convert_to:
+        for value in merge_values:
+            df1[value] = pd.to_numeric(df1[value], downcast=convert_to)
+            df2[value] = pd.to_numeric(df2[value], downcast=convert_to)
+            
+    final_df[merge_values] = df1[merge_values].add(df2[merge_values], fill_value=0)
     final_df["AVG"] = final_df.mean(axis=1)
     return final_df

@@ -27,6 +27,7 @@ def main(year):
         df_tgt,
         on=["PLAYER", "TEAM"],
         merge_values=df_rush_attempt.columns.to_list()[2:-1],
+        convert_to='float'
     )
 
     df_rush_share.to_csv(
