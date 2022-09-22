@@ -379,7 +379,7 @@ def df_combine(
     df1: pd.DataFrame, df2: pd.DataFrame, on: List[str], merge_values: List[str], convert_to=None
 ):
     final_df = pd.DataFrame()
-    # find_player = "A.Kamara"
+    find_player = "T.Hill"
     # print(df1['PLAYER'].to_list())
     # print(find_player in df1['PLAYER'].to_list())
     
@@ -393,7 +393,11 @@ def df_combine(
     for i in range(len(df1)):
         player = df1['PLAYER'][i]
         if player in player_list:
-            value = df1.iloc[i].loc[merge_values].fillna(0).add(df2.loc[df2["PLAYER"] == player][merge_values].fillna(0))
+            second = df2
+            for each in on:
+                second = second.loc[df2[each] == df1[each][i]]
+            second = second[merge_values].fillna(0)
+            value = df1.iloc[i].loc[merge_values].fillna(0).add(second)
         else:
             value = df1.iloc[i].loc[merge_values].fillna(0)
         for column in on:
