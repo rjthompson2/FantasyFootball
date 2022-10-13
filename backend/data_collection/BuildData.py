@@ -6,6 +6,7 @@ from typing import Tuple, List
 import pandas as pd
 import re
 import logging
+import numpy as np
 
 
 LOG = logging.getLogger(__name__)
@@ -376,22 +377,26 @@ def rb_share(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def df_combine(
-    df1: pd.DataFrame, df2: pd.DataFrame, on: List[str], merge_values: List[str], convert_to=None
+    df1: pd.DataFrame,
+    df2: pd.DataFrame,
+    on: List[str],
+    merge_values: List[str],
+    convert_to=None,
 ):
     final_df = pd.DataFrame()
     # find_player = "T.Hill"
     # print(df1['PLAYER'].to_list())
     # print(find_player in df1['PLAYER'].to_list())
-    
+
     if convert_to:
         for value in merge_values:
             df1[value] = pd.to_numeric(df1[value], downcast=convert_to)
             df2[value] = pd.to_numeric(df2[value], downcast=convert_to)
-            
-    player_list = df2['PLAYER'].to_list()
+
+    player_list = df2["PLAYER"].to_list()
     values = []
     for i in range(len(df1)):
-        player = df1['PLAYER'][i]
+        player = df1["PLAYER"][i]
         if player in player_list:
             second = df2
             for each in on:
@@ -405,11 +410,12 @@ def df_combine(
         values.append(value)
         # if player == find_player:
         #     print(value)
-    
+
     final_df = pd.concat(values)
     # print(final_df)
-    final_df = final_df[on+merge_values]
-    final_df = final_df[final_df['PLAYER'].notna()]
+    final_df = final_df[on + merge_values]
+    final_df = final_df[final_df["PLAYER"].notna()]
+    final_df[merge_values] = final_df[merge_values].replace({"0": np.nan, 0: np.nan})
 
     final_df["AVG"] = final_df.mean(axis=1)
 
