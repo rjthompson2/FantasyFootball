@@ -20,10 +20,17 @@ def main(year):
     df_rush_share = build(rb_data_list, "Rusher", "Avg. Rushing Share")
     df_rush_yards = build(rb_data_list, "Rusher", "Avg. Rushing Yards Share")
     df_rush_attempt = build(rb_data_list, "Rusher", "Avg. Rushing Attempt")
-    df_rush_rz = build(rb_data_list, "Rusher", "Redzone Looks", final_type=["total"])
+    df_rush_rz = build(
+        rb_data_list, "Rusher", "Redzone Looks", final_type=["total", "avg"]
+    )
+    df_rush_gz = build(
+        rb_data_list, "Rusher", "Greenzone Looks", final_type=["total", "avg"]
+    )
     df_wopr = build(flex_data_list, "Receiver", "Avg. WOPR")
     df_tgt = build(flex_data_list, "Receiver", "Avg. Targets")
-    df_rec_rz = build(flex_data_list, "Receiver", "Redzone Looks", final_type=["total"])
+    df_rec_rz = build(
+        flex_data_list, "Receiver", "Redzone Looks", final_type=["total", "avg"]
+    )
     df_it = bd.df_combine(
         df1=df_rush_attempt,
         df2=df_tgt,
@@ -47,8 +54,13 @@ def main(year):
         header=True,
         index=False,
     )
-    df_rush_rz.to_csv(
-        find_in_data_folder("rush_rz_" + str(year) + ".csv"),
+    # df_rush_rz.to_csv(
+    #     find_in_data_folder("rush_rz_" + str(year) + ".csv"),
+    #     header=True,
+    #     index=False,
+    # )
+    df_rush_gz.to_csv(
+        find_in_data_folder("rush_gz_" + str(year) + ".csv"),
         header=True,
         index=False,
     )
@@ -58,8 +70,8 @@ def main(year):
         index=False,
     )
     df_wopr.to_csv(
-        find_in_data_folder("wopr_" + str(year) + ".csv"), 
-        header=True, 
+        find_in_data_folder("wopr_" + str(year) + ".csv"),
+        header=True,
         index=False,
     )
     df_tgt.to_csv(
@@ -84,11 +96,12 @@ def build(data_list, player_type, value, final_type=["avg"]):
             new_df = get_values(data_list, i, player_type, value)
             delta_df = delta_df.merge(new_df, on=["PLAYER", "TEAM"], how="outer")
 
+    final_df = delta_df.copy()
     if "avg" in final_type:
-        delta_df["AVG"] = delta_df.mean(axis=1)
+        final_df["AVG"] = delta_df.mean(axis=1)
     if "total" in final_type:
-        delta_df["TOTAL"] = delta_df.sum(axis=1)
-    return delta_df
+        final_df["TOTAL"] = delta_df.sum(axis=1)
+    return final_df
 
 
 def get_values(data_list, i, player_type, value):

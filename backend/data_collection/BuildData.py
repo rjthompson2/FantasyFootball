@@ -325,12 +325,18 @@ def rb_share(df: pd.DataFrame) -> pd.DataFrame:
         ]
         .assign(
             rush_loc=lambda x: x.yardline_100 - x.rushing_yards,
-            redzone_look=lambda x: x.rush_loc == 0,
+            redzone_look=lambda x: x.rush_loc <= 10,
+            greenzone_look=lambda x: x.rush_loc <= 5,
         )
-        .groupby("rusher_player_id", as_index=False)["redzone_look"]
+        .groupby("rusher_player_id", as_index=False)["redzone_look", "greenzone_look"]
         .sum()
         .sort_values(by="redzone_look", ascending=False)
-        .rename(columns={"redzone_look": "Redzone Looks"})
+        .rename(
+            columns={
+                "redzone_look": "Redzone Looks",
+                "greenzone_look": "Greenzone Looks",
+            }
+        )
     )
     rush_df = rush_df.merge(rz, on="rusher_player_id")
     player_id_table = df.groupby(["rusher_player_id"], as_index=False)[
