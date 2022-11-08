@@ -210,7 +210,7 @@ def flex_wopr(df: pd.DataFrame) -> pd.DataFrame:
         ]
         .assign(
             pass_loc=lambda x: x.yardline_100 - x.air_yards,
-            redzone_look=lambda x: x.pass_loc == 0,
+            redzone_look=lambda x: x.pass_loc <= 20,
         )
         .groupby("receiver_player_id", as_index=False)["redzone_look"]
         .sum()
