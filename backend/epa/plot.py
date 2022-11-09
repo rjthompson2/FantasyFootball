@@ -108,6 +108,56 @@ def defense_plot():
         find_in_data_folder("EPA/defensive_rush_pass.png")
     )
 
+def offense_plot():
+    schedule_epa = epa.get_rush_pass_epa([2022])
+
+    plt.style.use('ggplot')
+
+    x = schedule_epa['offense_rush_epa/play'].values
+    y = schedule_epa['offense_pass_epa/play'].values
+
+    fig, ax = plt.subplots(figsize=(15, 15))
+
+    ax.grid(alpha=0.5)
+    # plot a vertical and horixontal line to create separate quadrants
+    ax.vlines(0, -0.2, 0.2, color='#fcc331', alpha=0.7, lw=4, linestyles='dashed')
+    ax.hlines(0, -0.2, 0.2, color='#fcc331', alpha=0.7, lw=4, linestyles='dashed')
+    ax.set_ylim(-.27, .27)
+    ax.set_xlim(-.27, .27)
+    ax.set_xlabel('offense_rush_epa/play', fontsize=20)
+    ax.set_ylabel('offense_pass_epa/play', fontsize=20)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+
+    annot_styles = {
+        'bbox': {'boxstyle': 'round,pad=0.5', 'facecolor': 'none', 'edgecolor':'#fcc331'},
+        'fontsize': 20,
+        'color': '#202f52'
+    }
+
+    # annotate the axis
+    ax.annotate('Better Passing Offense', xy=(0.09,0.015), **annot_styles)
+    ax.annotate('Worse Passing Offense', xy=(-0.24,-0.015), **annot_styles)
+    ax.annotate('Better Rushing Offense', xy=(-0.07,0.23), **annot_styles)
+    ax.annotate('Worse Rushing Offense', xy=(-0.07,-0.23), **annot_styles)
+
+    team_colors = pd.read_csv('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/teams_colors_logos.csv')
+
+    # annotate the points with team logos
+    for idx, row in schedule_epa.iterrows():
+        offense_epa = row['offense_rush_epa/play']
+        defense_epa = row['offense_pass_epa/play']
+        logo_src = team_colors[team_colors['team_abbr'] == idx]['team_logo_espn'].values[0]
+        res = requests.get(logo_src)
+        img = plt.imread(BytesIO(res.content))
+        ax.imshow(img, extent=[row['offense_rush_epa/play']-0.01, row['offense_rush_epa/play']+0.01, row['offense_pass_epa/play']-0.009, row['offense_pass_epa/play']+0.009], aspect='equal', zorder=1000)
+
+    ax.set_title('Offense Rushing and Passing EPA', fontsize=20)
+    plt.savefig(
+        find_in_data_folder("EPA/offensive_rush_pass.png")
+    )
+
 if __name__ == "__main__":
     main()
     defense_plot()
+    offense_plot()
