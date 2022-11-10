@@ -9,6 +9,7 @@ import pandas as pd
 import backend.epa.test as epa
 import requests
 
+#TODO make plotting more general with standardized proportions
 def main():
     schedule_epa = epa.epa_schedule([2022])
 
@@ -120,10 +121,10 @@ def offense_plot():
 
     ax.grid(alpha=0.5)
     # plot a vertical and horixontal line to create separate quadrants
-    ax.vlines(0, -0.2, 0.2, color='#fcc331', alpha=0.7, lw=4, linestyles='dashed')
-    ax.hlines(0, -0.2, 0.2, color='#fcc331', alpha=0.7, lw=4, linestyles='dashed')
-    ax.set_ylim(-.27, .27)
-    ax.set_xlim(-.27, .27)
+    ax.vlines(0, -0.3, 0.3, color='#fcc331', alpha=0.7, lw=4, linestyles='dashed')
+    ax.hlines(0, -0.3, 0.3, color='#fcc331', alpha=0.7, lw=4, linestyles='dashed')
+    ax.set_ylim(-.3, .3)
+    ax.set_xlim(-.3, .3)
     ax.set_xlabel('offense_rush_epa/play', fontsize=20)
     ax.set_ylabel('offense_pass_epa/play', fontsize=20)
     plt.xticks(fontsize=20)
@@ -136,10 +137,10 @@ def offense_plot():
     }
 
     # annotate the axis
-    ax.annotate('Better Passing Offense', xy=(0.09,0.015), **annot_styles)
-    ax.annotate('Worse Passing Offense', xy=(-0.24,-0.015), **annot_styles)
-    ax.annotate('Better Rushing Offense', xy=(-0.07,0.23), **annot_styles)
-    ax.annotate('Worse Rushing Offense', xy=(-0.07,-0.23), **annot_styles)
+    ax.annotate('Better Rushing Offense', xy=(0.19,0.015), **annot_styles)
+    ax.annotate('Worse Rushing Offense', xy=(-0.29,-0.015), **annot_styles)
+    ax.annotate('Better Passing Offense', xy=(-0.07,0.28), **annot_styles)
+    ax.annotate('Worse Passing Offense', xy=(-0.07,-0.28), **annot_styles)
 
     team_colors = pd.read_csv('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/teams_colors_logos.csv')
 
@@ -150,7 +151,7 @@ def offense_plot():
         logo_src = team_colors[team_colors['team_abbr'] == idx]['team_logo_espn'].values[0]
         res = requests.get(logo_src)
         img = plt.imread(BytesIO(res.content))
-        ax.imshow(img, extent=[row['offense_rush_epa/play']-0.01, row['offense_rush_epa/play']+0.01, row['offense_pass_epa/play']-0.009, row['offense_pass_epa/play']+0.009], aspect='equal', zorder=1000)
+        ax.imshow(img, extent=[row['offense_rush_epa/play']-0.02, row['offense_rush_epa/play']+0.02, row['offense_pass_epa/play']-0.019, row['offense_pass_epa/play']+0.019], aspect='equal', zorder=1000)
 
     ax.set_title('Offense Rushing and Passing EPA', fontsize=20)
     plt.savefig(
