@@ -1,16 +1,10 @@
 import nfl_data_py as nfl
 import pandas as pd
-year = [2022]
-# values = nfl.import_pbp_data(years=year).columns.to_list()
-# for value in values:
-#     if "epa" in value:
-#         print(value)
-# print(nfl.import_pbp_data(years=year).columns.to_list())
-
 
 #TODO need to get current year
-def get_epa(year):
-    df = nfl.import_pbp_data(years=year)
+def get_epa(year, df=None):
+    if not isinstance(df, pd.DataFrame):
+        df = nfl.import_pbp_data(years=year)
 
     epa_df = pd.DataFrame({
         'offense_epa': df.groupby('posteam')['epa'].sum(),
@@ -33,25 +27,29 @@ def get_epa(year):
 
     return epa_df
 
-def get_rush_pass_epa(year):
-    df = nfl.import_pbp_data(years=year)
-    team = []
-    
-    epa_df = pd.DataFrame({
-        'offense_epa': df.groupby('posteam')['epa'].sum(),
-        'offense_pass_epa': df.loc[df['play_type']=='pass'].groupby('posteam')['epa'].sum(),
-        'offense_rush_epa': df.loc[df['play_type']=='run'].groupby('posteam')['epa'].sum(),
-        'offense_epa/play': df.groupby('posteam')['epa'].mean(),
-        'offense_pass_epa/play': df.loc[df['play_type']=='pass'].groupby('posteam')['epa'].mean(),
-        'offense_rush_epa/play': df.loc[df['play_type']=='run'].groupby('posteam')['epa'].mean(),
-    })
+def get_rush_pass_epa(year=None, df=None, offense=True, defense=True):
+    if not isinstance(df, pd.DataFrame):
+        df = nfl.import_pbp_data(years=year)
+    epa_df = pd.DataFrame()
 
-    epa_df['defense_epa'] = df.groupby('defteam')['epa'].sum()
-    epa_df['defense_pass_epa'] = df.loc[df['play_type']=='pass'].groupby('defteam')['epa'].sum()
-    epa_df['defense_rush_epa'] = df.loc[df['play_type']=='run'].groupby('defteam')['epa'].sum()
-    epa_df['defense_epa/play'] = df.groupby('defteam')['epa'].mean()
-    epa_df['defense_pass_epa/play'] = df.loc[df['play_type']=='pass'].groupby('defteam')['epa'].mean()
-    epa_df['defense_rush_epa/play'] = df.loc[df['play_type']=='run'].groupby('defteam')['epa'].mean()
+    if offense and defense:
+        epa_df['offense_epa'] = df.groupby('posteam')['epa'].sum()
+        epa_df['defense_epa'] = df.groupby('defteam')['epa'].sum()
+
+
+    if offense:
+        epa_df['offense_pass_epa'] = df.loc[df['play_type']=='pass'].groupby('posteam')['epa'].sum()
+        epa_df['offense_rush_epa'] = df.loc[df['play_type']=='run'].groupby('posteam')['epa'].sum()
+        epa_df['offense_epa/play'] = df.groupby('posteam')['epa'].mean()
+        epa_df['offense_pass_epa/play'] = df.loc[df['play_type']=='pass'].groupby('posteam')['epa'].mean()
+        epa_df['offense_rush_epa/play'] = df.loc[df['play_type']=='run'].groupby('posteam')['epa'].mean()
+    
+    if defense:
+        epa_df['defense_pass_epa'] = df.loc[df['play_type']=='pass'].groupby('defteam')['epa'].sum()
+        epa_df['defense_rush_epa'] = df.loc[df['play_type']=='run'].groupby('defteam')['epa'].sum()
+        epa_df['defense_epa/play'] = df.groupby('defteam')['epa'].mean()
+        epa_df['defense_pass_epa/play'] = df.loc[df['play_type']=='pass'].groupby('defteam')['epa'].mean()
+        epa_df['defense_rush_epa/play'] = df.loc[df['play_type']=='run'].groupby('defteam')['epa'].mean()
 
     return epa_df
 
@@ -78,6 +76,24 @@ def epa_schedule(year):
     schedule_epa['Defense_EPA_Delta'] = defense_delta
 
     return schedule_epa
+
+def schedule_adjusted_epa(year):
+    df = nfl.import_pbp_data(years=year)
+    epa_df = get_rush_pass_epa(year, df)
+    passing_df = df.loc[df['play_type']=='pass']
+    rushing_df = df.loc[df['play_type']=='run']
+
+    passing_df['epa'] = df.loc[df['play_type']=='pass'].apply(lambda x: x['epa'] - epa_df.loc[x['defteam']]['defense_pass_epa/play'], axis=1)
+    rushing_df['epa'] = df.loc[df['play_type']=='run'].apply(lambda x: x['epa'] - epa_df.loc[x['defteam']]['defense_rush_epa/play'], axis=1)
+    schedule_adj_df = passing_df.append(rushing_df)
+    final_df_offense = get_rush_pass_epa(df=schedule_adj_df,defense=False)
+
+    passing_df['epa'] = df.loc[df['play_type']=='pass'].apply(lambda x: x['epa'] - epa_df.loc[x['posteam']]['offense_pass_epa/play'], axis=1)
+    rushing_df['epa'] = df.loc[df['play_type']=='run'].apply(lambda x: x['epa'] - epa_df.loc[x['posteam']]['offense_rush_epa/play'], axis=1)
+    schedule_adj_df = passing_df.append(rushing_df)
+    final_df_defense = get_rush_pass_epa(df=schedule_adj_df,offense=False)
+
+    return final_df_offense.join(final_df_defense)
 
 def get_opponent(team, schedule):
     team_df = schedule[(schedule['away_team']==team) | (schedule['home_team']==team)]
@@ -109,3 +125,5 @@ def delta_epa_defense(team, schedule, epa_df, weeks_played):
     defense_future = past_future_opp_epa(team, schedule, epa_df, weeks_played)[1]['defense_epa/play']
     defense_delta = defense_future - defense_past
     return defense_delta
+
+schedule_adjusted_epa([2022])

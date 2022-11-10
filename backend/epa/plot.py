@@ -60,13 +60,13 @@ def main():
         find_in_data_folder("EPA/schedule_remaining.png")
     )
 
-def defense_plot():
-    schedule_epa = epa.get_rush_pass_epa([2022])
+def defense_plot(epa_df, name):
+    epa_df = epa.get_rush_pass_epa([2022])
 
     plt.style.use('ggplot')
 
-    x = schedule_epa['defense_rush_epa/play'].values
-    y = schedule_epa['defense_pass_epa/play'].values
+    x = epa_df['defense_rush_epa/play'].values
+    y = epa_df['defense_pass_epa/play'].values
 
     fig, ax = plt.subplots(figsize=(15, 15))
 
@@ -96,7 +96,7 @@ def defense_plot():
     team_colors = pd.read_csv('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/teams_colors_logos.csv')
 
     # annotate the points with team logos
-    for idx, row in schedule_epa.iterrows():
+    for idx, row in epa_df.iterrows():
         offense_epa = row['defense_rush_epa/play']
         defense_epa = row['defense_pass_epa/play']
         logo_src = team_colors[team_colors['team_abbr'] == idx]['team_logo_espn'].values[0]
@@ -106,16 +106,15 @@ def defense_plot():
 
     ax.set_title('Defense Rushing and Passing EPA', fontsize=20)
     plt.savefig(
-        find_in_data_folder("EPA/defensive_rush_pass.png")
+        find_in_data_folder(name)
     )
 
-def offense_plot():
-    schedule_epa = epa.get_rush_pass_epa([2022])
+def offense_plot(epa_df, name):
 
     plt.style.use('ggplot')
 
-    x = schedule_epa['offense_rush_epa/play'].values
-    y = schedule_epa['offense_pass_epa/play'].values
+    x = epa_df['offense_rush_epa/play'].values
+    y = epa_df['offense_pass_epa/play'].values
 
     fig, ax = plt.subplots(figsize=(15, 15))
 
@@ -145,7 +144,7 @@ def offense_plot():
     team_colors = pd.read_csv('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/teams_colors_logos.csv')
 
     # annotate the points with team logos
-    for idx, row in schedule_epa.iterrows():
+    for idx, row in epa_df.iterrows():
         offense_epa = row['offense_rush_epa/play']
         defense_epa = row['offense_pass_epa/play']
         logo_src = team_colors[team_colors['team_abbr'] == idx]['team_logo_espn'].values[0]
@@ -155,10 +154,18 @@ def offense_plot():
 
     ax.set_title('Offense Rushing and Passing EPA', fontsize=20)
     plt.savefig(
-        find_in_data_folder("EPA/offensive_rush_pass.png")
+        find_in_data_folder(name)
     )
 
 if __name__ == "__main__":
     main()
-    defense_plot()
-    offense_plot()
+    epa_df = epa.get_rush_pass_epa([2022])
+    name = "EPA/epa_defense.png"
+    defense_plot(epa_df, name)
+    name = "EPA/epa_offense.png"
+    offense_plot(epa_df, name)
+    epa_df = epa.schedule_adjusted_epa([2022])
+    name = "EPA/sched_adj_epa_defense.png"
+    defense_plot(epa_df, name)
+    name = "EPA/sched_adj_epa_offense.png"
+    offense_plot(epa_df, name)
