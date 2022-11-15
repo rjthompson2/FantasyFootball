@@ -61,8 +61,6 @@ def main():
     )
 
 def defense_plot(epa_df, name):
-    epa_df = epa.get_rush_pass_epa([2022])
-
     plt.style.use('ggplot')
 
     x = epa_df['defense_rush_epa/play'].values
@@ -110,7 +108,6 @@ def defense_plot(epa_df, name):
     )
 
 def offense_plot(epa_df, name):
-
     plt.style.use('ggplot')
 
     x = epa_df['offense_rush_epa/play'].values

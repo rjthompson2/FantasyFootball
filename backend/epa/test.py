@@ -1,7 +1,6 @@
 import nfl_data_py as nfl
 import pandas as pd
 
-#TODO need to get current year
 def get_epa(year, df=None):
     if not isinstance(df, pd.DataFrame):
         df = nfl.import_pbp_data(years=year)
@@ -36,7 +35,6 @@ def get_rush_pass_epa(year=None, df=None, offense=True, defense=True):
         epa_df['offense_epa'] = df.groupby('posteam')['epa'].sum()
         epa_df['defense_epa'] = df.groupby('defteam')['epa'].sum()
 
-
     if offense:
         epa_df['offense_pass_epa'] = df.loc[df['play_type']=='pass'].groupby('posteam')['epa'].sum()
         epa_df['offense_rush_epa'] = df.loc[df['play_type']=='run'].groupby('posteam')['epa'].sum()
@@ -55,7 +53,7 @@ def get_rush_pass_epa(year=None, df=None, offense=True, defense=True):
 
 
 def epa_schedule(year):
-    #https://www.fantasyfootballdatapros.com/blog/intermediate/26
+    #https://www.fantasyfootballdatapros.com/blog/intermediate/26 source
     epa_df = get_epa(year)
 
     schedule = nfl.import_schedules(years=year)
