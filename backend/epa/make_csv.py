@@ -1,4 +1,4 @@
-import backend.epa.test as epa
+import backend.epa.main as epa
 import pandas as pd
 from backend.utils import find_in_data_folder
 

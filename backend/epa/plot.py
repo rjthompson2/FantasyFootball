@@ -6,7 +6,7 @@ import matplotlib as mpl
 import numpy as np
 import seaborn as sns
 import pandas as pd
-import backend.epa.test as epa
+import backend.epa.main as epa
 import requests
 
 #TODO make plotting more general with standardized proportions

@@ -123,5 +123,3 @@ def delta_epa_defense(team, schedule, epa_df, weeks_played):
     defense_future = past_future_opp_epa(team, schedule, epa_df, weeks_played)[1]['defense_epa/play']
     defense_delta = defense_future - defense_past
     return defense_delta
-
-schedule_adjusted_epa([2022])
