@@ -1,0 +1,32 @@
+<!doctype html>
+
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Welcome home</title>
+  </head>
+
+  <body>
+    <h1>Team Stats</h1>
+  </body>
+  <form method="get" action="/">
+    <button type="submit">Back</button>
+  </form>
+  
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <div class="dropdown">
+    <a id="my-dropdown" href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Choose an image</a>
+    <ul class="dropdown-menu">
+       <li><a href="{{url_for('stats_visualization.teams',id='schedule_remaining.png')}}">Remaining Schedule</a></li>
+    <li><a href="{{url_for('stats_visualization.teams',id='epa_offense.png')}}">EPA Offense</a></li>
+    <li><a href="{{url_for('stats_visualization.teams',id='epa_defense.png')}}">EPA Defense</a></li>
+    <li><a href="{{url_for('stats_visualization.teams',id='sched_adj_epa_offense.png')}}">Schedule Adj EPA Offense</a></li>
+    <li><a href="{{url_for('stats_visualization.teams',id='sched_adj_epa_defense.png')}}">Schedule Adj EPA Defense</a></li>
+    </ul>
+  </div>
+
+  <img src="/static/{{file_name}}" alt="statistics for each team based on epa. ERROR {{file_name}} not found!" style="width:800px;height:800px;">
+</html>
