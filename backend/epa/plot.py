@@ -141,22 +141,25 @@ def defense_plot(epa_df, name):
     plt.savefig(find_in_data_folder(name))
 
 
-def offense_plot(epa_df, name):
+def offense_plot(epa_df, name, columns=["offense_rush_epa/play", "offense_pass_epa/play"], annotations=["Better Rushing Offense", "Worse Rushing Offense", "Better Passing Offense", "Worse Passing Offense"]):
     plt.style.use("ggplot")
 
-    x = epa_df["offense_rush_epa/play"].values
-    y = epa_df["offense_pass_epa/play"].values
+    #.3
+    x = epa_df[columns[0]].values
+    y = epa_df[columns[1]].values
+    maximum = max(max(x), max(y))
+    maximum += maximum/15
 
     fig, ax = plt.subplots(figsize=(15, 15))
 
     ax.grid(alpha=0.5)
     # plot a vertical and horixontal line to create separate quadrants
-    ax.vlines(0, -0.3, 0.3, color="#fcc331", alpha=0.7, lw=4, linestyles="dashed")
-    ax.hlines(0, -0.3, 0.3, color="#fcc331", alpha=0.7, lw=4, linestyles="dashed")
-    ax.set_ylim(-0.3, 0.3)
-    ax.set_xlim(-0.3, 0.3)
-    ax.set_xlabel("offense_rush_epa/play", fontsize=20)
-    ax.set_ylabel("offense_pass_epa/play", fontsize=20)
+    ax.vlines(0, -maximum, maximum, color="#fcc331", alpha=0.7, lw=4, linestyles="dashed")
+    ax.hlines(0, -maximum, maximum, color="#fcc331", alpha=0.7, lw=4, linestyles="dashed")
+    ax.set_ylim(-maximum, maximum)
+    ax.set_xlim(-maximum, maximum)
+    ax.set_xlabel(columns[0], fontsize=20)
+    ax.set_ylabel(columns[1], fontsize=20)
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
 
@@ -171,10 +174,10 @@ def offense_plot(epa_df, name):
     }
 
     # annotate the axis
-    ax.annotate("Better Rushing Offense", xy=(0.19, 0.015), **annot_styles)
-    ax.annotate("Worse Rushing Offense", xy=(-0.29, -0.015), **annot_styles)
-    ax.annotate("Better Passing Offense", xy=(-0.07, 0.28), **annot_styles)
-    ax.annotate("Worse Passing Offense", xy=(-0.07, -0.28), **annot_styles)
+    ax.annotate(annotations[0], xy=(maximum/1.6, maximum/20), **annot_styles)
+    ax.annotate(annotations[1], xy=(-maximum/1.04, -maximum/20), **annot_styles)
+    ax.annotate(annotations[2], xy=(-maximum/4.2, (maximum-maximum/15)), **annot_styles)
+    ax.annotate(annotations[3], xy=(-maximum/4.2, -(maximum-maximum/15)), **annot_styles)
 
     team_colors = pd.read_csv(
         "https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/teams_colors_logos.csv"
@@ -182,8 +185,8 @@ def offense_plot(epa_df, name):
 
     # annotate the points with team logos
     for idx, row in epa_df.iterrows():
-        offense_epa = row["offense_rush_epa/play"]
-        defense_epa = row["offense_pass_epa/play"]
+        offense_epa = row[columns[0]]
+        defense_epa = row[columns[1]]
         logo_src = team_colors[team_colors["team_abbr"] == idx][
             "team_logo_espn"
         ].values[0]
@@ -192,10 +195,10 @@ def offense_plot(epa_df, name):
         ax.imshow(
             img,
             extent=[
-                row["offense_rush_epa/play"] - 0.02,
-                row["offense_rush_epa/play"] + 0.02,
-                row["offense_pass_epa/play"] - 0.019,
-                row["offense_pass_epa/play"] + 0.019,
+                row[columns[0]] - maximum/15, #.02
+                row[columns[0]] + maximum/15,
+                row[columns[1]] - maximum/16, #.019
+                row[columns[1]] + maximum/16,
             ],
             aspect="equal",
             zorder=1000,
