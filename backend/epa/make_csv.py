@@ -2,6 +2,7 @@ import backend.epa.main as epa
 import pandas as pd
 from backend.utils import find_in_data_folder
 
+
 def main():
     year = 2022
     epa_df = epa.get_epa([2022])

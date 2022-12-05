@@ -11,5 +11,6 @@ app.register_blueprint(stats, url_prefix="/stats")
 def home():
     return render_template("home.html")
 
+
 if __name__ == "__main__":
     app.run(debug=True)
