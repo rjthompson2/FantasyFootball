@@ -154,15 +154,18 @@ def offense_plot(epa_df, name):
         find_in_data_folder(name)
     )
 
-if __name__ == "__main__":
+def make_all(years):
     main()
-    epa_df = epa.get_rush_pass_epa([2022])
+    epa_df = epa.get_rush_pass_epa(years)
     name = "EPA/epa_defense.png"
     defense_plot(epa_df, name)
     name = "EPA/epa_offense.png"
     offense_plot(epa_df, name)
-    epa_df = epa.schedule_adjusted_epa([2022])
+    epa_df = epa.schedule_adjusted_epa(years)
     name = "EPA/sched_adj_epa_defense.png"
     defense_plot(epa_df, name)
     name = "EPA/sched_adj_epa_offense.png"
     offense_plot(epa_df, name)
+
+if __name__ == "__main__":
+    make_all(years=[2022])
