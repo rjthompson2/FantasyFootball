@@ -9,7 +9,6 @@ import pandas as pd
 import backend.epa.main as epa
 import requests
 
-# TODO make plotting more general with standardized proportions
 def main():
     schedule_epa = epa.epa_schedule([2022])
 
@@ -77,77 +76,13 @@ def main():
     plt.savefig(find_in_data_folder("EPA/schedule_remaining.png"))
 
 
-def defense_plot(epa_df, name):
-    plt.style.use("ggplot")
-
-    x = epa_df["defense_rush_epa/play"].values
-    y = epa_df["defense_pass_epa/play"].values
-
-    fig, ax = plt.subplots(figsize=(15, 15))
-
-    ax.grid(alpha=0.5)
-    # plot a vertical and horixontal line to create separate quadrants
-    ax.vlines(0, -0.2, 0.2, color="#fcc331", alpha=0.7, lw=4, linestyles="dashed")
-    ax.hlines(0, -0.2, 0.2, color="#fcc331", alpha=0.7, lw=4, linestyles="dashed")
-    ax.set_ylim(-0.25, 0.25)
-    ax.set_xlim(-0.25, 0.25)
-    ax.set_xlabel("defense_rush_epa/play", fontsize=20)
-    ax.set_ylabel("defense_pass_epa/play", fontsize=20)
-    plt.xticks(fontsize=20)
-    plt.yticks(fontsize=20)
-
-    annot_styles = {
-        "bbox": {
-            "boxstyle": "round,pad=0.5",
-            "facecolor": "none",
-            "edgecolor": "#fcc331",
-        },
-        "fontsize": 20,
-        "color": "#202f52",
-    }
-
-    # annotate the axis
-    ax.annotate("Worse Passing Defense", xy=(0.09, 0.015), **annot_styles)
-    ax.annotate("Better Passing Defense", xy=(-0.24, -0.015), **annot_styles)
-    ax.annotate("Worse Rushing Defense", xy=(-0.07, 0.23), **annot_styles)
-    ax.annotate("Better Rushing Defense", xy=(-0.07, -0.23), **annot_styles)
-
-    team_colors = pd.read_csv(
-        "https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/teams_colors_logos.csv"
-    )
-
-    # annotate the points with team logos
-    for idx, row in epa_df.iterrows():
-        offense_epa = row["defense_rush_epa/play"]
-        defense_epa = row["defense_pass_epa/play"]
-        logo_src = team_colors[team_colors["team_abbr"] == idx][
-            "team_logo_espn"
-        ].values[0]
-        res = requests.get(logo_src)
-        img = plt.imread(BytesIO(res.content))
-        ax.imshow(
-            img,
-            extent=[
-                row["defense_rush_epa/play"] - 0.01,
-                row["defense_rush_epa/play"] + 0.01,
-                row["defense_pass_epa/play"] - 0.009,
-                row["defense_pass_epa/play"] + 0.009,
-            ],
-            aspect="equal",
-            zorder=1000,
-        )
-
-    ax.set_title("Defense Rushing and Passing EPA", fontsize=20)
-    plt.savefig(find_in_data_folder(name))
-
-
-def offense_plot(epa_df, name, columns=["offense_rush_epa/play", "offense_pass_epa/play"], annotations=["Better Rushing Offense", "Worse Rushing Offense", "Better Passing Offense", "Worse Passing Offense"]):
+def plot_epa(epa_df, name, columns=["offense_rush_epa/play", "offense_pass_epa/play"], annotations=["Better Rushing Offense", "Worse Rushing Offense", "Better Passing Offense", "Worse Passing Offense"]):
     plt.style.use("ggplot")
 
     #.3
     x = epa_df[columns[0]].values
     y = epa_df[columns[1]].values
-    maximum = max(max(x), max(y))
+    maximum = max(max(abs(x)), max(abs(y)))
     maximum += maximum/15
 
     fig, ax = plt.subplots(figsize=(15, 15))
@@ -210,16 +145,14 @@ def offense_plot(epa_df, name, columns=["offense_rush_epa/play", "offense_pass_e
 
 def make_all(years):
     main()
+    
     epa_df = epa.get_rush_pass_epa(years)
-    name = "EPA/epa_defense.png"
-    defense_plot(epa_df, name)
-    name = "EPA/epa_offense.png"
-    offense_plot(epa_df, name)
+    plot_epa(epa_df, name="EPA/epa_defense.png", columns=["defense_rush_epa/play", "defense_pass_epa/play"], annotations=["Worse Passing Defense", "Better Passing Defense", "Worse Rushing Defense", "Better Rushing Defense"])
+    plot_epa(epa_df, name="EPA/epa_offense.png", columns=["offense_rush_epa/play", "offense_pass_epa/play"], annotations=["Better Rushing Offense", "Worse Rushing Offense", "Better Passing Offense", "Worse Passing Offense"])
+    
     epa_df = epa.schedule_adjusted_epa(years)
-    name = "EPA/sched_adj_epa_defense.png"
-    defense_plot(epa_df, name)
-    name = "EPA/sched_adj_epa_offense.png"
-    offense_plot(epa_df, name)
+    plot_epa(epa_df, name="EPA/sched_adj_epa_defense.png", columns=["defense_rush_epa/play", "defense_pass_epa/play"], annotations=["Worse Passing Defense", "Better Passing Defense", "Worse Rushing Defense", "Better Rushing Defense"])
+    plot_epa(epa_df, name="EPA/sched_adj_epa_offense.png", columns=["offense_rush_epa/play", "offense_pass_epa/play"], annotations=["Better Rushing Offense", "Worse Rushing Offense", "Better Passing Offense", "Worse Passing Offense"])
 
 
 if __name__ == "__main__":
