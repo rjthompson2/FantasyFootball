@@ -24,6 +24,7 @@ def teams():
     # Copies file into static folder if it isn't already in there
     if not os.path.exists("frontend/webapp/static/" + file_name):
         shutil.copy(src, "frontend/webapp/static")
+        return render_template("epa.html", file_name=file_name)
 
     # Updates plots
     file_time = time.ctime(
