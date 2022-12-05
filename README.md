@@ -19,8 +19,6 @@ The next week Taylor barely beat Elliots 20.3 points by .1 point. After that, it
 
 # TODOs
 
-Add implied touches and Fantasy Points to weekly stats
-
 accuracy metric for ECR, ADP, and VOR fantasy predictions
 
 normal distribution of recovery time per injury
