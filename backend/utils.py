@@ -28,7 +28,7 @@ def find_in_data_folder(file_path: str) -> str:
     return f"{path}/backend/data{file_path}"
 
 
-class Teams(Enum):
+class Teams(str, Enum):
     ARI = "ARI"
     ATL = "ATL"
     BAL = "BAL"

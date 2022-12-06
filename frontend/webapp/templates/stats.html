@@ -8,7 +8,7 @@
   </head>
 
   <body>
-    <h1>Player Stats</h1>
+    <h1>Player Stats {{test}}</h1>
   </body>
   <form method="get" action="/">
     <button type="submit">Back</button>
@@ -22,14 +22,17 @@
     <ul class="dropdown-menu">
     <li><a href="{{url_for('stats_visualization.players',id='wopr_')}}">WOPR</a></li>
     <li><a href="{{url_for('stats_visualization.players',id='rush_it_')}}">IT</a></li>
-    <li><a href="{{url_for('stats_visualization.players',id='rush_share_')}}">Rushing Share</a></li>
     <li><a href="{{url_for('stats_visualization.players',id='rush_gz_')}}">Rushing Green Zone</a></li>
     <li><a href="{{url_for('stats_visualization.players',id='rec_rz_')}}">Receiving Red Zone</a></li>
+    <li><a href="{{url_for('stats_visualization.players',id='rush_share_')}}">Rushing Share</a></li>
     </ul>
   </div>
   <form method="post">
     <label for="year">Enter year: </label>
     <input type="text" id="year" name="year"></input>
+  </form>
+  <form method="post">
+    <button type="submit" id="groupby" name="groupby" value="team">Team</button>
   </form>
 
   {{df | safe}}

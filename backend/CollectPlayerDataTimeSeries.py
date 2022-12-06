@@ -31,7 +31,6 @@ def main(year):
     df_rec_rz = build(
         flex_data_list, "Receiver", "Redzone Looks", final_type=["total", "avg"]
     )
-    
     df_it = bd.df_combine(
         df1=df_rush_attempt,
         df2=df_tgt,
