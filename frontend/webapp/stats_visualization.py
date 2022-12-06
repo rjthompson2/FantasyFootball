@@ -41,7 +41,12 @@ def players():
         if team:
             for team_name in list(utils.Teams):
                 # html += team_name.value
-                html += "<a href=plot?id=wopr&year="+year+"&team="+team_name.value+">"+team_name.value+"</a>"
+                value = ""
+                if original == "wopr_":
+                    value = "wopr"
+                elif original == "rush_it_":
+                    value = "implied_touches"
+                html += "<a href=plot?id="+value+"&year="+year+"&team="+team_name.value+">"+team_name.value+"</a>"
                 html += df[df['TEAM'] == team_name.value].to_html()
 
         else:
@@ -66,7 +71,8 @@ def player_plots():
     # team = str(request.args.get("team"))
     if name == "wopr":
         src = find_in_data_folder(folder+"WOPR/" + file_name)
-    
+    elif name == "implied_touches":
+        src = find_in_data_folder(folder+"ImpliedTouches/" + file_name)
     
     html = '<img src="/static/'+file_name+'" alt="statistics for each team based on the stat. ERROR '+file_name+' not found!" style="width:800px;height:600px;"></img>'
 
