@@ -389,11 +389,9 @@ def df_combine(
     merge_values: List[str],
     convert_to=None,
 ):
-    final_df = pd.DataFrame()
-    find_player = "J.Mason"
-
     df1, df2 = check_convert_to(convert_to, df1, df2, merge_values)
 
+    final_df = pd.DataFrame()
     for i in range(len(df1)):
         player = df1["PLAYER"][i]
         df_sum = check_list(player, df1, df2, on, merge_values, i)
