@@ -418,11 +418,14 @@ def check_convert_to(convert_to, df1, df2, merge_values):
 def check_list(player, df1, df2, on, merge_values, i):
     if not player in df2["PLAYER"].to_list():
         return df1.iloc[i].loc[merge_values].fillna(0)
+
     second = df2.copy()
     for each in on:
         second = second.loc[df2[each] == df1[each][i]]
     second = second[merge_values].fillna(0)
     value = df1.iloc[i].loc[merge_values].fillna(0).add(second)
+
     for column in on:
         value[column] = df1[column][i]
+        
     return value

@@ -9,6 +9,7 @@ import pandas as pd
 import backend.epa.main as epa
 import requests
 
+
 def main():
     schedule_epa = epa.epa_schedule([2022])
 
@@ -76,21 +77,35 @@ def main():
     plt.savefig(find_in_data_folder("EPA/schedule_remaining.png"))
 
 
-def plot_epa(epa_df, name, columns=["offense_rush_epa/play", "offense_pass_epa/play"], annotations=["Better Rushing Offense", "Worse Rushing Offense", "Better Passing Offense", "Worse Passing Offense"]):
+def plot_epa(
+    epa_df,
+    name,
+    columns=["offense_rush_epa/play", "offense_pass_epa/play"],
+    annotations=[
+        "Better Rushing Offense",
+        "Worse Rushing Offense",
+        "Better Passing Offense",
+        "Worse Passing Offense",
+    ],
+):
     plt.style.use("ggplot")
 
-    #.3
+    # .3
     x = epa_df[columns[0]].values
     y = epa_df[columns[1]].values
     maximum = max(max(abs(x)), max(abs(y)))
-    maximum += maximum/15
+    maximum += maximum / 15
 
     fig, ax = plt.subplots(figsize=(15, 15))
 
     ax.grid(alpha=0.5)
     # plot a vertical and horixontal line to create separate quadrants
-    ax.vlines(0, -maximum, maximum, color="#fcc331", alpha=0.7, lw=4, linestyles="dashed")
-    ax.hlines(0, -maximum, maximum, color="#fcc331", alpha=0.7, lw=4, linestyles="dashed")
+    ax.vlines(
+        0, -maximum, maximum, color="#fcc331", alpha=0.7, lw=4, linestyles="dashed"
+    )
+    ax.hlines(
+        0, -maximum, maximum, color="#fcc331", alpha=0.7, lw=4, linestyles="dashed"
+    )
     ax.set_ylim(-maximum, maximum)
     ax.set_xlim(-maximum, maximum)
     ax.set_xlabel(columns[0], fontsize=20)
@@ -109,10 +124,14 @@ def plot_epa(epa_df, name, columns=["offense_rush_epa/play", "offense_pass_epa/p
     }
 
     # annotate the axis
-    ax.annotate(annotations[0], xy=(maximum/1.6, maximum/20), **annot_styles)
-    ax.annotate(annotations[1], xy=(-maximum/1.04, -maximum/20), **annot_styles)
-    ax.annotate(annotations[2], xy=(-maximum/4.2, (maximum-maximum/15)), **annot_styles)
-    ax.annotate(annotations[3], xy=(-maximum/4.2, -(maximum-maximum/15)), **annot_styles)
+    ax.annotate(annotations[0], xy=(maximum / 1.6, maximum / 20), **annot_styles)
+    ax.annotate(annotations[1], xy=(-maximum / 1.04, -maximum / 20), **annot_styles)
+    ax.annotate(
+        annotations[2], xy=(-maximum / 4.2, (maximum - maximum / 15)), **annot_styles
+    )
+    ax.annotate(
+        annotations[3], xy=(-maximum / 4.2, -(maximum - maximum / 15)), **annot_styles
+    )
 
     team_colors = pd.read_csv(
         "https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/teams_colors_logos.csv"
@@ -130,10 +149,10 @@ def plot_epa(epa_df, name, columns=["offense_rush_epa/play", "offense_pass_epa/p
         ax.imshow(
             img,
             extent=[
-                row[columns[0]] - maximum/15, #.02
-                row[columns[0]] + maximum/15,
-                row[columns[1]] - maximum/16, #.019
-                row[columns[1]] + maximum/16,
+                row[columns[0]] - maximum / 15,  # .02
+                row[columns[0]] + maximum / 15,
+                row[columns[1]] - maximum / 16,  # .019
+                row[columns[1]] + maximum / 16,
             ],
             aspect="equal",
             zorder=1000,
@@ -145,14 +164,54 @@ def plot_epa(epa_df, name, columns=["offense_rush_epa/play", "offense_pass_epa/p
 
 def make_all(years):
     main()
-    
+
     epa_df = epa.get_rush_pass_epa(years)
-    plot_epa(epa_df, name="EPA/epa_defense.png", columns=["defense_rush_epa/play", "defense_pass_epa/play"], annotations=["Worse Passing Defense", "Better Passing Defense", "Worse Rushing Defense", "Better Rushing Defense"])
-    plot_epa(epa_df, name="EPA/epa_offense.png", columns=["offense_rush_epa/play", "offense_pass_epa/play"], annotations=["Better Rushing Offense", "Worse Rushing Offense", "Better Passing Offense", "Worse Passing Offense"])
-    
+    plot_epa(
+        epa_df,
+        name="EPA/epa_defense.png",
+        columns=["defense_rush_epa/play", "defense_pass_epa/play"],
+        annotations=[
+            "Worse Passing Defense",
+            "Better Passing Defense",
+            "Worse Rushing Defense",
+            "Better Rushing Defense",
+        ],
+    )
+    plot_epa(
+        epa_df,
+        name="EPA/epa_offense.png",
+        columns=["offense_rush_epa/play", "offense_pass_epa/play"],
+        annotations=[
+            "Better Rushing Offense",
+            "Worse Rushing Offense",
+            "Better Passing Offense",
+            "Worse Passing Offense",
+        ],
+    )
+
     epa_df = epa.schedule_adjusted_epa(years)
-    plot_epa(epa_df, name="EPA/sched_adj_epa_defense.png", columns=["defense_rush_epa/play", "defense_pass_epa/play"], annotations=["Worse Passing Defense", "Better Passing Defense", "Worse Rushing Defense", "Better Rushing Defense"])
-    plot_epa(epa_df, name="EPA/sched_adj_epa_offense.png", columns=["offense_rush_epa/play", "offense_pass_epa/play"], annotations=["Better Rushing Offense", "Worse Rushing Offense", "Better Passing Offense", "Worse Passing Offense"])
+    plot_epa(
+        epa_df,
+        name="EPA/sched_adj_epa_defense.png",
+        columns=["defense_rush_epa/play", "defense_pass_epa/play"],
+        annotations=[
+            "Worse Passing Defense",
+            "Better Passing Defense",
+            "Worse Rushing Defense",
+            "Better Rushing Defense",
+        ],
+    )
+    plot_epa(
+        epa_df,
+        name="EPA/sched_adj_epa_offense.png",
+        columns=["offense_rush_epa/play", "offense_pass_epa/play"],
+        annotations=[
+            "Better Rushing Offense",
+            "Worse Rushing Offense",
+            "Better Passing Offense",
+            "Worse Passing Offense",
+        ],
+    )
 
 
 if __name__ == "__main__":
