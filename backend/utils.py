@@ -7,7 +7,10 @@ from enum import Enum
 
 LOG = logging.getLogger(__name__)
 
-
+# find_parent_dir
+# IndexError: list index out of range
+# TODO Is not universal and messes with the crontab
+# TODO need to move towards SQL or some other storage
 def find_parent_dir(parent: str) -> str:
     current = os.getcwd()
 
