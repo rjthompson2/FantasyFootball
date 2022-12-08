@@ -392,21 +392,12 @@ def df_combine(
     final_df = pd.DataFrame()
     find_player = "J.Mason"
 
-    if convert_to:
-        for value in merge_values:
-            df1[value] = pd.to_numeric(df1[value], downcast=convert_to)
-            df2[value] = pd.to_numeric(df2[value], downcast=convert_to)
+    df1, df2 = check_convert_to(convert_to, df1, df2, merge_values)
 
     values = []
     for i in range(len(df1)):
         player = df1["PLAYER"][i]
-        if player in df2["PLAYER"].to_list():
-            second = get_similar(df2.copy(), df1, df2, on, merge_values, i)
-            value = df1.iloc[i].loc[merge_values].fillna(0).add(second)
-        else:
-            value = df1.iloc[i].loc[merge_values].fillna(0)
-        for column in on:
-            value[column] = df1[column][i]
+        value = check_list(player, df1, df2, on, merge_values, i)
         final_df = final_df.append(value)
 
     final_df = final_df[on + merge_values]
@@ -416,7 +407,22 @@ def df_combine(
     final_df["AVG"] = final_df.mean(axis=1)
     return final_df
 
-def get_similar(df, df1, df2, on, merge_values, i):
+def check_convert_to(convert_to, df1, df2, merge_values):
+    if not convert_to:
+        return df1, df2
+    for value in merge_values:
+        df1[value] = pd.to_numeric(df1[value], downcast=convert_to)
+        df2[value] = pd.to_numeric(df2[value], downcast=convert_to)
+    return df1, df2
+
+def check_list(player, df1, df2, on, merge_values, i):
+    if not player in df2["PLAYER"].to_list():
+        return df1.iloc[i].loc[merge_values].fillna(0)
+    second = df2.copy()
     for each in on:
-        df = df.loc[df2[each] == df1[each][i]]
-    return df[merge_values].fillna(0)
+        second = second.loc[df2[each] == df1[each][i]]
+    second = second[merge_values].fillna(0)
+    value = df1.iloc[i].loc[merge_values].fillna(0).add(second)
+    for column in on:
+        value[column] = df1[column][i]
+    return value
