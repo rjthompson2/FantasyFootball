@@ -390,12 +390,17 @@ def df_combine(
     convert_to=None,
 ):
     final_df = pd.DataFrame()
+    find_player = "J.Mason"
+
     df1, df2 = check_convert_to(convert_to, df1, df2, merge_values)
 
     for i in range(len(df1)):
         player = df1["PLAYER"][i]
-        final_df = final_df.append(sum_dataframes(player, df1, df2, on, merge_values, i))
-
+        df_sum = check_list(player, df1, df2, on, merge_values, i)
+        for column in on:
+            df_sum[column] = df1[column][i]
+        final_df = final_df.append(df_sum)
+    
     final_df = final_df[on + merge_values]
     final_df = final_df[final_df["PLAYER"].notna()]
     final_df[merge_values] = final_df[merge_values].replace({"0": np.nan, 0: np.nan})
@@ -411,17 +416,13 @@ def check_convert_to(convert_to, df1, df2, merge_values):
         df2[value] = pd.to_numeric(df2[value], downcast=convert_to)
     return df1, df2
 
-def sum_dataframes(value, df1, df2, on, merge_values, i):
-    if not value in df2["PLAYER"].to_list():
+def check_list(player, df1, df2, on, merge_values, i):
+    if not player in df2["PLAYER"].to_list():
         return df1.iloc[i].loc[merge_values].fillna(0)
 
-    second = df2.copy()
+    df_sum = df2.copy()
     for each in on:
-        second = second.loc[df2[each] == df1[each][i]]
-    second = second[merge_values].fillna(0)
-    df_sum = df1.iloc[i].loc[merge_values].fillna(0).add(second)
+        df_sum = df_sum.loc[df2[each] == df1[each][i]]
+    df_sum = df_sum[merge_values].fillna(0)
 
-    for column in on:
-        df_sum[column] = df1[column][i]
-        
-    return df_sum
+    return df1.iloc[i].loc[merge_values].fillna(0).add(df_sum)
