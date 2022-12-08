@@ -390,43 +390,33 @@ def df_combine(
     convert_to=None,
 ):
     final_df = pd.DataFrame()
-    # find_player = "T.Hill"
-    # print(df1['PLAYER'].to_list())
-    # print(find_player in df1['PLAYER'].to_list())
+    find_player = "J.Mason"
 
     if convert_to:
         for value in merge_values:
             df1[value] = pd.to_numeric(df1[value], downcast=convert_to)
             df2[value] = pd.to_numeric(df2[value], downcast=convert_to)
 
-    player_list = df2["PLAYER"].to_list()
     values = []
     for i in range(len(df1)):
         player = df1["PLAYER"][i]
-        if player in player_list:
-            second = df2
-            for each in on:
-                second = second.loc[df2[each] == df1[each][i]]
-            second = second[merge_values].fillna(0)
+        if player in df2["PLAYER"].to_list():
+            second = get_similar(df2.copy(), df1, df2, on, merge_values, i)
             value = df1.iloc[i].loc[merge_values].fillna(0).add(second)
         else:
             value = df1.iloc[i].loc[merge_values].fillna(0)
         for column in on:
             value[column] = df1[column][i]
-        values.append(value)
-        # if player == find_player:
-        #     print(value)
+        final_df = final_df.append(value)
 
-    final_df = pd.concat(values)
-    # print(final_df)
     final_df = final_df[on + merge_values]
     final_df = final_df[final_df["PLAYER"].notna()]
     final_df[merge_values] = final_df[merge_values].replace({"0": np.nan, 0: np.nan})
 
     final_df["AVG"] = final_df.mean(axis=1)
-
-    # print(find_player in final_df['PLAYER'].to_list())
-    # print(final_df.loc[final_df['PLAYER'] == find_player])
-    # print(df1.loc[df1['PLAYER'] == find_player])
-    # print(df2.loc[df2['PLAYER'] == find_player])
     return final_df
+
+def get_similar(df, df1, df2, on, merge_values, i):
+    for each in on:
+        df = df.loc[df2[each] == df1[each][i]]
+    return df[merge_values].fillna(0)

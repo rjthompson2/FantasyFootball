@@ -63,12 +63,16 @@ def player_plots():
         button = '<form method="get" action="/stats"  method="post"><button type="submit">Back</button></form>'
         return render_template("stats.html")
 
+    dropdown = '<div class="dropdown"><a id="my-dropdown" href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Choose a Team</a><ul class="dropdown-menu">'
+    for team_option in utils.Teams:
+        dropdown += "<li><a href=plot?id="+name+"&year="+year+"&team="+team_option.value+">"+team_option.value+"</a></li>"
+    dropdown += '</ul></div>'
+
     folder = "WeeklyTeam"
     src = ""
     button = '<form method="get" action="/stats/?id='+name+'_"><button type="submit" groupby="True">Back</button></form>'
 
     file_name = year + "_" + team + "_" + name + ".png"
-    # team = str(request.args.get("team"))
     if name == "wopr":
         src = find_in_data_folder(folder+"WOPR/" + file_name)
     elif name == "implied_touches":
@@ -79,7 +83,7 @@ def player_plots():
     # Copies file into static folder if it isn't already in there
     if not os.path.exists("frontend/webapp/static/" + file_name):
         shutil.copy(src, "frontend/webapp/static")
-        return render_template("stats_plot.html", df=html, button=button)
+        return render_template("stats_plot.html", df=html, button=button, dropdown=dropdown)
 
     # Updates plots
     file_time = time.ctime(
@@ -90,8 +94,9 @@ def player_plots():
         # TODO figure out auto updates
         # plot.make_all([int(now[-1])])
         shutil.copy(src, "frontend/webapp/static")
+    
 
-    return render_template("stats_plot.html", df=html, button=button)
+    return render_template("stats_plot.html", df=html, button=button, dropdown=dropdown)
 
 @stats.route("/epa", methods=["GET"])
 def teams():

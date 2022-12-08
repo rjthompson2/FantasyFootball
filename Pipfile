@@ -21,6 +21,7 @@ flask = "*"
 streamlit = "*"
 plotly = "*"
 nflfastpy = "*"
+pyinstaller = "*"
 
 [dev-packages]
 
