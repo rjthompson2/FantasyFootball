@@ -398,7 +398,7 @@ def df_combine(
         for column in on:
             df_sum[column] = df1[column][i]
         final_df = final_df.append(df_sum)
-    
+
     final_df = final_df[on + merge_values]
     final_df = final_df[final_df["PLAYER"].notna()]
     final_df[merge_values] = final_df[merge_values].replace({"0": np.nan, 0: np.nan})
@@ -406,13 +406,16 @@ def df_combine(
     final_df["AVG"] = final_df.mean(axis=1)
     return final_df
 
+
 def check_convert_to(convert_to, df1, df2, merge_values):
     if not convert_to:
         return df1, df2
+
     for value in merge_values:
         df1[value] = pd.to_numeric(df1[value], downcast=convert_to)
         df2[value] = pd.to_numeric(df2[value], downcast=convert_to)
     return df1, df2
+
 
 def check_list(player, df1, df2, on, merge_values, i):
     if not player in df2["PLAYER"].to_list():

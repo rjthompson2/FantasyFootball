@@ -53,7 +53,11 @@ def plot(df, team, value, year=None):
     plt.title(team + " Weekly " + value)
     plt.xlabel("Week")
     plt.ylabel(value)
-    plt.legend()
+    if len(new_df.columns) > 9:
+        plt.legend(loc="upper left")
+    else:
+        plt.legend(loc="upper right")
+
     if year:
         plt.savefig(
             find_in_data_folder(

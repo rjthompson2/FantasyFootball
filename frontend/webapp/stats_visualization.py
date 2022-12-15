@@ -16,6 +16,7 @@ def players():
     original = str(request.args.get("id"))
     year = "2022"
     df = ""
+    stat = ""
     team = None
 
     if request.method == "POST":
@@ -62,7 +63,8 @@ def players():
 
         else:
             html = df.to_html()
-    return render_template("stats.html", df=html)
+        stat = original.replace("_", " ").upper()
+    return render_template("stats.html", df=html, stat=stat)
 
 
 @stats.route("/plot")
@@ -102,6 +104,8 @@ def player_plots():
         src = find_in_data_folder(folder + "WOPR/" + file_name)
     elif name == "implied_touches":
         src = find_in_data_folder(folder + "ImpliedTouches/" + file_name)
+    elif name == "rush_share":
+        src = find_in_data_folder(folder + "RushingShare/" + file_name)
 
     html = (
         '<img src="/static/'

@@ -87,6 +87,7 @@ def plot_epa(
         "Better Passing Offense",
         "Worse Passing Offense",
     ],
+    title="Offense Rushing and Passing EPA",
 ):
     plt.style.use("ggplot")
 
@@ -158,7 +159,7 @@ def plot_epa(
             zorder=1000,
         )
 
-    ax.set_title("Offense Rushing and Passing EPA", fontsize=20)
+    ax.set_title(title, fontsize=20)
     plt.savefig(find_in_data_folder(name))
 
 
@@ -176,6 +177,7 @@ def make_all(years):
             "Worse Rushing Defense",
             "Better Rushing Defense",
         ],
+        title="Defense Rushing and Passing EPA",
     )
     plot_epa(
         epa_df,
@@ -187,6 +189,7 @@ def make_all(years):
             "Better Passing Offense",
             "Worse Passing Offense",
         ],
+        title="Offense Rushing and Passing EPA",
     )
 
     epa_df = epa.schedule_adjusted_epa(years)
@@ -200,6 +203,7 @@ def make_all(years):
             "Worse Rushing Defense",
             "Better Rushing Defense",
         ],
+        title="Defense Rushing and Passing EPA",
     )
     plot_epa(
         epa_df,
@@ -211,6 +215,7 @@ def make_all(years):
             "Better Passing Offense",
             "Worse Passing Offense",
         ],
+        title="Offense Rushing and Passing EPA",
     )
 
 
