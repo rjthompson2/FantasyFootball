@@ -13,7 +13,7 @@ def save_data():
     path = find_in_data_folder(f"draft_order_{year}_copy.csv")
     # collect data if not available
     if not os.path.exists(path):
-        CollectDraftData().main()
+        CollectDraftData.main(year)
     return path
 
 
