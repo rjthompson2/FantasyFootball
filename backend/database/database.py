@@ -1,20 +1,21 @@
 import psycopg2
 
-conn = psycopg2.connect(
-    database="testdb",
-    user="postgres",
-    password="password",
-    host="127.0.0.1",
-    port="5432",
-)
+ENDPOINT="database-3.cjxdo8ioz7b5.us-east-1.rds.amazonaws.com"
+PORT="5432"
+USER="postgres"
+PORT='5432'
 
-cursor = conn.cursor()
+def connect():
+    connection = psycopg2.connect(
+        database="postgres",
+        user=USER,
+        password="RjT12899!",
+        host=ENDPOINT,
+        port=PORT
+    )
+    cursor=connection.cursor()
+    return cursor, connection
 
-cursor.execute("select version()")
-
-# Fetch a single row using fetchone() method.
-data = cursor.fetchone()
-print("Connection established to: ",data)
-
-#Closing the connection
-conn.close()
+def close(cursor, connection):
+    cursor.close()
+    connection.close()

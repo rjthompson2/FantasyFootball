@@ -131,6 +131,10 @@ dmypy.json
 # Data
 backend/data/*
 frontend/webapp/static/*
+database.py
 
 # ChromeDriver
 chromedriver
+
+# Keys
+*.perm

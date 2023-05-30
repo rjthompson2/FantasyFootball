@@ -1,0 +1,43 @@
+{
+    "DBEngineVersions": [
+        {
+            "Engine": "postgres",
+            "EngineVersion": "14.6",
+            "DBParameterGroupFamily": "postgres14",
+            "DBEngineDescription": "PostgreSQL",
+            "DBEngineVersionDescription": "PostgreSQL 14.6-R1",
+            "ValidUpgradeTarget": [
+                {
+                    "Engine": "postgres",
+                    "EngineVersion": "14.7",
+                    "Description": "PostgreSQL 14.7-R1",
+                    "AutoUpgrade": false,
+                    "IsMajorVersionUpgrade": false
+                },
+                {
+                    "Engine": "postgres",
+                    "EngineVersion": "15.2",
+                    "Description": "PostgreSQL 15.2-R2",
+                    "AutoUpgrade": false,
+                    "IsMajorVersionUpgrade": true
+                }
+            ],
+            "ExportableLogTypes": [
+                "postgresql",
+                "upgrade"
+            ],
+            "SupportsLogExportsToCloudwatchLogs": true,
+            "SupportsReadReplica": true,
+            "SupportedFeatureNames": [
+                "Lambda",
+                "s3Export",
+                "s3Import"
+            ],
+            "Status": "available",
+            "SupportsParallelQuery": false,
+            "SupportsGlobalDatabases": false,
+            "MajorEngineVersion": "14",
+            "SupportsBabelfish": false
+        }
+    ]
+}
