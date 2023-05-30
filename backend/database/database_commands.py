@@ -2,7 +2,7 @@ import psycopg2
 from backend.database import database
 
 
-def add(tablename, values_dict):
+def posgresql_add(tablename, values_dict):
     cursor, connection = database.connect()
     command = """INSERT INTO {tablename}("""
     keys = values_dict.keys
