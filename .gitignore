@@ -131,7 +131,7 @@ dmypy.json
 # Data
 backend/data/*
 frontend/webapp/static/*
-database.py
+backend/database/database.py
 
 # ChromeDriver
 chromedriver
