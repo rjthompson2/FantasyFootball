@@ -57,6 +57,7 @@ def get_cf(data: list) -> pd.DataFrame:
             temp_df.append(
                 pd.DataFrame([values], columns=["PLAYER", "FPTS", "C", "F", "STD"])
             )
+            temp_df = pd.concat([temp_df, pd.DataFrame([values], columns=["PLAYER", "FPTS", "C", "F", "STD"]])
     cf_df = pd.concat(temp_df)
     return cf_df
 

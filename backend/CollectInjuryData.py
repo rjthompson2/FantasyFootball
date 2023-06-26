@@ -31,7 +31,8 @@ def gather_injury_data() -> None:
         if df == None:
             df_list = ws.collect_all()
             df = pd.concat(df_list)
-            df = old_df.append(df)
+            # df = old_df.append(df) #deprecated
+            df = pd.concat([old_df, df])
     else:
         df_list = ws.collect_all()
         df = pd.concat(df_list)
@@ -65,7 +66,9 @@ def clean_injury_data() -> pd.DataFrame:
             index=[i],
         )
         i += 1
-        df = df.append(new_row)
+        # df = df.append(new_row) #DEPRECATED
+        df = pd.concat([df, new_row])
+
 
     for index, row in aquired_df.iterrows():
         i = df.index[df["Name"] == row["Acquired"]]
@@ -104,7 +107,8 @@ def df_normalize() -> None:
                 index=[i],
             )
             i += 1
-            numerical_df = numerical_df.append(new_row)
+            # numerical_df = numerical_df.append(new_row) #DEPRECATED
+            numerical_df = pd.concat([numerical_df, new_row])
 
     numerical_df.to_csv(r"data/injury_data_numerical.csv", index=False, header=True)
 

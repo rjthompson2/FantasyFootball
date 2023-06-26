@@ -397,7 +397,8 @@ def df_combine(
         df_sum = check_list(player, df1, df2, on, merge_values, i)
         for column in on:
             df_sum[column] = df1[column][i]
-        final_df = final_df.append(df_sum)
+        # final_df = final_df.append(df_sum) #DEPRECATED
+        final_df = pd.concat([final_df, df_sum])
 
     final_df = final_df[on + merge_values]
     final_df = final_df[final_df["PLAYER"].notna()]

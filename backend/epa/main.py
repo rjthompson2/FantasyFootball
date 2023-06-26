@@ -105,7 +105,9 @@ def schedule_adjusted_epa(year):
     rushing_df["epa"] = df.loc[df["play_type"] == "run"].apply(
         lambda x: x["epa"] - epa_df.loc[x["defteam"]]["defense_rush_epa/play"], axis=1
     )
-    schedule_adj_df = passing_df.append(rushing_df)
+    # schedule_adj_df = passing_df.append(rushing_df) #DEPRECATED
+    schedule_adj_df = pd.concat([passing_df, rushing_df])
+
     final_df_offense = get_rush_pass_epa(df=schedule_adj_df, defense=False)
 
     passing_df["epa"] = df.loc[df["play_type"] == "pass"].apply(
@@ -114,7 +116,8 @@ def schedule_adjusted_epa(year):
     rushing_df["epa"] = df.loc[df["play_type"] == "run"].apply(
         lambda x: x["epa"] - epa_df.loc[x["posteam"]]["offense_rush_epa/play"], axis=1
     )
-    schedule_adj_df = passing_df.append(rushing_df)
+    # schedule_adj_df = passing_df.append(rushing_df)
+    schedule_adj_df = pd.concat([passing_df, rushing_df])
     final_df_defense = get_rush_pass_epa(df=schedule_adj_df, offense=False)
 
     return final_df_offense.join(final_df_defense)

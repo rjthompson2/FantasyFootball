@@ -25,7 +25,8 @@ def qb(start_year, end_year):
             find_in_data_folder("HistoricData/qb_data_" + str(year) + ".csv")
         )
         qb_df = qb_df.drop("RANK", axis=1)
-        df = df.append(qb_df)
+        # df = df.append(qb_df) #DEPRECATED
+        df = pd.concat([df, qb_df])
 
     make_map(df, name=find_in_data_folder("CorrelationMatrix/qb_matrix.png"))
 
@@ -50,7 +51,8 @@ def rb(start_year, end_year):
         rb_df = rb_df.join(values)
         rb_df = rb_df.drop("RUSHING 20+", axis=1)
         rb_df = rb_df.drop("RANK", axis=1)
-        df = df.append(rb_df)
+        # df = df.append(rb_df) #DEPRECATED
+        df = pd.concat([df, rb_df])
     df = df[
         [
             "PLAYER",
@@ -105,8 +107,10 @@ def wr_te(start_year, end_year):
 
         te_df = merge(te_df, share_df)
 
-        final_wr_df = final_wr_df.append(wr_df)
-        final_te_df = final_te_df.append(te_df)
+        # final_wr_df = final_wr_df.append(wr_df) #DEPRECATED
+        final_wr_df = pd.concat([final_wr_df, wr_df])
+        # final_te_df = final_te_df.append(te_df) #DEPRECATED
+        final_te_df = pd.concat([final_te_df, te_df])
 
     make_map(final_wr_df, name=find_in_data_folder("CorrelationMatrix/wr_matrix.png"))
     make_map(final_te_df, name=find_in_data_folder("CorrelationMatrix/te_matrix.png"))

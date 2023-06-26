@@ -39,23 +39,24 @@ class AsyncWebScraper(Scraper):
     """Generalized scraper for asyncronously collecting data from static webpages"""
 
     def collect(self, id, tag):
-        df = pd.DataFrame()
         if self.driver == None or not self.driver.ok:
             print("Could not connect.")
             return pd.DataFrame()
         soup = BS(self.driver.content, features="lxml")
         table = soup.findAll("table", {id: tag})
         read_tables = pd.read_html(str(table))
-        for read_table in read_tables:
-            df = df.append(read_table)
-        return df
+        #TODO double check might just be able to return read tables??
+        # df = pd.concat([read_table for read_table in read_tables])
+        # for read_table in read_tables:
+        #     df = df.append(read_table) #DEPRECATED
+        return read_tables
 
 
 class WebScraper(Scraper):
     """Generalized scraper for collecting data from static webpages"""
 
     def collect(self, id, tag):
-        df = pd.DataFrame()
+        # df = pd.DataFrame()
         if self.driver == None or not self.driver.ok:
             print("Could not connect.")
             return pd.DataFrame()
@@ -64,9 +65,9 @@ class WebScraper(Scraper):
         read_tables = pd.read_html(str(table))
 
         # df = pd.concat([read_table])
-        for read_table in read_tables:
-            df = df.append(read_table)
-        return df
+        # for read_table in read_tables:
+        #     df = df.append(read_table)
+        return read_tables
 
 
 class FilterWebScraper(Scraper):
@@ -232,7 +233,8 @@ class InjuryScraper(DynamicScraper):
         table = soup.findAll("table", {"class": tag})
         read_tables = pd.read_html(str(table))
         for read_table in read_tables:
-            df = df.append(read_table)
+            # df = df.append(read_table) #DEPRECATED
+            df = pd.concat([df, read_table])
             df.columns = df.iloc[0]
             df = df.drop(index=0)
         return df
