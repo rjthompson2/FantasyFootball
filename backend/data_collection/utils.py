@@ -97,7 +97,7 @@ def update_chrome_driver() -> None:
     download_url = (
         "https://chromedriver.storage.googleapis.com/"
         + version_number
-        + "/chromedriver_mac64_m1.zip"
+        + "/chromedriver_mac_arm64.zip"
     )
 
     # download the zip file using the url built above

@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup as BS
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from concurrent.futures import ThreadPoolExecutor
 from selenium.common.exceptions import ElementNotInteractableException
@@ -107,7 +108,8 @@ class DynamicScraper(ABC):
         if headless:
             opts.add_argument("--headless")
         chrome_driver = os.getcwd() + "/chromedriver"
-        self.driver = webdriver.Chrome(options=opts, executable_path=chrome_driver)
+        service = Service(executable_path=chrome_driver)
+        self.driver = webdriver.Chrome(options=opts, service=service)
         self.driver.get(url)
 
     def collect(self):
@@ -154,7 +156,7 @@ class DynamicWebScraper(DynamicScraper):
 class DivScraper(DynamicScraper):
     def collect(self, _id, data):
         content = self.driver.page_source
-        soup = BS(content)
+        soup = BS(content, features="lxml")
         found_list = soup.findAll("div", {_id: data})
         return [x.text for x in found_list]
 
