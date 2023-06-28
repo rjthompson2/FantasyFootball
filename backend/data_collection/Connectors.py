@@ -16,7 +16,7 @@ from backend.data_collection.Cleaners import (
 )
 from backend.data_collection.Bootstrap import get_bootstrap, get_cf
 from backend.data_analysis.accuracy import error_calculator
-from backend.database.database import connect_local
+from backend.database.database import get_local_engine
 from backend.utils import find_in_data_folder
 from typing import Tuple
 import time
