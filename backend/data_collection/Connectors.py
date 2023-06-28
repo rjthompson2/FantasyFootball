@@ -16,6 +16,7 @@ from backend.data_collection.Cleaners import (
 )
 from backend.data_collection.Bootstrap import get_bootstrap, get_cf
 from backend.data_analysis.accuracy import error_calculator
+from backend.database.database import connect_local
 from backend.utils import find_in_data_folder
 from typing import Tuple
 import time
@@ -68,9 +69,9 @@ class DraftConnector:
                     "data",
                     "id",
                 ],
-                "https://www.cbssports.com/fantasy/football/stats/{position}/"
-                + str(self.year)
-                + "/restofseason/projections/ppr/": ["TableBase-table", "class"],
+                # "https://www.cbssports.com/fantasy/football/stats/{position}/"
+                # + str(self.year)
+                # + "/restofseason/projections/ppr/": ["TableBase-table", "class"],#TODO website deprecated need to grab new data/deprecate
                 # 'https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/': ['projections',  'class'], #TODO website deprecated need to grab new data/deprecate
             }
         )
@@ -158,6 +159,11 @@ class DraftConnector:
         df = df.dropna(subset=["POS"])
         df.to_csv(file_path, index=False, header=True)
 
+    def load_sql(self, df: pd.DataFrame) -> None:
+        engine = get_local_engine("postgres")
+        df = df.dropna(how="all")
+        df = df.dropna(subset=["POS"])
+        df.to_sql("draft", engine)
 
 class AccuracyConnector:
     def __init__(self, year: int):

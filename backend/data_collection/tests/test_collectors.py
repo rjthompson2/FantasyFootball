@@ -79,7 +79,7 @@ class TestCollectors:
                 "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/": [
                     "projections",
                     "class",
-                ],
+                ], 
             }
         )
 
@@ -97,22 +97,22 @@ class TestCollectors:
         new_df = FPTSCleaner().clean_data(df)
         assert not new_df.equals(df)
 
-        df = None
-        try:
-            df = fdc.get_site_data(
-                "https://www.cbssports.com/fantasy/football/stats/{position}/"
-                + str(year)
-                + "/restofseason/projections/ppr/"
-            )
-        except WebDriverException:
-            update_chrome_driver()
-            df = fdc.collect_data()
+        # df = None
+        # try:
+        #     df = fdc.get_site_data(
+        #         "https://www.cbssports.com/fantasy/football/stats/{position}/"
+        #         + str(year)
+        #         + "/restofseason/projections/ppr/"
+        #     )
+        # except WebDriverException:
+        #     update_chrome_driver()
+        #     df = fdc.collect_data()
 
-        # LOG.warning(df)
-        assert df
-        assert not df == {}
-        new_df = FPTSCleaner().clean_data(df)
-        assert not new_df.equals(df)
+        # # LOG.warning(df)
+        # assert df
+        # assert not df == {} #DEPRECATED
+        # new_df = FPTSCleaner().clean_data(df)
+        # assert not new_df.equals(df)
 
         df = None
         try:
@@ -137,13 +137,13 @@ class TestCollectors:
                     "data",
                     "id",
                 ],
-                "https://www.cbssports.com/fantasy/football/stats/{position}/"
-                + str(year)
-                + "/restofseason/projections/ppr/": ["TableBase-table", "class"],
+                # "https://www.cbssports.com/fantasy/football/stats/{position}/"
+                # + str(year)
+                # + "/restofseason/projections/ppr/": ["TableBase-table", "class"], #DEPRECATED
                 "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/": [
                     "projections",
                     "class",
-                ],
+                ], 
             }
         )
 

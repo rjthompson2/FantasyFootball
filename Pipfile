@@ -26,6 +26,7 @@ psycopg2-binary = "*"
 psycopg2 = "*"
 boto3 = "*"
 html5lib = "*"
+sqlalchemy = "*"
 
 [dev-packages]
 

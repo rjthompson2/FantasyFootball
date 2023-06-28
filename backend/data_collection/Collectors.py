@@ -17,6 +17,7 @@ from typing import List
 import pandas as pd
 import multiprocessing
 import re
+import pandas as pd
 import requests
 import logging
 
@@ -33,7 +34,7 @@ class Collector:
         self.id = _id
         self.tag = tag
 
-    def collect_data(self):
+    def collect_data(self)-> pd.DataFrame:
         if isinstance(self.ws, DynamicWebScraper):
             self.ws.start(self.url, headless=True)
         else:

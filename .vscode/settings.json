@@ -1,3 +1,19 @@
 {
-    "python.pythonPath": "/Users/rileythompson/.local/share/virtualenvs/FantasyFootball-EQpHNs4D/bin/python"
+    "python.pythonPath": "/Users/rileythompson/.local/share/virtualenvs/FantasyFootball-EQpHNs4D/bin/python",
+    "python.testing.pytestArgs": [
+        "."
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        ".",
+        "-p",
+        "test_*.py"
+    ],
+    "python.testing.nosetestArgs": [
+        "."
+    ]
 }
