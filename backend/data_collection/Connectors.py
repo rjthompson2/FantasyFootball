@@ -152,6 +152,7 @@ class DraftConnector:
         df = df.merge(injury_df, on="PLAYER", how="outer")
 
         self.load(df)
+        # self.load_sql(df)
 
     def load(self, df: pd.DataFrame) -> None:
         file_path = find_in_data_folder(f"draft_order_{self.year}.csv")
@@ -163,7 +164,7 @@ class DraftConnector:
         engine = get_local_engine("postgres")
         df = df.dropna(how="all")
         df = df.dropna(subset=["POS"])
-        df.to_sql("draft", engine)
+        df.to_sql("draft", con=engine, index=False, if_exists='replace')
 
 class AccuracyConnector:
     def __init__(self, year: int):
