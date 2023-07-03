@@ -9,12 +9,7 @@ import os
 
 @st.cache
 def get_data():
-    year = get_season_year()
     path = find_in_data_folder(f"draft_order_{year}.csv")
-    # collect data if not available
-    if not os.path.exists(path):
-        CollectDraftData().main()
-
     df = pd.read_csv(path)
     df = df.dropna(subset=["POS"])
     return df
@@ -26,7 +21,14 @@ st.set_page_config(
     layout="wide",
 )
 
-df = get_data()
+try:
+    df = get_data()
+except FileNotFoundError:
+    # collect data if not available
+    year = get_season_year()
+    CollectDraftData.main(year)
+    df = get_data()
+
 
 st.sidebar.header("Filter here: ")
 position = st.sidebar.multiselect(

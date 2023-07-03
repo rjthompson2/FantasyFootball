@@ -27,6 +27,8 @@ psycopg2 = "*"
 boto3 = "*"
 html5lib = "*"
 sqlalchemy = "*"
+numpy = "*"
+scipy = "*"
 
 [dev-packages]
 
