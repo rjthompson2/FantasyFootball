@@ -1,15 +1,15 @@
 from backend.data_collection.utils import get_season_year
 from backend.utils import find_in_data_folder
-from backend import CollectDraftData
 import pandas as pd
 import plotly.express as px
 import streamlit as st
 import os
 
-
-@st.cache
-def get_data():
-    path = find_in_data_folder(f"draft_order_{year}.csv")
+#TODO create cache for sql
+#TODO find way to update data that works
+@st.cache_data
+def get_data(path):
+    # collect data if not available
     df = pd.read_csv(path)
     df = df.dropna(subset=["POS"])
     return df
@@ -21,14 +21,9 @@ st.set_page_config(
     layout="wide",
 )
 
-try:
-    df = get_data()
-except FileNotFoundError:
-    # collect data if not available
-    year = get_season_year()
-    CollectDraftData.main(year)
-    df = get_data()
-
+year = get_season_year()
+path = find_in_data_folder(f"draft_order_{year}.csv")
+df = get_data(path)
 
 st.sidebar.header("Filter here: ")
 position = st.sidebar.multiselect(
@@ -54,6 +49,7 @@ quick_find = st.sidebar.multiselect(
 if quick_find:
     df_selection = df.query("PLAYER == @quick_find")
 
+df_selection = pd.DataFrame(df_selection.values,columns=df_selection.columns)
 st.dataframe(df_selection)
 
 new_selection = df_selection.dropna(subset=["VOR"]).reset_index()

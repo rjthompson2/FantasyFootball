@@ -7,14 +7,10 @@ import streamlit as st
 import os
 
 
-@st.cache
-def save_data():
-    year = get_season_year()
-    path = find_in_data_folder(f"draft_order_{year}_copy.csv")
-    # collect data if not available
-    if not os.path.exists(path):
-        CollectDraftData.main(year)
-    return path
+@st.cache_resource
+def get_data(path):
+    df = pd.read_csv(path).copy()
+    return df
 
 
 st.set_page_config(
@@ -23,8 +19,9 @@ st.set_page_config(
     layout="wide",
 )
 
-path = save_data()
-df = pd.read_csv(path)
+year = get_season_year()
+path = find_in_data_folder(f"draft_order_{year}.csv")
+df = get_data(path)
 df = df.dropna(subset=["POS"])
 
 st.sidebar.header("Filter here: ")
@@ -49,6 +46,7 @@ if quick_find:
 
 st.sidebar.button("Update")
 
+df_selection = pd.DataFrame(df_selection.values,columns=df_selection.columns)
 st.dataframe(df_selection)
 
 new_selection = df_selection.dropna(subset=["VOR"]).reset_index()
