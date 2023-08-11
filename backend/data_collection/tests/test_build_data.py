@@ -47,13 +47,10 @@ class TestBuildData:
                     "data",
                     "id",
                 ],
-                # "https://www.cbssports.com/fantasy/football/stats/{position}/"
-                # + str(YEAR)
-                # + "/restofseason/projections/ppr/": ["TableBase-table", "class"],
-                "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/": [
-                    "projections",
-                    "class",
-                ],
+                # "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/": [
+                #     "projections",
+                #     "class",
+                # ],
             }
         )
 
@@ -70,13 +67,10 @@ class TestBuildData:
                     "data",
                     "id",
                 ],
-                # "https://www.cbssports.com/fantasy/football/stats/{position}/"
-                # + str(YEAR)
-                # + "/restofseason/projections/ppr/": ["TableBase-table", "class"],
-                "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/": [
-                    "projections",
-                    "class",
-                ],
+                # "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/": [
+                #     "projections",
+                #     "class",
+                # ],
             }
         )
         cleaner = FPTSCleaner()

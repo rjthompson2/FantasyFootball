@@ -128,17 +128,30 @@ class InjuryCleaner:
 
 class ESPNCleaner:
     """Cleans the injury data for each player"""
+    def __init__(self):
+        self.pos_conversion = {
+            1: "QB",
+            2: "RB",
+            3: "WR",
+            4: "TE",
+            5: "K",
+            16: "DST"
+        }
 
     def clean_data(self, data: dict) -> pd.DataFrame:
         data_list = data["players"]
-        names = [data["player"]["fullName"] for data in data_list]
+        names = [self.clean_name(data["player"]["fullName"]) for data in data_list]
         fpts = [
             data["player"]["stats"][-1]["appliedTotal"]
             if "stats" in data["player"]
             else None
             for data in data_list
         ]
-        return pd.DataFrame({"PLAYER": names, "FPTS": fpts})
+        position = [self.pos_conversion[data["player"]["defaultPositionId"]] for data in data_list]
+        return pd.DataFrame({"PLAYER": names, "POS": position, "FPTS": fpts})
+
+    def clean_name(self, name:str):
+        return re.sub(" D/ST", "", name)
 
 
 class ECRCleaner:
@@ -157,28 +170,25 @@ class ECRCleaner:
 
 class CBSCleaner:
     """Cleans the data from cbs' site"""
-    #TODO make a cleaner for CBS data
+    #TODO move to dicitonary
     def clean_data(self, data: list) -> pd.DataFrame:
         data_list = []
         for pos_list in data:
             if pos_list[0] == "Running":
-                data_list.append(self.data_cleaner(pos_list, [52, 12, 14]))
+                data_list.append(self.data_cleaner(pos_list, [52, 12, 14], "RB"))
             elif pos_list[0] == "Passing":
-                data_list.append(self.data_cleaner(pos_list, [54, 13, 15]))
+                data_list.append(self.data_cleaner(pos_list, [54, 13, 15], "QB"))
             elif pos_list[0] == "Tight":
-                data_list.append(self.data_cleaner(pos_list, [37, 8, 10]))
+                data_list.append(self.data_cleaner(pos_list, [37, 8, 10], "TE"))
             elif pos_list[0] == "Wide":
-                data_list.append(self.data_cleaner(pos_list, [52, 12, 14]))
+                data_list.append(self.data_cleaner(pos_list, [52, 12, 14], "WR"))
             elif pos_list[0] == "FG":
-                data_list.append(self.data_cleaner(pos_list, [69, 16, 18]))
+                data_list.append(self.data_cleaner(pos_list, [69, 16, 18], "K"))
             elif pos_list[0] == "Defense/Special":
-                data_list.append(self.data_cleaner(pos_list, [66, 13, 15], dst=True))
-            else:
-                print(pos_list)
-                exit()
+                data_list.append(self.data_cleaner(pos_list, [66, 13, 15], "DST"))
         return pd.concat(data_list)
 
-    def data_cleaner(self, data: list, prunes: list, dst=False) -> pd.DataFrame:
+    def data_cleaner(self, data: list, prunes: list, position: str) -> pd.DataFrame:
         columns = data[:prunes[0]]
         data = data[prunes[0]:]
         regexp = re.compile(r'[A-Z]')
@@ -190,11 +200,11 @@ class CBSCleaner:
             while regexp.search(data[j][0]):
                 names.append(data[j])
                 j+=1
-            if not dst:
+            if position != "DST":
                players.append(" ".join([name for name in names[len(names)//2:]]))
             else:
                 players.append(" ".join([name for name in names]))
             data = data[j:]
             fpts.append(data[prunes[1]])
             data = data[prunes[2]:]
-        return pd.DataFrame({"PLAYERS": players, "FPTS":fpts})
+        return pd.DataFrame({"PLAYERS": players, "POS":[position for i in range(len(players))], "FPTS":fpts})

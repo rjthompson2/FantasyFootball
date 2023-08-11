@@ -37,5 +37,4 @@ class TestWebscrapers:
             # print(site.format(position=position.value.upper()))
             data = ws.new_collect(site.format(position=position.value.upper()), prune=[354,-61])
             fpts.append(data)
-        print(fpts)
         assert fpts != [] and fpts != None

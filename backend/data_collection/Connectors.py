@@ -130,8 +130,8 @@ class DraftConnector:
         ecr_df = self.ecr_cleaner.clean_data(ecr_df)
         fpts_df = self.fpts_cleaner.clean_data(fpts_df)
         cbs_df = self.cbs_cleaner.clean_data(cbs_data)
-        injury_df = self.injury_cleaner.clean_data(injury_df)
         espn_df = self.espn_cleaner.clean_data(espn_data)
+        injury_df = self.injury_cleaner.clean_data(injury_df)
 
         # Merges fantasy point prediction data into singular df
         fpts_df = pd.concat([fpts_df, cbs_df, espn_df])
@@ -159,7 +159,7 @@ class DraftConnector:
         df = df.merge(injury_df, on="PLAYER", how="outer")
 
         self.load(df)
-        self.load_sql(df)
+        # self.load_sql(df)
 
     def load(self, df: pd.DataFrame) -> None:
         file_path = find_in_data_folder(f"draft_order_{self.year}.csv")

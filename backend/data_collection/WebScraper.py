@@ -135,13 +135,11 @@ class DynamicWebScraper(DynamicScraper):
     """Generalized scraper for collecting data dynamic static webpages"""
 
     def collect(self, id, tag):
-        print("Collecting...")
         if id == "id":
             df = pd.read_html(
                 self.driver.find_element_by_id(tag).get_attribute("outerHTML")
             )[0]
         elif id == "class":
-            print(1)
             columns = []
             heading = self.driver.find_elements(
                 "xpath", 
@@ -169,8 +167,6 @@ class DynamicWebScraper(DynamicScraper):
                         i += 1
 
             df = pd.DataFrame(data=dfs, columns=columns)
-            print(2)
-        print("Done collecting...")
         return df
 
 

@@ -18,14 +18,16 @@ class FantasyScraper(DynamicScraper):
 
     def collect(self, tag: str) -> pd.DataFrame:
         """Collects the draft order data from the webpage"""
-        # df = pd.DataFrame()
+        df = pd.DataFrame()
         try:
             soup = BS(self.driver.page_source, features="lxml")
             table = soup.findAll("table", {"id": tag})
             read_tables = pd.read_html(str(table))
-            # for read_table in read_tables:
-                # df = df.append(read_table)
-            return read_tables
+            for read_table in read_tables:
+                df = pd.concat([df, read_table])
+                df.columns = df.iloc[0]
+                df = df.drop(index=0)
+            return df
         except Exception:
             return pd.DataFrame()
 

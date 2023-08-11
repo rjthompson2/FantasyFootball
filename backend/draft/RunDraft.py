@@ -81,7 +81,7 @@ def rundraft_webapp(url: str, wait_time=30) -> None:
         time.sleep(wait_time)
     while current_round < total_teams * 15:
         df = wp.collect("results-by-round")
-        if len(df.index) != 0:
+        if len(df) != 0:
             df = bd.build_drafting_data(df)
             drft.automated_draft(df, pos)
             file_path = find_in_data_folder(f"league_draft_{year}.csv")
