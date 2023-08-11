@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from concurrent.futures import ThreadPoolExecutor
 from selenium.common.exceptions import ElementNotInteractableException
+from webdriver_manager.chrome import ChromeDriverManager
 from abc import ABC
 from itertools import repeat
 import pandas as pd
@@ -14,42 +15,38 @@ import os
 import csv
 import urllib
 import logging
+import re
+import time
 
 
 LOG = logging.getLogger(__name__)
 
 
-# TODO collect Data using AsyncIO
+# asyncronous api collector
+async def collect_api_data(url: str, headers=None):
+    async with aiohttp.ClientSession(headers=headers) as session:
+        async with session.get(url) as resp:
+            try:
+                response = await resp.json()
+                return response
+            except aiohttp.client_exceptions.ContentTypeError:
+                return {}
+
+
 class Scraper(ABC):
     driver = None
 
-    def start(self, url):
+    def start(self, url:str, params=None):
         """Gets a request for the url"""
-        self.driver = requests.get(url)
+        self.driver = requests.get(url, params=None)
 
     def collect(self):
         pass
 
-    def new_collect(self, url, id, tag):
-        self.start(url)
+    def new_collect(self, url, id, tag, params=None):
+        self.start(url, params=params)
         return self.collect(id, tag)
 
-
-# TODO WIP
-class AsyncWebScraper(Scraper):
-    """Generalized scraper for asyncronously collecting data from static webpages"""
-
-    def collect(self, id, tag):
-        if self.driver == None or not self.driver.ok:
-            print("Could not connect.")
-            return pd.DataFrame()
-        soup = BS(self.driver.content, features="lxml")
-        table = soup.findAll("table", {id: tag})
-        read_tables = pd.read_html(str(table))
-        df = pd.concat(read_tables)
-        # for read_table in read_tables:
-        #     df = df.append(read_table) #DEPRECATED
-        return read_tables
 
 
 class WebScraper(Scraper):
@@ -67,6 +64,25 @@ class WebScraper(Scraper):
         # for read_table in read_tables:
         #     df = df.append(read_table) #DEPRECATED
         return df
+
+
+class RegexWebScraper(Scraper):
+    """Generalized scraper for collecting data from static webpages"""
+    def collect(self, prune:list=None):
+        soup = BS(self.driver.content, features="lxml")
+        text = soup.get_text()
+        values = text.split()
+        if prune:
+            start = prune[0]
+            end = prune[1]
+            values = values[start:end]
+        return values
+
+    def new_collect(self, url, params=None, prune:list=None):
+        self.start(url, params=params)
+        return self.collect(prune=prune)
+
+
 
 
 class FilterWebScraper(Scraper):
@@ -105,6 +121,7 @@ class DynamicScraper(ABC):
         opts = Options()
         if headless:
             opts.add_argument("--headless")
+        opts.add_argument("--incognito")
         chrome_driver = os.getcwd() + "/chromedriver"
         service = Service(executable_path=chrome_driver)
         self.driver = webdriver.Chrome(options=opts, service=service)
@@ -118,20 +135,24 @@ class DynamicWebScraper(DynamicScraper):
     """Generalized scraper for collecting data dynamic static webpages"""
 
     def collect(self, id, tag):
+        print("Collecting...")
         if id == "id":
             df = pd.read_html(
                 self.driver.find_element_by_id(tag).get_attribute("outerHTML")
             )[0]
         elif id == "class":
+            print(1)
             columns = []
-            heading = self.driver.find_elements_by_xpath(
+            heading = self.driver.find_elements(
+                "xpath", 
                 "//*[@class= '" + tag + "']/thead/tr/th"
             )
             for column in heading:
                 columns.append(column.text)
             columns = [column for column in columns if column != ""]
 
-            body = self.driver.find_elements_by_xpath(
+            body = self.driver.find_elements(
+                "xpath", 
                 "//*[@class= '" + tag + "']/tbody/tr/td"
             )
             i = 1
@@ -148,6 +169,8 @@ class DynamicWebScraper(DynamicScraper):
                         i += 1
 
             df = pd.DataFrame(data=dfs, columns=columns)
+            print(2)
+        print("Done collecting...")
         return df
 
 

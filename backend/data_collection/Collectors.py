@@ -2,6 +2,7 @@ from backend.data_collection.WebScraper import (
     WebScraper,
     DynamicWebScraper,
     FilterWebScraper,
+    RegexWebScraper,
 )
 from backend.data_collection.utils import (
     clean_name,
@@ -10,6 +11,7 @@ from backend.data_collection.utils import (
     update_chrome_driver,
     change_team_name,
     Positions,
+    get_season_year,
 )
 from selenium.common.exceptions import WebDriverException
 from itertools import repeat
@@ -96,9 +98,7 @@ class FPTSDataCollector(MultiProssCollector):
         return df_dict
 
     def get_site_data(self, site: str) -> dict:
-        exceptions = [
-            "https://www.cbssports.com/fantasy/football/stats/{position}/2022/restofseason/projections/ppr/"
-        ]  # sites that need the position to be capitalized to work
+        year = get_season_year()
         data = self.input[site][0]
         _id = self.input[site][1]
 
@@ -107,15 +107,27 @@ class FPTSDataCollector(MultiProssCollector):
             data: {
                 position.value: (
                     ws.new_collect(site.format(position=position.value), _id, data)
-                    if site not in exceptions
-                    else ws.new_collect(
-                        site.format(position=position.value.upper()), _id, data
-                    )
                 )
                 for position in Positions
             }
         }
         return df_dict
+
+class CBSDataCollector(MultiProssCollector):
+    def __init__(self, url: str) -> None:
+        year = get_season_year()
+        self.input = [position for position in Positions]
+        self.site = url
+
+    def collect_data(self) -> pd.DataFrame:
+        # Aggregate all data from the sites
+        return super().collect_data()
+
+    def get_site_data(self, position: str) -> list:
+        ws = RegexWebScraper()
+        data = ws.new_collect(self.site.format(position=position.value.upper()), prune=[354,-61])
+        return data
+
 
 
 class InjuryDataCollector(MultiProssCollector):

@@ -5,6 +5,7 @@ from backend.data_collection.Collectors import (
     FPTSDataCollector,
     APICollector,
     InjuryDataCollector,
+    CBSDataCollector,
 )
 from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
 from backend.data_collection.Cleaners import (
@@ -13,6 +14,7 @@ from backend.data_collection.Cleaners import (
     FPTSCleaner,
     InjuryCleaner,
     ESPNCleaner,
+    CBSCleaner,
 )
 from backend.data_collection.utils import update_chrome_driver, get_season_year
 from selenium.common.exceptions import WebDriverException
@@ -73,13 +75,10 @@ class TestCollectors:
                     "data",
                     "id",
                 ],
-                "https://www.cbssports.com/fantasy/football/stats/{position}/"
-                + str(year)
-                + "/restofseason/projections/ppr/": ["TableBase-table", "class"],
-                "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/": [
-                    "projections",
-                    "class",
-                ], 
+                # "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/": [
+                #     "projections",
+                #     "class",
+                # ], 
             }
         )
 
@@ -114,20 +113,20 @@ class TestCollectors:
         # new_df = FPTSCleaner().clean_data(df)
         # assert not new_df.equals(df)
 
-        df = None
-        try:
-            df = fdc.get_site_data(
-                "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/"
-            )
-        except WebDriverException:
-            update_chrome_driver()
-            df = fdc.collect_data()
+        # df = None
+        # try:
+        #     df = fdc.get_site_data(
+        #         "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/"
+        #     )
+        # except WebDriverException:
+        #     update_chrome_driver()
+        #     df = fdc.collect_data()
 
-        # LOG.warning(df)
-        assert df
-        assert not df == {}
-        new_df = FPTSCleaner().clean_data(df)
-        assert not new_df.equals(df)
+        # # LOG.warning(df)
+        # assert df
+        # assert not df == {}
+        # new_df = FPTSCleaner().clean_data(df)
+        # assert not new_df.equals(df)
 
     def test_ftps_collection(self):
         year = get_season_year()
@@ -137,13 +136,10 @@ class TestCollectors:
                     "data",
                     "id",
                 ],
-                # "https://www.cbssports.com/fantasy/football/stats/{position}/"
-                # + str(year)
-                # + "/restofseason/projections/ppr/": ["TableBase-table", "class"], #DEPRECATED
-                "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/": [
-                    "projections",
-                    "class",
-                ], 
+                # "https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/": [
+                #     "projections",
+                #     "class",
+                # ], 
             }
         )
 
@@ -157,6 +153,19 @@ class TestCollectors:
         new_df = FPTSCleaner().clean_data(df)
         assert not new_df.equals(df)
         # assert len(new_df.loc["PLAYER" == new_df.iloc[0]["PLAYER"]]) >= 3
+
+    def test_cbs_collection(self):
+        year = get_season_year()
+        cbsc = CBSDataCollector(
+            url="https://www.cbssports.com/fantasy/football/stats/{position}/"
+                + str(year)
+                + "/restofseason/projections/ppr/"
+        )
+        data = cbsc.collect_data()
+        for value in data:
+            assert value != []
+        new_df = CBSCleaner().clean_data(data)
+        assert new_df != data
 
     def test_espn_collection(self):
         # original url: https://fantasy.espn.com/football/players/projections

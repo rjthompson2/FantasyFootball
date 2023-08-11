@@ -2,6 +2,7 @@ from backend.data_collection.BuildData import build_players, calculate_VOR
 from backend.data_collection.Collectors import (
     Collector,
     FPTSDataCollector,
+    CBSDataCollector,
     InjuryDataCollector,
     APICollector,
 )
@@ -11,8 +12,10 @@ from backend.data_collection.Cleaners import (
     ADPCleaner,
     ECRCleaner,
     FPTSCleaner,
+    CBSCleaner,
     InjuryCleaner,
     ESPNCleaner,
+    CBSCleaner,
 )
 from backend.data_collection.Bootstrap import get_bootstrap, get_cf
 from backend.data_analysis.accuracy import error_calculator
@@ -69,12 +72,15 @@ class DraftConnector:
                     "data",
                     "id",
                 ],
-                # "https://www.cbssports.com/fantasy/football/stats/{position}/"
-                # + str(self.year)
-                # + "/restofseason/projections/ppr/": ["TableBase-table", "class"],#TODO website deprecated need to grab new data/deprecate
                 # 'https://eatdrinkandsleepfootball.com/fantasy/projections/{position}/': ['projections',  'class'], #TODO website deprecated need to grab new data/deprecate
             }
         )
+        self.cbs = CBSDataCollector(
+            url="https://www.cbssports.com/fantasy/football/stats/{position}/"
+                + str(self.year)
+                + "/restofseason/projections/ppr/"
+        )
+        self.cbs_cleaner = CBSCleaner()
         self.fpts_cleaner = FPTSCleaner()
         espn_headers = {
             "Host": "fantasy.espn.com",
@@ -111,22 +117,24 @@ class DraftConnector:
         ecr_df = self.ecr.collect_data()
         injury_df = self.idc.collect_data()
         fpts_df = self.fdc.collect_data()
+        cbs_data = self.cbs.collect_data()
         espn_data = self.espn.collect_data()
-        return adp_df, ecr_df, injury_df, fpts_df, espn_data
+        return adp_df, ecr_df, injury_df, fpts_df, cbs_data, espn_data
 
     def run(self) -> None:
         # Gets all data
-        adp_df, ecr_df, injury_df, fpts_df, espn_data = self.collect_data()
+        adp_df, ecr_df, injury_df, fpts_df, cbs_data, espn_data = self.collect_data()
 
         # Cleans all data
         adp_df = self.adp_cleaner.clean_data(adp_df)
         ecr_df = self.ecr_cleaner.clean_data(ecr_df)
         fpts_df = self.fpts_cleaner.clean_data(fpts_df)
+        cbs_df = self.cbs_cleaner.clean_data(cbs_data)
         injury_df = self.injury_cleaner.clean_data(injury_df)
         espn_df = self.espn_cleaner.clean_data(espn_data)
 
         # Merges fantasy point prediction data into singular df
-        fpts_df = pd.concat([fpts_df, espn_df])
+        fpts_df = pd.concat([fpts_df, cbs_df, espn_df])
 
         # Get a list of dictionaries with the player, mean, ceiling, floor, and standard deviation
         data = get_bootstrap(fpts_df)

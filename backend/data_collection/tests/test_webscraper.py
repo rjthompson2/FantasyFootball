@@ -1,4 +1,4 @@
-from backend.data_collection.WebScraper import DivScraper, WebScraper
+from backend.data_collection.WebScraper import DivScraper, RegexWebScraper
 from backend.data_collection.utils import update_chrome_driver
 from backend.data_collection.utils import get_season_year
 from backend.data_collection.utils import Positions
@@ -31,17 +31,11 @@ class TestWebscrapers:
     def test_cbs(self):
         year = get_season_year()
         site = "https://www.cbssports.com/fantasy/football/stats/{position}/" + str(year) + "/restofseason/projections/ppr/"
-        _id = "class"
-        data = "TableBase-table"
         fpts = []
-        ws = WebScraper()
+        ws = RegexWebScraper()
         for position in Positions:
-            print(site.format(position=position.value.upper()))
-            try:
-                ws.start(site.format(position=position.value.upper()))
-                data = ws.collect(_id, data)
-            except selenium.common.exceptions.SessionNotCreatedException:
-                update_chrome_driver()
-                data = ws.new_collect(site.format(position=position.value.upper()), _id, data)
+            # print(site.format(position=position.value.upper()))
+            data = ws.new_collect(site.format(position=position.value.upper()), prune=[354,-61])
             fpts.append(data)
-        assert fpts != [] or fpts != None
+        print(fpts)
+        assert fpts != [] and fpts != None

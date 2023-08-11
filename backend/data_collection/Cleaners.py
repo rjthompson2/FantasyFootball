@@ -153,3 +153,48 @@ class ECRCleaner:
         df["PLAYER"] = df["PLAYER"].apply(lambda x: re.sub("\s\(.*", "", x))
         df = clean_name(df)
         return df
+
+
+class CBSCleaner:
+    """Cleans the data from cbs' site"""
+    #TODO make a cleaner for CBS data
+    def clean_data(self, data: list) -> pd.DataFrame:
+        data_list = []
+        for pos_list in data:
+            if pos_list[0] == "Running":
+                data_list.append(self.data_cleaner(pos_list, [52, 12, 14]))
+            elif pos_list[0] == "Passing":
+                data_list.append(self.data_cleaner(pos_list, [54, 13, 15]))
+            elif pos_list[0] == "Tight":
+                data_list.append(self.data_cleaner(pos_list, [37, 8, 10]))
+            elif pos_list[0] == "Wide":
+                data_list.append(self.data_cleaner(pos_list, [52, 12, 14]))
+            elif pos_list[0] == "FG":
+                data_list.append(self.data_cleaner(pos_list, [69, 16, 18]))
+            elif pos_list[0] == "Defense/Special":
+                data_list.append(self.data_cleaner(pos_list, [66, 13, 15], dst=True))
+            else:
+                print(pos_list)
+                exit()
+        return pd.concat(data_list)
+
+    def data_cleaner(self, data: list, prunes: list, dst=False) -> pd.DataFrame:
+        columns = data[:prunes[0]]
+        data = data[prunes[0]:]
+        regexp = re.compile(r'[A-Z]')
+        players = []
+        fpts = []
+        while data != []:
+            j = 0
+            names = []
+            while regexp.search(data[j][0]):
+                names.append(data[j])
+                j+=1
+            if not dst:
+               players.append(" ".join([name for name in names[len(names)//2:]]))
+            else:
+                players.append(" ".join([name for name in names]))
+            data = data[j:]
+            fpts.append(data[prunes[1]])
+            data = data[prunes[2]:]
+        return pd.DataFrame({"PLAYERS": players, "FPTS":fpts})

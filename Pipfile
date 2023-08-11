@@ -29,6 +29,7 @@ html5lib = "*"
 sqlalchemy = "*"
 numpy = "*"
 scipy = "*"
+webdriver-manager = "*"
 
 [dev-packages]
 

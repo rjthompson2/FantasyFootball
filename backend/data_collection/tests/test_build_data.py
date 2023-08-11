@@ -1,7 +1,7 @@
 from backend.data_collection.Bootstrap import get_bootstrap, get_cf
 from backend.data_collection.BuildData import build_players
-from backend.data_collection.Collectors import Collector, FPTSDataCollector
-from backend.data_collection.Cleaners import ADPCleaner, ECRCleaner, FPTSCleaner
+from backend.data_collection.Collectors import Collector, FPTSDataCollector, CBSDataCollector
+from backend.data_collection.Cleaners import ADPCleaner, ECRCleaner, FPTSCleaner, CBSCleaner
 from backend.data_collection.utils import get_season_year
 from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
 import pytest
@@ -13,6 +13,33 @@ YEAR = get_season_year()
 
 
 class TestBuildData:
+
+    def test_build_players_combine(self):
+        fdc = FPTSDataCollector(
+            aggr_sites={
+                "https://www.fantasypros.com/nfl/projections/{position}.php?week=draft&scoring=PPR&week=draft": [
+                    "data",
+                    "id",
+                ]
+            }
+        )
+        fpts_df = fdc.collect_data()
+        fpts_df = FPTSCleaner().clean_data(fpts_df)
+
+
+        year = get_season_year()
+        cbsc = CBSDataCollector(
+            url="https://www.cbssports.com/fantasy/football/stats/{position}/"
+                + str(year)
+                + "/restofseason/projections/ppr/"
+        )
+        cbs_data = cbsc.collect_data()
+        cbs_df = CBSCleaner().clean_data(cbs_data)
+
+        df_list = [fpts_df, cbs_df]
+
+
+
     def test_build_players(self):
         fdc = FPTSDataCollector(
             aggr_sites={
