@@ -5,6 +5,7 @@ codes = [
     "frontend/commands/run_data_visualization.sh",
     "frontend/commands/run_drafter_gui.sh",
     "python frontend/webapp/app.py",
+    "python backend/events/simple_listener.py",
 ]
 
 

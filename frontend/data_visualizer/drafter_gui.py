@@ -7,10 +7,10 @@ import streamlit as st
 import os
 
 
-@st.cache_resource
-def get_data(path):
-    df = pd.read_csv(path).copy()
-    return df
+# @st.cache_resource
+# def get_data(path):
+#     df = pd.read_csv(path).copy()
+#     return df
 
 
 st.set_page_config(
@@ -20,8 +20,8 @@ st.set_page_config(
 )
 
 year = get_season_year()
-path = find_in_data_folder(f"draft_order_{year}.csv")
-df = get_data(path)
+path = find_in_data_folder(f"draft_order_{year}_copy.csv")
+df = pd.read_csv(path).copy()
 df = df.dropna(subset=["POS"])
 
 st.sidebar.header("Filter here: ")

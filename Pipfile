@@ -15,7 +15,6 @@ pytest = "*"
 seaborn = "*"
 lxml = "*"
 typing = "*"
-fantasyfootball = {path = "."}
 nfl-data-py = "*"
 flask = "*"
 streamlit = "*"
@@ -30,6 +29,8 @@ sqlalchemy = "*"
 numpy = "*"
 scipy = "*"
 webdriver-manager = "*"
+celery = "*"
+fantasyfootball = {path = "."}
 
 [dev-packages]
 

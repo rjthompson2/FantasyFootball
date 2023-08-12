@@ -1,14 +1,14 @@
 from flask import Blueprint, render_template, request, current_app
-from backend.draft.RunDraft import rundraft_webapp
 from backend.utils import find_in_data_folder, find_parent_dir
 from backend.data_collection.utils import get_season_year
+from backend.events.simple_listener import write
 import pandas as pd
-import os
 import selenium
+import asyncio
 import shutil
+import os
 
 draft = Blueprint(__name__, "draft")
-
 
 @draft.route("/", methods=["GET"])
 def drafter():
@@ -25,14 +25,14 @@ def drafter():
                 copy = pd.read_csv(find_in_data_folder(f"draft_order_{year}.csv"))
                 new_path = find_in_data_folder(f"draft_order_{year}_copy.csv")
                 copy.to_csv(new_path, index=False)
+
                 # Runs draft
-                rundraft_webapp(url, 1)
+                asyncio.run(write("RunDraft", [url, 1]))
                 current_app.logger.info("Backend finished")
             except selenium.common.exceptions.InvalidArgumentException:
                 current_app.logger.warning("Selenium exception")
                 return render_template("draft.html", error="Please enter a valid url!")
     return render_template("draft.html")
-
 
 @draft.route("/analysis")
 def visualizer():
