@@ -2,7 +2,7 @@ import re
 import logging
 import pandas as pd
 from typing import List
-from backend.data_collection.utils import clean_name, change_team_name, Positions
+from backend.data_collection.utils import clean_name, change_team_name, Positions, team_name_changes, name_team_changes
 
 
 LOG = logging.getLogger(__name__)
@@ -151,7 +151,10 @@ class ESPNCleaner:
         return pd.DataFrame({"PLAYER": names, "POS": position, "FPTS": fpts})
 
     def clean_name(self, name:str):
-        return re.sub(" D/ST", "", name)
+        name = re.sub(" D/ST", "", name)
+        if name in name_team_changes.keys():
+            name = name_team_changes[name]
+        return name
 
 
 class ECRCleaner:
@@ -185,7 +188,7 @@ class CBSCleaner:
             elif pos_list[0] == "FG":
                 data_list.append(self.data_cleaner(pos_list, [69, 16, 18], "K"))
             elif pos_list[0] == "Defense/Special":
-                data_list.append(self.data_cleaner(pos_list, [66, 13, 15], "DST"))
+                data_list.append(self.data_cleaner(pos_list, [56, 13, 15], "DST"))
         return pd.concat(data_list)
 
     def data_cleaner(self, data: list, prunes: list, position: str) -> pd.DataFrame:
@@ -201,9 +204,9 @@ class CBSCleaner:
                 names.append(data[j])
                 j+=1
             if position != "DST":
-               players.append(" ".join([name for name in names[len(names)//2:]]))
+               players.append((" ".join([name for name in names[len(names)//2:]])))
             else:
-                players.append(" ".join([name for name in names]))
+                players.append(team_name_changes[" ".join([name for name in names])])
             data = data[j:]
             fpts.append(data[prunes[1]])
             data = data[prunes[2]:]

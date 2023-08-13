@@ -45,6 +45,41 @@ team_name_changes = {
     "New England": "New England Patriots",
 }
 
+name_team_changes = {
+    "Dolphins": "Miami Dolphins",
+    "Cowboys": "Dallas Cowboys",
+    "Eagles": "Philadelphia Eagles",
+    "Buccaneers": "Tampa Bay Buccaneers",
+    "Packers": "Green Bay Packers",
+    "Chiefs": "Kansas City Chiefs",
+    "Raiders": "Las Vegas Raiders",
+    "Rams": "Los Angeles Rams",
+    "Texans": "Houston Texans",
+    "Broncos": "Denver Broncos",
+    "Lions": "Detroit Lions",
+    "Jets": "New York Jets",
+    "Saints": "New Orleans Saints",
+    "49ers": "San Francisco 49ers",
+    "Titans": "Tennessee Titans",
+    "Bills": "Buffalo Bills",
+    "Falcons": "Atlanta Falcons",
+    "Vikings": "Minnesota Vikings",
+    "Colts": "Indianapolis Colts",
+    "Seahawks": "Seattle Seahawks",
+    "Bengals": "Cincinnati Bengals",
+    "Bears": "Chicago Bears",
+    "Cardinals": "Arizona Cardinals",
+    "Ravens": "Baltimore Ravens",
+    "Jaguars": "Jacksonville Jaguars",
+    "Commanders": "Washington Commanders",
+    "Steelers": "Pittsburgh Steelers",
+    "Browns": "Cleveland Browns",
+    "Chargers": "Los Angeles Chargers",
+    "Giants": "New York Giants",
+    "Panthers": "Carolina Panthers",
+    "Patriots": "New England Patriots",
+}
+
 player_name_changes = {
     "Eli Mitchell": "Elijah Mitchell",
 }
