@@ -134,11 +134,6 @@ class DraftConnector:
         injury_df = self.injury_cleaner.clean_data(injury_df)
 
         # Merges fantasy point prediction data into singular df
-        #TODO need to clean names
-        print("fpts_df", fpts_df.loc[fpts_df["POS"] == "DST"])
-        print("cbs_df", cbs_df.loc[cbs_df["POS"] == "DST"])
-        print("espn_df", espn_df.loc[espn_df["POS"] == "DST"])
-        exit()
         fpts_df = pd.concat([fpts_df, cbs_df, espn_df])
 
         # Get a list of dictionaries with the player, mean, ceiling, floor, and standard deviation
