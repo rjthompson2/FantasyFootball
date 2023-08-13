@@ -6,7 +6,6 @@ LOCK = False
 
 async def listen():
     while True:
-        #TODO some listening
         with open("backend/events/data/messages.txt", "r") as f:
             line = f.readline()
         if line == "":
