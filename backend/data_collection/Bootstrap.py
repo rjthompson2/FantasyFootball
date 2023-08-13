@@ -33,13 +33,27 @@ def mp_bootstrap(player: str, fpts_df: pd.DataFrame):
     new_df = fpts_df.loc[fpts_df["PLAYER"] == player]
     new_df = new_df.drop(columns=["PLAYER", "POS"])
     new_df = new_df.dropna(axis=1, how="all").dropna()
-    if len(new_df.values.tolist()) <= 1:
+    
+    if len(new_df.values.tolist()) > 1:
+        new_list = [new_df.values.tolist()]
+        output = calculate_ceiling_floor(
+            arrays=new_list, player_names=[player], stdout=False
+        )
+        return output
+    
+    elif len(new_df.values.tolist()) < 1:
         return None
-    new_list = [new_df.values.tolist()]
-    output = calculate_ceiling_floor(
-        arrays=new_list, player_names=[player], stdout=False
-    )
-    return output
+
+    mean = new_df.values.tolist()[0][0]
+    if mean != 0:
+        return {
+            "player": player,
+            "mean": mean,
+            "ceiling": "N/A",
+            "floor": "N/A",
+            "std": "N/A",
+        }
+    return None
 
 
 def get_cf(data: list) -> pd.DataFrame:

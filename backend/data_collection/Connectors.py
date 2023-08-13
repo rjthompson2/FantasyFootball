@@ -143,7 +143,7 @@ class DraftConnector:
         cf_df = get_cf(data)
         pos_df = fpts_df[["PLAYER", "POS"]]
         cf_df = pos_df.drop_duplicates(subset=["PLAYER"]).merge(
-            cf_df, on="PLAYER", copy=False
+            cf_df, on="PLAYER", how="outer", copy=False
         )  # Ensures no duplicate players
 
         # Get the replacemnet players and values for each position
