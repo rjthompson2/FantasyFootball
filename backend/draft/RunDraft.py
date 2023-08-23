@@ -76,10 +76,12 @@ def rundraft_webapp(url: str, wait_time=30) -> None:
     current_round = 1
 
     # Run the draft
+    #TODO add picking players
     if pos == 1:
         drft.recommend()
         time.sleep(wait_time)
     while current_round < total_teams * 15:
+        wp.navigate_to_data()
         df = wp.collect("results-by-round")
         if len(df.index) != 0:
             df.columns = ["Pick", "Player", "Team", "XRank"]

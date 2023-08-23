@@ -20,6 +20,7 @@ from backend.data_collection.Cleaners import (
 from backend.data_collection.Bootstrap import get_bootstrap, get_cf
 from backend.data_analysis.accuracy import error_calculator
 from backend.database.database import get_local_engine
+from backend.data_collection.utils import clean_name
 from backend.utils import find_in_data_folder
 from typing import Tuple
 import time
@@ -90,10 +91,11 @@ class DraftConnector:
             "Accept-Encoding": "gzip, deflate, br",
             "X-Fantasy-Source": "kona",
             "X-Fantasy-Filter": '{"players":{"filterStatsForExternalIds":{"value":['
-            + str(self.year - 1)
-            + ","
-            + str(self.year)
-            + ']},"filterSlotIds":{"value":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,23,24]},"filterStatsForSourceIds":{"value":[0,1]},"useFullProjectionTable":{"value":true},"sortAppliedStatTotal":{"sortAsc":false,"sortPriority":3,"value":"102022"},"sortDraftRanks":{"sortPriority":2,"sortAsc":true,"value":"PPR"},"sortPercOwned":{"sortPriority":4,"sortAsc":false},"limit":1000,"filterRanksForSlotIds":{"value":[0,2,4,6,17,16]},"filterStatsForTopScoringPeriodIds":{"value":2,"additionalValue":["002022","102022","002021","022022"]}}}',
+                + str(self.year-1)
+                + ","
+                + str(self.year)
+                + ']},"filterSlotIds":{"value":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,23,24]},"filterStatsForSourceIds":{"value":[0,1]},"useFullProjectionTable":{"value":true},"sortAppliedStatTotal":{"sortAsc":false,"sortPriority":3,"value":"102022"},"sortDraftRanks":{"sortPriority":2,"sortAsc":true,"value":"PPR"},"sortPercOwned":{"sortPriority":4,"sortAsc":false},"limit":1000,"filterRanksForSlotIds":{"value":[0,2,4,6,17,16]},'+
+                '"filterStatsForTopScoringPeriodIds":{"value":2,"additionalValue":["00'+str(self.year)+'","10'+str(self.year)+'","00'+str(self.year-1)+'","02'+str(self.year)+'"]}}}',
             "X-Fantasy-Platform": "kona-PROD-6daa0c838b3e2ff0192c0d7d1d24be52e5811609",
             "DNT": "1",
             "Connection": "keep-alive",
@@ -105,7 +107,7 @@ class DraftConnector:
             "If-None-Match": 'W/"0e4940690e8c2869b89702c401e93ff75"',
         }
         self.espn = APICollector(
-            url="https://fantasy.espn.com/apis/v3/games/ffl/seasons/2022/segments/0/leaguedefaults/3?view=kona_player_info",
+            url="https://fantasy.espn.com/apis/v3/games/ffl/seasons/"+str(self.year)+"/segments/0/leaguedefaults/3?view=kona_player_info",
             params=espn_headers,
         )
         self.espn_cleaner = ESPNCleaner()
@@ -135,6 +137,9 @@ class DraftConnector:
 
         # Merges fantasy point prediction data into singular df
         fpts_df = pd.concat([fpts_df, cbs_df, espn_df])
+        
+        #Cleans names for bootstrapping
+        fpts_df = clean_name(fpts_df)
 
         # Get a list of dictionaries with the player, mean, ceiling, floor, and standard deviation
         data = get_bootstrap(fpts_df)

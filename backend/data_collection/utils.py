@@ -82,6 +82,7 @@ name_team_changes = {
 
 player_name_changes = {
     "Eli Mitchell": "Elijah Mitchell",
+    "Travis Etienne Jr.": "Travis Etienne",
 }
 
 
@@ -95,9 +96,10 @@ def get_season_year() -> int:
 
 
 def clean_name_str(name: str) -> str:
-    name = re.sub("\s[IVX]*$", "", name)
-    name = re.sub("\s[JS]r\.?$", "", name)
-    name = re.sub("\.", "", name)
+    if str(name) != "nan" and str(name) != "None":
+        name = re.sub("\s[IVX]*$", "", name)
+        name = re.sub("\s[JS]r\.?$", "", name)
+        name = re.sub("\.", "", name)
     return name
 
 

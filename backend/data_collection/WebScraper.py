@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from concurrent.futures import ThreadPoolExecutor
 from selenium.common.exceptions import ElementNotInteractableException
+from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from abc import ABC
 from itertools import repeat
@@ -122,9 +123,10 @@ class DynamicScraper(ABC):
         if headless:
             opts.add_argument("--headless")
         opts.add_argument("--incognito")
-        chrome_driver = os.getcwd() + "/chromedriver"
-        service = Service(executable_path=chrome_driver)
-        self.driver = webdriver.Chrome(options=opts, service=service)
+        self.driver = webdriver.Chrome(
+            options=opts,
+            service=Service(ChromeDriverManager().install()),
+        )
         self.driver.get(url)
 
     def collect(self):

@@ -2,6 +2,8 @@ from backend.data_collection.WebScraper import DynamicScraper
 from backend.utils import find_in_data_folder
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup as BS
 from typing import Tuple
 import pandas as pd
@@ -61,10 +63,14 @@ class FantasyScraper(DynamicScraper):
             password.send_keys(self.password)
             self.driver.find_element("xpath", '//*[@id="login-signin"]').click()
 
-        time.sleep(5)
-        self.driver.find_element(
-            "xpath", '//*[@id="modalContent"]/a'
-        ).click()  # Clicks out of the popup
+        # Clicks out of the popup
+        element = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//*[@id="modalContent"]/a'))
+        )
+        element.click()
+        # self.driver.find_element(
+        #     "xpath", '//*[@id="modalContent"]/a'
+        # ).click()  # Clicks out of the popup
 
     def get_user(self) -> str:
         """Gets the username and password from UserInfo"""
@@ -92,9 +98,18 @@ class FantasyScraper(DynamicScraper):
 
     def find_order(self) -> list:
         """gets the names of every player in draft order"""
-        self.driver.find_element("xpath", '//*[@id="draft"]/div[5]/ul/li[2]').click()
         soup = BS(self.driver.page_source, features="lxml")
-        players = soup.findAll("option")
-        self.driver.find_element("xpath", '//*[@id="draft"]/div[5]/ul/li[3]').click()
-        players = [re.sub("<.*?>", "", str(player)) for player in players]
+        players = soup.findAll("div", 
+            {"class": "Grid-U Va-m Fz-s Ell"}
+        )
+        players = [re.sub("<.*?>", "", str(player)) for player in set(players)]
         return players
+    
+    def navigate_to_data(self):
+        # self.driver.find_element("xpath", '//*[@id="draft"]/div[5]/ul/li[2]').click()
+        try:
+            self.driver.find_element(By.XPATH, '//*[@id="draft"]/div[5]/ul/li[2]').click()
+            self.driver.find_element("xpath", '//*[@id="draft"]/div[5]/ul/li[3]').click()
+        except:
+            return
+

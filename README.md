@@ -30,3 +30,6 @@ look into argparse package
 look into Faust event bus
 
 add decision trees after adding events
+
+allow run drafter to draft players based on user's inputs
+
