@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, current_app
 from backend.utils import find_in_data_folder
 from backend.epa import plot
 from backend import CollectPlayerDataTimeSeries, utils
+from backend.data_collection.utils import get_season_year
 import pandas as pd
 import shutil
 import time
@@ -9,12 +10,12 @@ import datetime
 import os
 
 stats = Blueprint(__name__, "stats")
-
+season = str(get_season_year())
 
 @stats.route("/", methods=["GET", "POST"])
 def players():
     original = str(request.args.get("id"))
-    year = "2022"
+    year = season
     df = ""
     stat = ""
     team = None
@@ -29,7 +30,7 @@ def players():
     if original != "None":
         file_name = "backend/data/" + original + year + ".csv"
 
-        if year == "2022":
+        if year == season:
             file_time = time.ctime(os.path.getmtime(file_name)).split()
             now = time.asctime(time.localtime()).split()
             if now[2] != file_time[2]:
@@ -139,7 +140,8 @@ def player_plots():
 def teams():
     file_name = str(request.args.get("id"))
     if file_name == "None":
-        file_name = "schedule_remaining.png"
+        file_name = "schedule_remaining_"
+    file_name += season+".png"
 
     src = find_in_data_folder("EPA/" + file_name)
     # Copies file into static folder if it isn't already in there

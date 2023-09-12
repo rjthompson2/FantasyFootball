@@ -10,8 +10,8 @@ import backend.epa.main as epa
 import requests
 
 
-def main():
-    schedule_epa = epa.epa_schedule([2023])
+def main(years):
+    schedule_epa = epa.epa_schedule(years)
 
     plt.style.use("ggplot")
 
@@ -74,7 +74,10 @@ def main():
         )
 
     ax.set_title("Offense EPA and Defense EPA", fontsize=20)
-    plt.savefig(find_in_data_folder("EPA/schedule_remaining.png"))
+    year_duration = str(years[0])
+    if len(years) > 1:
+        year_duration = year_duration+"-"+str(years[-1])
+    plt.savefig(find_in_data_folder("EPA/schedule_remaining_"+year_duration+".png"))
 
 
 def plot_epa(
@@ -164,7 +167,7 @@ def plot_epa(
 
 
 def make_all(years):
-    main()
+    main(years)
 
     epa_df = epa.get_rush_pass_epa(years)
     year_duration = str(years[0])
