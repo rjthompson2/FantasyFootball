@@ -135,23 +135,24 @@ def get_opponent(team, schedule):
 
 def opponent_epa(team, schedule, epa_df):
     opponent = get_opponent(team, schedule)
-    epa_opponent = epa_df.reset_index().rename(columns={"index": "opp_team"})
+    epa_opponent = epa_df.reset_index().rename(columns={"posteam": "opp_team"})
+    opponent = opponent.merge(epa_opponent, on="opp_team")
+    opponent = opponent.loc[:, ["week", "opp_team", "offense_epa/play", "defense_epa/play"]]
+    opponent = opponent.sort_values(by="week")
     return (
-        opponent.merge(epa_opponent, on="opp_team")
-        .loc[:, ["week", "opp_team", "offense_epa/play", "defense_epa/play"]]
-        .sort_values(by="week")
+        opponent
     )
 
 
 def past_future_opp_epa(team, schedule, epa_df, weeks_played):
     opponent_epa_df = opponent_epa(team, schedule, epa_df)
-    past_games = (
-        opponent_epa_df[opponent_epa_df["week"] <= weeks_played]
+    future_games = (
+        opponent_epa_df[opponent_epa_df["week"] > weeks_played]
         .loc[:, ["offense_epa/play", "defense_epa/play"]]
         .mean()
     )
-    future_games = (
-        opponent_epa_df[opponent_epa_df["week"] > weeks_played]
+    past_games = (
+        opponent_epa_df[opponent_epa_df["week"] <= weeks_played]
         .loc[:, ["offense_epa/play", "defense_epa/play"]]
         .mean()
     )
