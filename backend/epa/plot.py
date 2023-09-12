@@ -167,9 +167,12 @@ def make_all(years):
     main()
 
     epa_df = epa.get_rush_pass_epa(years)
+    year_duration = str(years[0])
+    if len(years) > 1:
+        year_duration = year_duration+"-"+str(years[-1])
     plot_epa(
         epa_df,
-        name="EPA/epa_defense_"+str(years[0])+"-"+str(years[-1])+".png",
+        name="EPA/epa_defense_"+year_duration+".png",
         columns=["defense_rush_epa/play", "defense_pass_epa/play"],
         annotations=[
             "Worse Passing Defense",
@@ -181,7 +184,7 @@ def make_all(years):
     )
     plot_epa(
         epa_df,
-        name="EPA/epa_offense_"+str(years[0])+"-"+str(years[-1])+".png",
+        name="EPA/epa_offense_"+year_duration+".png",
         columns=["offense_rush_epa/play", "offense_pass_epa/play"],
         annotations=[
             "Better Rushing Offense",
@@ -195,7 +198,7 @@ def make_all(years):
     epa_df = epa.schedule_adjusted_epa(years)
     plot_epa(
         epa_df,
-        name="EPA/sched_adj_epa_defense_"+str(years[0])+"-"+str(years[-1])+".png",
+        name="EPA/sched_adj_epa_defense_"+year_duration+".png",
         columns=["defense_rush_epa/play", "defense_pass_epa/play"],
         annotations=[
             "Worse Passing Defense",
@@ -207,7 +210,7 @@ def make_all(years):
     )
     plot_epa(
         epa_df,
-        name="EPA/sched_adj_epa_offense_"+str(years[0])+"-"+str(years[-1])+".png",
+        name="EPA/sched_adj_epa_offense_"+year_duration+".png",
         columns=["offense_rush_epa/play", "offense_pass_epa/play"],
         annotations=[
             "Better Rushing Offense",
