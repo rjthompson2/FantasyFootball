@@ -145,7 +145,7 @@ def opportunity(df: pd.DataFrame) -> pd.DataFrame:
 
 
 ################################################
-# TODO overlap with other functions, make generic
+# TODO overlaps with other functions, make generic
 def flex_wopr(df: pd.DataFrame) -> pd.DataFrame:
     if df.empty:
         raise Exception("DataFrame Empty")
@@ -182,7 +182,7 @@ def flex_wopr(df: pd.DataFrame) -> pd.DataFrame:
         (rec_df["air_yards_player"] / rec_df["air_yards_team"]) * 100, 2
     )
     rec_df = (
-        rec_df.groupby(["receiver_player_id"], as_index=False)
+        rec_df.groupby(["receiver_player_id", "posteam", "game_id"], as_index=False)
         .mean()
         .sort_values(by="raw_rec_fpts", ascending=False)
     )
@@ -296,8 +296,9 @@ def rb_share(df: pd.DataFrame) -> pd.DataFrame:
     rush_df["rushing_yards_share"] = round(
         (rush_df["rushing_yards_player"] / rush_df["rushing_yards_team"]) * 100, 2
     )
+
     rush_df = (
-        rush_df.groupby(["rusher_player_id"], as_index=False)
+        rush_df.groupby(["rusher_player_id", "posteam", "game_id"], as_index=False)
         .mean()
         .sort_values(by="raw_rush_fpts", ascending=False)
     )
@@ -329,7 +330,7 @@ def rb_share(df: pd.DataFrame) -> pd.DataFrame:
             redzone_look=lambda x: x.rush_loc <= 10,
             greenzone_look=lambda x: x.rush_loc <= 5,
         )
-        .groupby("rusher_player_id", as_index=False)["redzone_look", "greenzone_look"]
+        .groupby("rusher_player_id", as_index=False)[["redzone_look", "greenzone_look"]]
         .sum()
         .sort_values(by="redzone_look", ascending=False)
         .rename(
@@ -405,7 +406,7 @@ def df_combine(
     final_df = final_df[final_df["PLAYER"].notna()]
     final_df[merge_values] = final_df[merge_values].replace({"0": np.nan, 0: np.nan})
 
-    final_df["AVG"] = final_df.mean(axis=1)
+    final_df["AVG"] = final_df.mean(axis=1, numeric_only=True)
     return final_df
 
 

@@ -98,9 +98,9 @@ def build(data_list, player_type, value, final_type=["avg"]):
 
     final_df = delta_df.copy()
     if "avg" in final_type:
-        final_df["AVG"] = delta_df.mean(axis=1)
+        final_df["AVG"] = delta_df.mean(axis=1, numeric_only=True)
     if "total" in final_type:
-        final_df["TOTAL"] = delta_df.sum(axis=1)
+        final_df["TOTAL"] = delta_df.sum(axis=1, numeric_only=True)
     return final_df
 
 
