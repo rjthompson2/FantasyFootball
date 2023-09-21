@@ -399,8 +399,11 @@ def df_combine(
         df_sum = check_list(player, df1, df2, on, merge_values, i)
         for column in on:
             df_sum[column] = df1[column][i]
+        if type(df_sum) == pd.core.series.Series:
+            df_sum = pd.DataFrame(data=[list(df_sum.values)], columns=list(df_sum.index)) #df_sum.to_frame()
+        
         # final_df = final_df.append(df_sum) #DEPRECATED
-        final_df = pd.concat([final_df, df_sum])
+        final_df = pd.concat([df_sum, final_df])
 
     final_df = final_df[on + merge_values]
     final_df = final_df[final_df["PLAYER"].notna()]
