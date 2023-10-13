@@ -34,7 +34,10 @@ def players():
             file_time = time.ctime(os.path.getmtime(file_name)).split()
             now = time.asctime(time.localtime()).split()
             if now[2] != file_time[2]:
-                CollectPlayerDataTimeSeries.main(int(year))
+                try:
+                    CollectPlayerDataTimeSeries.main(int(year))
+                except AttributeError:
+                    print("Could not connect")
 
         df = (
             pd.read_csv(file_name)

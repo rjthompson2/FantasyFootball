@@ -92,7 +92,6 @@ def epa_schedule(year):
 
     return schedule_epa
 
-
 def schedule_adjusted_epa(year):
     df = nfl.import_pbp_data(years=year)
     epa_df = get_rush_pass_epa(year, df)
@@ -179,3 +178,49 @@ def delta_epa_defense(team, schedule, epa_df, weeks_played):
     ]
     defense_delta = defense_future - defense_past
     return defense_delta
+
+
+
+def epa_schedule_championship(year):
+    # https://www.fantasyfootballdatapros.com/blog/intermediate/26 source
+    epa_df = get_epa(year)
+
+    schedule = nfl.import_schedules(years=year)
+
+    team = []
+    offense_delta = []
+    defense_delta = []
+
+    for i in epa_df.index:
+        team.append(i)
+        offense = epa_df['offense_epa/play'].loc[i]
+        offense_delta.append(offense)
+        defense = epa_defense(i, schedule, epa_df, 14)
+        defense_delta.append(defense[-1])
+
+    schedule_epa = pd.DataFrame()
+    schedule_epa["Team"] = team
+    schedule_epa["Offense_EPA"] = offense_delta
+    schedule_epa["Defense_EPA_Delta"] = defense_delta
+
+    return schedule_epa
+
+
+def epa_offense(team, schedule, epa_df, weeks_played):
+    offense_past = past_future_opp_epa(team, schedule, epa_df, weeks_played)[0][
+        "offense_epa/play"
+    ]
+    offense_future = past_future_opp_epa(team, schedule, epa_df, weeks_played)[1][
+        "offense_epa/play"
+    ]
+    return offense_past, offense_future
+
+
+def epa_defense(team, schedule, epa_df, weeks_played):
+    defense_past = past_future_opp_epa(team, schedule, epa_df, weeks_played)[0][
+        "defense_epa/play"
+    ]
+    defense_future = past_future_opp_epa(team, schedule, epa_df, weeks_played)[1][
+        "defense_epa/play"
+    ]
+    return defense_past, defense_future
