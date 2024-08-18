@@ -43,7 +43,7 @@ class FantasyScraper(DynamicScraper):
     def login(self) -> None:
         """Logs in given the information in UserInfo"""
         self.driver.find_element(
-            "xpath", '//*[@id="connecting"]/div/div/div[2]/div[3]/a'
+            "xpath", '//*[@id="connecting"]/div/div/div[2]/a'
         ).click()  # Clicks to be taken to the login
 
         # Enters the username
@@ -64,13 +64,16 @@ class FantasyScraper(DynamicScraper):
             self.driver.find_element("xpath", '//*[@id="login-signin"]').click()
 
         # Clicks out of the popup
-        element = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, '//*[@id="modalContent"]/a'))
-        )
-        element.click()
+        try:
+            element = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.XPATH, '//*[@id="modalContent"]/div[1]/button/svg/path'))
+            )
+            element.click()
         # self.driver.find_element(
         #     "xpath", '//*[@id="modalContent"]/a'
         # ).click()  # Clicks out of the popup
+        except:
+            print("Automation not working. Need to manually exit the tiny X next time")
 
     def get_user(self) -> str:
         """Gets the username and password from UserInfo"""

@@ -28,9 +28,10 @@ html5lib = "*"
 sqlalchemy = "*"
 numpy = "*"
 scipy = "*"
-webdriver-manager = "*"
 celery = "*"
 fantasyfootball = {path = "."}
+chromedriver-autoinstaller = "*"
+webdriver-manager = "*"
 
 [dev-packages]
 

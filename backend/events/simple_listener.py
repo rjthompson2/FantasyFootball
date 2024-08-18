@@ -39,6 +39,7 @@ async def listen():
                 if "RunDraft" in line.split():
                     print("Running...")
                     values = line.split()
+                    print(values[1], int(values[2]))
                     rundraft_webapp(values[1], int(values[2]))
             
 

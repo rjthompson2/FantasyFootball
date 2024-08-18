@@ -179,35 +179,53 @@ class CBSCleaner:
         for pos_list in data:
             if pos_list[0] == "Running":
                 data_list.append(self.data_cleaner(pos_list, [52, 12, 14], "RB"))
-            elif pos_list[0] == "Passing":
-                data_list.append(self.data_cleaner(pos_list, [54, 13, 15], "QB"))
+            elif pos_list[0] == "Quarterbacks":
+                data_list.append(self.data_cleaner(pos_list, [55, 13, 15], "QB"))
             elif pos_list[0] == "Tight":
                 data_list.append(self.data_cleaner(pos_list, [37, 8, 10], "TE"))
-            elif pos_list[0] == "Wide":
+            elif pos_list[0] == "Receivers":
                 data_list.append(self.data_cleaner(pos_list, [52, 12, 14], "WR"))
-            elif pos_list[0] == "FG":
-                data_list.append(self.data_cleaner(pos_list, [69, 16, 18], "K"))
+            elif pos_list[0] == "Kickers":
+                data_list.append(self.data_cleaner(pos_list, [90, 16, 18], "K"))
             elif pos_list[0] == "Defense/Special":
                 data_list.append(self.data_cleaner(pos_list, [56, 13, 15], "DST"))
         return pd.concat(data_list)
 
     def data_cleaner(self, data: list, prunes: list, position: str) -> pd.DataFrame:
+        # Separates data from value names
         columns = data[:prunes[0]]
         data = data[prunes[0]:]
+
+        # Regex to search for player names
         regexp = re.compile(r'[A-Z]')
+
         players = []
         fpts = []
         while data != []:
             j = 0
             names = []
-            while regexp.search(data[j][0]):
-                names.append(data[j])
-                j+=1
+
+            # Loops through looking for full names, stopping at any numbers
+            while j < len(data) and regexp.search(data[j][0]):
+                # Prevents other data from getting into name
+                if data[j] == position or data[j] == "FB":
+                    j += 2
+                else:
+                    names.append(data[j])
+                    j+=1
+
+            # Special instructions depending on player type
             if position != "DST":
                players.append((" ".join([name for name in names[len(names)//2:]])))
             else:
                 players.append(team_name_changes[" ".join([name for name in names])])
+            
+            # Removes names we collected from data
             data = data[j:]
-            fpts.append(data[prunes[1]])
+
+            # Gets the Fantasy Points from the data
+            fpts.append(float(data[prunes[1]]))
+
+            # Starts at the next player
             data = data[prunes[2]:]
-        return pd.DataFrame({"PLAYERS": players, "POS":[position for i in range(len(players))], "FPTS":fpts})
+        return pd.DataFrame({"PLAYER": players, "POS":[position for i in range(len(players))], "FPTS":fpts})

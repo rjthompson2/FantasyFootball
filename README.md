@@ -33,3 +33,14 @@ add decision trees after adding events
 
 allow run drafter to draft players based on user's inputs
 
+# How to run
+pipenv shell
+
+Then run all tests to ensure that the code works.
+
+Next, collect all data:
+python backend/CollectData.py
+
+Finally, run the frontend:
+python frontend/run_page.py
+

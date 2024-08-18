@@ -81,36 +81,36 @@ class DraftConnector:
                 + str(self.year)
                 + "/restofseason/projections/ppr/"
         )
-        self.cbs_cleaner = CBSCleaner()
+        self.cbs_cleaner = CBSCleaner() 
         self.fpts_cleaner = FPTSCleaner()
-        espn_headers = {
-            "Host": "fantasy.espn.com",
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0",
-            "Accept": "application/json",
-            "Accept-Language": "en-US,en;q=0.5",
-            "Accept-Encoding": "gzip, deflate, br",
-            "X-Fantasy-Source": "kona",
-            "X-Fantasy-Filter": '{"players":{"filterStatsForExternalIds":{"value":['
-                + str(self.year-1)
-                + ","
-                + str(self.year)
-                + ']},"filterSlotIds":{"value":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,23,24]},"filterStatsForSourceIds":{"value":[0,1]},"useFullProjectionTable":{"value":true},"sortAppliedStatTotal":{"sortAsc":false,"sortPriority":3,"value":"102022"},"sortDraftRanks":{"sortPriority":2,"sortAsc":true,"value":"PPR"},"sortPercOwned":{"sortPriority":4,"sortAsc":false},"limit":1000,"filterRanksForSlotIds":{"value":[0,2,4,6,17,16]},'+
-                '"filterStatsForTopScoringPeriodIds":{"value":2,"additionalValue":["00'+str(self.year)+'","10'+str(self.year)+'","00'+str(self.year-1)+'","02'+str(self.year)+'"]}}}',
-            "X-Fantasy-Platform": "kona-PROD-6daa0c838b3e2ff0192c0d7d1d24be52e5811609",
-            "DNT": "1",
-            "Connection": "keep-alive",
-            "Referer": "https://fantasy.espn.com/football/players/projections",
-            "Cookie": "region=ccpa; _dcf=1; SWID=fd942b9e-091c-4601-94fe-d4adb5d81803; UNID=7fc05b27-5071-4006-9a34-e03d4b7561ce; UNID=7fc05b27-5071-4006-9a34-e03d4b7561ce",
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "same-origin",
-            "If-None-Match": 'W/"0e4940690e8c2869b89702c401e93ff75"',
-        }
-        self.espn = APICollector(
-            url="https://fantasy.espn.com/apis/v3/games/ffl/seasons/"+str(self.year)+"/segments/0/leaguedefaults/3?view=kona_player_info",
-            params=espn_headers,
-        )
-        self.espn_cleaner = ESPNCleaner()
+        # espn_headers = {
+        #     "Host": "fantasy.espn.com",
+        #     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0",
+        #     "Accept": "application/json",
+        #     "Accept-Language": "en-US,en;q=0.5",
+        #     "Accept-Encoding": "gzip, deflate, br",
+        #     "X-Fantasy-Source": "kona",
+        #     "X-Fantasy-Filter": '{"players":{"filterStatsForExternalIds":{"value":['
+        #         + str(self.year-1)
+        #         + ","
+        #         + str(self.year)
+        #         + ']},"filterSlotIds":{"value":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,23,24]},"filterStatsForSourceIds":{"value":[0,1]},"useFullProjectionTable":{"value":true},"sortAppliedStatTotal":{"sortAsc":false,"sortPriority":3,"value":"102022"},"sortDraftRanks":{"sortPriority":2,"sortAsc":true,"value":"PPR"},"sortPercOwned":{"sortPriority":4,"sortAsc":false},"limit":1000,"filterRanksForSlotIds":{"value":[0,2,4,6,17,16]},'+
+        #         '"filterStatsForTopScoringPeriodIds":{"value":2,"additionalValue":["00'+str(self.year)+'","10'+str(self.year)+'","00'+str(self.year-1)+'","02'+str(self.year)+'"]}}}',
+        #     "X-Fantasy-Platform": "kona-PROD-6daa0c838b3e2ff0192c0d7d1d24be52e5811609",
+        #     "DNT": "1",
+        #     "Connection": "keep-alive",
+        #     "Referer": "https://fantasy.espn.com/football/players/projections",
+        #     "Cookie": "region=ccpa; _dcf=1; SWID=fd942b9e-091c-4601-94fe-d4adb5d81803; UNID=7fc05b27-5071-4006-9a34-e03d4b7561ce; UNID=7fc05b27-5071-4006-9a34-e03d4b7561ce",
+        #     "Sec-Fetch-Dest": "empty",
+        #     "Sec-Fetch-Mode": "cors",
+        #     "Sec-Fetch-Site": "same-origin",
+        #     "If-None-Match": 'W/"0e4940690e8c2869b89702c401e93ff75"',
+        # }
+        # self.espn = APICollector(
+        #     url="https://fantasy.espn.com/apis/v3/games/ffl/seasons/"+str(self.year)+"/segments/0/leaguedefaults/3?view=kona_player_info",
+        #     params=espn_headers,
+        # )
+        # self.espn_cleaner = ESPNCleaner() #TODO website deprecated need to grab new data/deprecate
 
     def collect_data(
         self,
@@ -120,23 +120,23 @@ class DraftConnector:
         injury_df = self.idc.collect_data()
         fpts_df = self.fdc.collect_data()
         cbs_data = self.cbs.collect_data()
-        espn_data = self.espn.collect_data()
-        return adp_df, ecr_df, injury_df, fpts_df, cbs_data, espn_data
+        # espn_data = self.espn.collect_data()
+        return adp_df, ecr_df, injury_df, fpts_df, cbs_data#, espn_data
 
     def run(self) -> None:
         # Gets all data
-        adp_df, ecr_df, injury_df, fpts_df, cbs_data, espn_data = self.collect_data()
+        adp_df, ecr_df, injury_df, fpts_df, cbs_data = self.collect_data()#, espn_data = self.collect_data()
 
         # Cleans all data
         adp_df = self.adp_cleaner.clean_data(adp_df)
         ecr_df = self.ecr_cleaner.clean_data(ecr_df)
         fpts_df = self.fpts_cleaner.clean_data(fpts_df)
         cbs_df = self.cbs_cleaner.clean_data(cbs_data)
-        espn_df = self.espn_cleaner.clean_data(espn_data)
+        # espn_df = self.espn_cleaner.clean_data(espn_data)
         injury_df = self.injury_cleaner.clean_data(injury_df)
 
         # Merges fantasy point prediction data into singular df
-        fpts_df = pd.concat([fpts_df, cbs_df, espn_df])
+        fpts_df = pd.concat([fpts_df, cbs_df])#, espn_df])
         
         #Cleans names for bootstrapping
         fpts_df = clean_name(fpts_df)

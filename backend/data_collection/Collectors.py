@@ -125,7 +125,7 @@ class CBSDataCollector(MultiProssCollector):
 
     def get_site_data(self, position: str) -> list:
         ws = RegexWebScraper()
-        data = ws.new_collect(self.site.format(position=position.value.upper()), prune=[354,-61])
+        data = ws.new_collect(self.site.format(position=position.value.upper()), prune=[410,-122])
         return data
 
 

@@ -16,7 +16,10 @@ LOG = logging.getLogger(__name__)
 def build_players(df: pd.DataFrame) -> Tuple[dict, dict]:
     replacement_players = {}
     replacement_values = {}
-    values = {"QB": 24, "RB": 48, "WR": 48, "TE": 24}
+
+    # Current League: 1 QB, 2 WR, 2 RB, 1 TE, 2 Flex
+    # Total players: 12
+    values = {"QB": 12, "RB": 48, "WR": 48, "TE": 12}
 
     df_list = [df.loc[df["POS"] == x] for x in list(values.keys())]
 
@@ -65,8 +68,8 @@ def build_drafting_data(df: pd.DataFrame) -> pd.DataFrame:
     df = df.iloc[::-1]  # inverts data
     df = df.loc[~df["Player"].str.contains("Round")]
     df["Player"] = df["Player"].apply(
-        lambda x: re.sub("\.", "", x)
-    )  # removing punctuation
+        lambda x: re.sub("\.|- $", "", x)
+    )  # removing unnecessary punctuation
     df["Player"] = df["Player"].apply(
         lambda x: re.sub("QB$|WR$|RB$|TE$|K$|DEF$", "", x)
     )  # removing positions

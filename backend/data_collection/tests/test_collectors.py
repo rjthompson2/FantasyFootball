@@ -1,5 +1,6 @@
 import pytest
 import logging
+import pandas as pd
 from backend.data_collection.Collectors import (
     Collector,
     FPTSDataCollector,
@@ -165,7 +166,7 @@ class TestCollectors:
         for value in data:
             assert value != []
         new_df = CBSCleaner().clean_data(data)
-        assert new_df != data
+        assert type(new_df) == pd.DataFrame and not new_df.empty
 
     def test_espn_collection(self):
         # original url: https://fantasy.espn.com/football/players/projections
@@ -194,7 +195,7 @@ class TestCollectors:
         }
 
         api = APICollector(
-            url="https://fantasy.espn.com/apis/v3/games/ffl/seasons/2022/segments/0/leaguedefaults/3?view=kona_player_info",
+            url="https://fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leaguedefaults/3?view=kona_player_info",
             params=headers,
         )
         data = api.collect_data()

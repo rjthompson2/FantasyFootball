@@ -26,6 +26,8 @@ def get_bootstrap(fpts_df: pd.DataFrame):
         pool.close()
         pool.join()
         pool.terminate()
+    # for player in players:
+    #     data.append(mp_bootstrap(player, fpts_df))
     return data
 
 
@@ -34,6 +36,7 @@ def mp_bootstrap(player: str, fpts_df: pd.DataFrame):
     new_df = new_df.drop(columns=["PLAYER", "POS"])
     new_df = new_df.dropna(axis=1, how="all").dropna()
     
+    # More than length 1: everything worked
     if len(new_df.values.tolist()) > 1:
         new_list = [new_df.values.tolist()]
         output = calculate_ceiling_floor(
@@ -41,10 +44,14 @@ def mp_bootstrap(player: str, fpts_df: pd.DataFrame):
         )
         return output
     
+    # Less than length 1: no data
     elif len(new_df.values.tolist()) < 1:
         return None
 
     mean = new_df.values.tolist()[0][0]
+
+
+    # Exactly length 1: not enough data to produce ceiling and floor
     if mean != 0:
         return {
             "player": player,

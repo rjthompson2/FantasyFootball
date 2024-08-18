@@ -95,8 +95,8 @@ def championship_schedule(years):
     # plot a vertical and horixontal line to create separate quadrants
     ax.vlines(0, -0.2, 0.2, color="#fcc331", alpha=0.7, lw=4, linestyles="dashed")
     ax.hlines(0, -0.2, 0.2, color="#fcc331", alpha=0.7, lw=4, linestyles="dashed")
-    ax.set_ylim(-0.1, 0.1)
-    ax.set_xlim(-0.1, 0.1)
+    ax.set_ylim(-0.25, 0.25)
+    ax.set_xlim(-0.25, 0.25)
     ax.set_xlabel("Offense_EPA", fontsize=20)
     ax.set_ylabel("Defense_EPA_Delta", fontsize=20)
     plt.xticks(fontsize=20)

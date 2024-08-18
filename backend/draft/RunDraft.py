@@ -9,6 +9,7 @@ import pandas as pd
 import time
 import logging
 import shutil
+import selenium
 
 
 LOG = logging.getLogger(__name__)
@@ -60,7 +61,8 @@ def rundraft_webapp(url: str, wait_time=30) -> None:
     except WebDriverException:
         update_chrome_driver()
         wp.start(url)
-    except selenium.common.exceptions.InvalidArgumentException:
+    except selenium.common.exceptions.InvalidArgumentException as e:
+        print(e)
         wp.quit()
         raise selenium.common.exceptions.InvalidArgumentException
     wp.check_login()
