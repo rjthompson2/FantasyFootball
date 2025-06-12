@@ -15,27 +15,28 @@ def error_calculator(
 
     for column in on:
         # subtract all rows, get the absolute value, sums them, then gets the total, and averages it
-        difference_df = round(abs(merged_dfs[on + "_x"].sub(merged_dfs[on + "_y"])), 2)
+        difference_df = round(abs(merged_dfs[column + "_x"].sub(merged_dfs[column + "_y"])), 2)
         # subtract all rows, get the absolute value, divide by original, multiply by 100, then gets the total, and averages it
         accuracy_df = round(
             100
-            - abs(merged_dfs[on + "_x"].sub(merged_dfs[on + "_y"]))
-            .div(merged_dfs[on + "_x"])
+            - abs(merged_dfs[column + "_x"].sub(merged_dfs[column + "_y"]))
+            .div(merged_dfs[column + "_x"])
             .mul(100),
             2,
         )
         accuracy_df = accuracy_df.apply(lambda x: 0 if x < 0 or x > 100 else x)
 
-        diff_df[on + "Numeric"] = difference_df
-        diff_df[on + "Accuracy"] = accuracy_df
+        diff_df[column + "Numeric"] = difference_df
+        diff_df[column + "Accuracy"] = accuracy_df
         # difference["STD"] = math.sqrt(actual - prediction**2/len(total))
 
-        for item in keep:
-            if item not in diff_df:
-                if item == on:
-                    diff_df["Expected"] = merged_dfs[item + "_y"]  # prediction FPTS
-                    diff_df["Actual"] = merged_dfs[item + "_x"]  # actual FPTS
-                else:
-                    diff_df[item] = merged_dfs[item]
+        if keep and len(keep) > 0:
+            for item in keep:
+                if item not in diff_df:
+                    if item == column:
+                        diff_df["Expected"] = merged_dfs[item + "_y"]  # prediction FPTS
+                        diff_df["Actual"] = merged_dfs[item + "_x"]  # actual FPTS
+                    else:
+                        diff_df[item] = merged_dfs[item]
 
     return diff_df

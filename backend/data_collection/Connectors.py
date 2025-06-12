@@ -163,6 +163,9 @@ class DraftConnector:
         # Adds injury data to the final dataframe
         df = df.merge(injury_df, on="PLAYER", how="outer")
 
+        # Order by VOR
+        df = df.sort_values(by='ECR', ascending=True)
+
         self.load(df)
         # self.load_sql(df)
 

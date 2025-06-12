@@ -6,7 +6,6 @@ import streamlit as st
 import os
 
 #TODO create cache for sql
-#TODO find way to update data that works
 @st.cache_data
 def get_data(path):
     # collect data if not available

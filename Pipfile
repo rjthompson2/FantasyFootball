@@ -32,6 +32,7 @@ celery = "*"
 fantasyfootball = {path = "."}
 chromedriver-autoinstaller = "*"
 webdriver-manager = "*"
+cython = "*"
 
 [dev-packages]
 

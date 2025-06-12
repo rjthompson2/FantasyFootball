@@ -1,12 +1,15 @@
 from backend.data_collection.utils import get_season_year
+from backend.events.simple_listener import write
 from backend.utils import find_in_data_folder
 from backend import CollectDraftData
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+import asyncio
 import os
 
 
+#TODO find way to update data that works
 # @st.cache_resource
 # def get_data(path):
 #     df = pd.read_csv(path).copy()

@@ -166,6 +166,7 @@ class TestCollectors:
         for value in data:
             assert value != []
         new_df = CBSCleaner().clean_data(data)
+        print(1)
         assert type(new_df) == pd.DataFrame and not new_df.empty
 
     def test_espn_collection(self):
@@ -195,7 +196,8 @@ class TestCollectors:
         }
 
         api = APICollector(
-            url="https://fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leaguedefaults/3?view=kona_player_info",
+            url="https://fantasy.espn.com/apis/v3/games/ffl/seasons/2025/segments/0/leaguedefaults/3?view=kona_player_info",
+            # url = "https://fantasy.espn.com/football/players/projections",
             params=headers,
         )
         data = api.collect_data()
@@ -214,6 +216,7 @@ class TestCollectors:
         except WebDriverException:
             update_chrome_driver()
             df = idc.collect_data()
+        print(df)
 
         assert not df.empty
         new_df = InjuryCleaner().clean_data(df)

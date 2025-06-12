@@ -1,0 +1,40 @@
+{
+    "manifest_version": 3,
+    "name": "Fantasy Football Draft Extension",
+    "description": "Leverage data insights to help you in your draft",
+    "version": "1.0.0",
+    "icons": {
+        "16": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["update-players.js"],
+            "run_at": "document_idle"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["index.html"],
+            "matches": ["<all_urls>"]
+        }
+    ],
+    "background": {
+        "service_worker": "service-worker.js",
+        "players": "update-players.js",
+        "type": "module"
+    },
+    "permissions": [
+        "activeTab",
+        "scripting"
+    ],
+    "action": {
+        "default_title": "Action Button"
+    },
+    "host_permissions": [
+        "http://*/*",
+        "https://*/*"
+    ]
+}

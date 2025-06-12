@@ -35,6 +35,7 @@ def main(args: list):
     except WebDriverException:
         update_chrome_driver()
         wp.start(url)
+
     wp.check_login()
     if pos == 1:
         drft.recommend()
@@ -53,9 +54,8 @@ def main(args: list):
     wp.quit()
 
 
-def rundraft_webapp(url: str, wait_time=30) -> None:
+def rundraft_webapp(url: str, wait_time=30, wp=FantasyScraper()) -> None:
     # Loading from the webpage
-    wp = FantasyScraper()
     try:
         wp.start(url)
     except WebDriverException:
@@ -82,8 +82,10 @@ def rundraft_webapp(url: str, wait_time=30) -> None:
     if pos == 1:
         drft.recommend()
         time.sleep(wait_time)
-    while current_round < total_teams * 15:
-        wp.navigate_to_data()
+    
+    wp.navigate_to_data()
+    total_rounds = 15
+    while current_round < total_teams * total_rounds:
         df = wp.collect("results-by-round")
         if len(df.index) != 0:
             df.columns = ["Pick", "Player", "Team", "XRank"]

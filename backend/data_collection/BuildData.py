@@ -19,7 +19,7 @@ def build_players(df: pd.DataFrame) -> Tuple[dict, dict]:
 
     # Current League: 1 QB, 2 WR, 2 RB, 1 TE, 2 Flex
     # Total players: 12
-    values = {"QB": 12, "RB": 48, "WR": 48, "TE": 12}
+    values = {"QB": 12, "RB": 36, "WR": 36, "TE": 12}
 
     df_list = [df.loc[df["POS"] == x] for x in list(values.keys())]
 
@@ -68,7 +68,7 @@ def build_drafting_data(df: pd.DataFrame) -> pd.DataFrame:
     df = df.iloc[::-1]  # inverts data
     df = df.loc[~df["Player"].str.contains("Round")]
     df["Player"] = df["Player"].apply(
-        lambda x: re.sub("\.|- $", "", x)
+        lambda x: re.sub("\.|- ", "", x)
     )  # removing unnecessary punctuation
     df["Player"] = df["Player"].apply(
         lambda x: re.sub("QB$|WR$|RB$|TE$|K$|DEF$", "", x)
@@ -355,7 +355,7 @@ def rb_share(df: pd.DataFrame) -> pd.DataFrame:
         columns={"rusher_player_name": "Rusher", "posteam": "Team"}
     )
 
-    # merging total FPTS scored in to our original df
+    # merging total FPTS scored into our original df
     rush_df = (
         rush_df.merge(
             df.groupby(["rusher_player_id"], as_index=False)[
@@ -405,7 +405,6 @@ def df_combine(
         if type(df_sum) == pd.core.series.Series:
             df_sum = pd.DataFrame(data=[list(df_sum.values)], columns=list(df_sum.index)) #df_sum.to_frame()
         
-        # final_df = final_df.append(df_sum) #DEPRECATED
         final_df = pd.concat([df_sum, final_df])
 
     final_df = final_df[on + merge_values]

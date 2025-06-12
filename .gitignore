@@ -138,3 +138,4 @@ chromedriver
 
 # Keys
 *.perm
+*.pkl

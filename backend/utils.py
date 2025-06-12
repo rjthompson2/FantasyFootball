@@ -1,8 +1,11 @@
 import os
 import re
+import shutil
 import logging
 import pandas as pd
 from enum import Enum
+from backend.data_collection.utils import get_season_year
+import shutil
 
 
 LOG = logging.getLogger(__name__)
@@ -30,6 +33,13 @@ def find_in_data_folder(file_path: str) -> str:
     path = find_parent_dir("FantasyFootball")
     return f"{path}/backend/data{file_path}"
 
+
+def reset_draft_copy():
+    year = get_season_year()
+    src_path = find_in_data_folder(f"draft_order_{year}.csv")
+    final_path = find_in_data_folder(f"draft_order_{year}_copy.csv")
+    shutil.copyfile(src_path, final_path)
+    
 
 class Teams(str, Enum):
     ARI = "ARI"

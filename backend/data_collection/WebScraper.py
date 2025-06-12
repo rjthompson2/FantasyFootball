@@ -117,11 +117,13 @@ class DynamicScraper(ABC):
 
     driver = None
 
-    def start(self, url, headless=False):
+    def start(self, url, headless=False, debug=False):
         """Opens a chrome browser and connects to the url"""
         opts = Options()
         if headless:
             opts.add_argument("--headless")
+        if debug:
+            opts.add_experimental_option("detach", True)
         opts.add_argument("--incognito")
         self.driver = webdriver.Chrome(
             options=opts,
