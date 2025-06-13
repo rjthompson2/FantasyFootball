@@ -39,7 +39,7 @@ So I decided to make an algorithm to win. I needed something to guide me when pi
 
 Mini-update on seasons so far:
 
-2020 - Last (before the code)
+2020 - Last (before the code)\n
 2021 - 3rd
 2022 - 3rd
 2023 - 2nd
