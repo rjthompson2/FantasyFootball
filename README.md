@@ -12,8 +12,11 @@ python backend/CollectData.py
 
 Next, download the chrome extension found in 'frontend/chrome-extension'.
 
-Finally, run the frontend:
+Next, run the frontend:
 python frontend/run_page.py
+
+Finally, click the chrome extension (you may need to press it twice).
+When you are in the draft for yahoo, make sure you click 'Draft Results,' this will allow  the chrome extension to read who has already been drafted. You may also need to click the 'Update' button in the side carrot on your chrome extension window for it to properly update streamlit.
 
 
 If you would like to add your own custom rankings, do the following:
