@@ -139,3 +139,7 @@ chromedriver
 # Keys
 *.perm
 *.pkl
+
+#Dev
+dev.*
+*/sandbox/*
