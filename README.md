@@ -1,4 +1,8 @@
 # How to run
+If it is your first time running, you will need to start by getting the directory of your folder and inputting the following command:
+pipenv install
+
+Every other time you run, input the following commands:
 pipenv shell
 
 Then run all tests to ensure that the code works.
