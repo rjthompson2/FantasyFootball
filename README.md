@@ -38,11 +38,17 @@ That slight will not go unpunished.
 So I decided to make an algorithm to win. I needed something to guide me when picking players during the draft, who to start/sit, and who to trade. The next season (2021) I got third place, but was in first until the finals. My system won me great trades such as getting Johnathan Taylor for Ezekiel Elliot week 3. While I did not win first, this showed improvement and encouraged me to keep working on it.
 
 Mini-update on seasons so far:
+
 2020 - Last (before the code)
+
 2021 - 3rd
+
 2022 - 3rd
+
 2023 - 2nd
+
 2024 - 1st
+
 
 # 2021 Trade
 During the 2021 season, I implemented an opportunity-based system for trading running backs (RBs). The idea is a common one in Fantasy Football. You should look at the amount of opportunities a player gets. While actual points and more descriptive statistics are better for describing what a player did. Opportunity statistics can tell us what could have been.
