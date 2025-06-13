@@ -1,21 +1,21 @@
 # How to run
-If it is your first time running, you will need to start by getting the directory of your folder and inputting the following command:
+If it is your first time running, you will need to start by getting the directory of your folder and inputting the following command:  
 pipenv install
 
-Every other time you run, input the following commands:
+Every other time you run, input the following commands:  
 pipenv shell
 
 Then run all tests to ensure that the code works.
 
-Next, collect all data:
+Next, collect all data:  
 python backend/CollectData.py
 
 Next, download the chrome extension found in 'frontend/chrome-extension'.
 
-Next, run the frontend:
+Next, run the frontend:  
 python frontend/run_page.py
 
-Finally, click the chrome extension (you may need to press it twice).
+Finally, click the chrome extension (you may need to press it twice).  
 When you are in the draft for yahoo, make sure you click 'Draft Results,' this will allow  the chrome extension to read who has already been drafted. You may also need to click the 'Update' button in the side carrot on your chrome extension window for it to properly update streamlit.
 
 Pressing slightly above the window and dragging will allow you to move the screen.
