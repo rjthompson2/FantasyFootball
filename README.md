@@ -18,6 +18,8 @@ python frontend/run_page.py
 Finally, click the chrome extension (you may need to press it twice).
 When you are in the draft for yahoo, make sure you click 'Draft Results,' this will allow  the chrome extension to read who has already been drafted. You may also need to click the 'Update' button in the side carrot on your chrome extension window for it to properly update streamlit.
 
+Pressing slightly above the window and dragging will allow you to move the screen.
+
 
 If you would like to add your own custom rankings, do the following:
 1. Ensure that wherever you have your player names stored in your CSV, the column is named "PLAYER"
