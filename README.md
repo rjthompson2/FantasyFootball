@@ -1,3 +1,17 @@
+# How to run
+pipenv shell
+
+Then run all tests to ensure that the code works.
+
+Next, collect all data:
+python backend/CollectData.py
+
+Next, download the chrome extension found in 'frontend/chrome-extension'.
+
+Finally, run the frontend:
+python frontend/run_page.py
+
+
 # FantasyFootball
 I first started watching football and playing Fantasy Football during the 2020 season. I was roommates with 11 other guys in an apartment in SF and needed to play so they could have enough people. It was a $20 dollar buy-in, now up to $100, with a pay structure of 3rd getting their money back, 2nd making some profit and the rest going to 1st place. They also decided to create a punishment for last place and agreed that the 1st place winnings would help pay for any punishment.
 
@@ -17,30 +31,8 @@ All of my league mates, except for one, were telling me that I was being robbed 
 
 The next week Taylor barely beat Elliots 20.3 points by .1 point. After that, it wasn't even close. Week 5 Taylor got my team 31.9 points (The second highest that week). From that week on, Taylor rose to the number 1 RB for the 2021 season. Finally placing in the top 3 after coming dead last a season earlier would not have happened without Johnathan Taylor and advanced analytics.
 
-# TODOs
+# TODOs/Future implementations
 
 accuracy metric for ECR, ADP, and VOR fantasy predictions
 
 normal distribution of recovery time per injury
-
-save to SQL or google sheets instead of CSV
-
-look into argparse package
-
-look into Faust event bus
-
-add decision trees after adding events
-
-allow run drafter to draft players based on user's inputs
-
-# How to run
-pipenv shell
-
-Then run all tests to ensure that the code works.
-
-Next, collect all data:
-python backend/CollectData.py
-
-Finally, run the frontend:
-python frontend/run_page.py
-
