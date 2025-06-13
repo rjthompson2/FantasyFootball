@@ -16,6 +16,12 @@ Finally, run the frontend:
 python frontend/run_page.py
 
 
+If you would like to add your own custom rankings, do the following:
+1. Ensure that wherever you have your player names stored in your CSV, the column is named "PLAYER"
+2. Ensure that all names are properly formatted using either commands -- clean_name_str (for strings) or clean_name (for pandas Dataframes) in backend.data_collection. It would be easiest to convert your csv,  clean_name
+3. Set the file's path to backend/data/draft_order_{year}.csv where {year} is the year when your draft starts
+You should be all set for the next time you run the frontend command!
+
 # FantasyFootball
 I first started watching football and playing Fantasy Football during the 2020 season. I was roommates with 11 other guys in an apartment in SF and needed to play so they could have enough people. It was a $20 dollar buy-in, now up to $100, with a pay structure of 3rd getting their money back, 2nd making some profit and the rest going to 1st place. They also decided to create a punishment for last place and agreed that the 1st place winnings would help pay for any punishment.
 
