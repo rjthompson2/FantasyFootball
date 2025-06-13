@@ -2,6 +2,7 @@ import socket
 import json
 import re
 from backend.data_collection.utils import get_season_year
+from backend.data_collection.utils import clean_name_str
 from backend.utils import find_in_data_folder
 import pandas as pd
 
@@ -35,7 +36,7 @@ def receiver():
                 path = find_in_data_folder(f"draft_order_{year}_copy.csv")
                 df = pd.read_csv(path)
                 for player in players:
-                    if player not in eliminated and df['PLAYER'].isin([player]).any():
+                    if player not in eliminated and df['PLAYER'].isin([clean_name_str(player)]).any():
                         # Need a list of all player frist name and team abbreviated to convert to full name
                         df.drop(df[df['PLAYER'] == player].index, inplace=True)
                         eliminated.append(player)
