@@ -46,13 +46,6 @@ All of my league mates, except for one, were telling me that I was being robbed 
 
 The next week Taylor barely beat Elliots 20.3 points by .1 point. After that, it wasn't even close. Week 5 Taylor got my team 31.9 points (The second highest that week). From that week on, Taylor rose to the number 1 RB for the 2021 season. Finally placing in the top 3 after coming dead last a season earlier would not have happened without Johnathan Taylor and advanced analytics.
 
-Mini-update on seasons so far:
-2020 - Last (before the code)
-2021 - 3rd
-2022 - 3rd
-2023 - 2nd
-2024 - 1st
-
 # TODOs/Future implementations
 
 accuracy metric for ECR, ADP, and VOR fantasy predictions
