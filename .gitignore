@@ -135,6 +135,7 @@ backend/database/database.py
 
 # ChromeDriver
 chromedriver
+LICENSE.*
 
 # Keys
 *.perm
