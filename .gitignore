@@ -144,3 +144,4 @@ LICENSE.*
 #Dev
 dev.*
 sandbox
+/.vscode
