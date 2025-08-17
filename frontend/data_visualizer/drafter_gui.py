@@ -27,6 +27,8 @@ path = find_in_data_folder(f"draft_order_{year}_copy.csv")
 df = pd.read_csv(path).copy()
 df = df.dropna(subset=["POS"])
 
+df = df.fillna("N/A")
+
 st.sidebar.header("Filter here: ")
 position = st.sidebar.multiselect(
     label="Select the Position Played:",
@@ -48,6 +50,28 @@ if quick_find:
     df_selection = df.query("PLAYER == @quick_find")
 
 st.sidebar.button("Update")
+
+# Default sort settings
+default_sort_col = "ECR"
+default_sort_order = "Ascending"
+
+
+# Sidebar: choose column to sort by
+sort_values = ["ECR", "ADPRANK", "VALUERANK"]
+sort_col = st.selectbox("Sort by column", sort_values, index=sort_values.index(default_sort_col))
+sort_order = st.radio("Sort order", ["Ascending", "Descending"], index=0 if default_sort_order=="Ascending" else 1)
+
+# Function to sort while keeping None at bottom
+def sort_with_na_bottom(df, col, ascending=True):
+    na_mask = df[col] == "N/A"
+    df_non_na = df[~na_mask]
+    df_na = df[na_mask]
+
+    df_non_na_sorted = df_non_na.sort_values(by=col, ascending=ascending, key=lambda s: s.map(lambda x: float(x) if isinstance(x, (int,float)) else x))
+    return pd.concat([df_non_na_sorted, df_na], ignore_index=True)
+
+df_selection = sort_with_na_bottom(df_selection, sort_col, ascending=(sort_order=="Ascending"))
+
 
 df_selection = pd.DataFrame(df_selection.values,columns=df_selection.columns)
 st.dataframe(df_selection)

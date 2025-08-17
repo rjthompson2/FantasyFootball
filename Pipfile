@@ -33,6 +33,7 @@ fantasyfootball = {path = "."}
 chromedriver-autoinstaller = "*"
 webdriver-manager = "*"
 cython = "*"
+streamlit-aggrid = "==1.0.5"
 
 [dev-packages]
 
