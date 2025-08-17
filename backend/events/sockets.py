@@ -39,11 +39,25 @@ def receiver():
                     player = clean_name_str(player)
                     if player not in eliminated and df['PLAYER'].isin([player]).any():
                         print("found!", player)
-                        # Need a list of all player frist name and team abbreviated to convert to full name
+                        # Need a list of all player first name and team abbreviated to convert to full name
                         df.drop(df[df['PLAYER'] == player].index, inplace=True)
                         eliminated.append(player)
                     elif player not in eliminated:
-                        print("Unable to find:", player)
+                        #TODO implement a way to check if a player exists based on first initial, last name, and team
+                        split_names = df["PLAYER"].str.split(" ", n=1, expand=True)
+                        first_names = split_names[0]
+                        last_names = split_names[1]
+                        mask = (
+                            first_names.str[0].str.lower() + " " + last_names.str.lower() == player.lower()
+                        )
+
+                        matches = df[mask]
+    
+                        if not matches.empty:
+                            eliminated.append(matches.to_dict("records")[0]['PLAYER'])
+                            df = df.drop(matches.index[0]).reset_index(drop=True)
+                        else:
+                            print("Unable to find:", player)
 
                 df.to_csv(
                     find_in_data_folder(f"draft_order_{year}_copy.csv"),

@@ -127,11 +127,7 @@
         poll();
     }
     
-    if (!window.hasRunFantasyExtension) {
-        window.hasRunFantasyExtension = true;
-        
-        collectData()
-    }
+    collectData()
 })();
 
 window.onload = function() {

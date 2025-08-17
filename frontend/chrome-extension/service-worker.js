@@ -14,7 +14,7 @@ chrome.action.onClicked.addListener(tab => {
             
                 document.addEventListener('mousedown', (e) => {
                     if ((el.getBoundingClientRect().left+500 >= e.clientX && e.clientX >= el.getBoundingClientRect().left) && (el.getBoundingClientRect().top >= e.clientY && e.clientY >= el.getBoundingClientRect().top-35)){
-                        console.log("True")
+                        // console.log("True")
                         isDragging = true;
                         offsetX = e.clientX - el.getBoundingClientRect().left;
                         offsetY = e.clientY - el.getBoundingClientRect().top;
@@ -23,16 +23,16 @@ chrome.action.onClicked.addListener(tab => {
                 });
             
                 document.addEventListener('mousemove', (e) => {
-                    console.log("Mouse moved")
+                    // console.log("Mouse moved")
                     if (!isDragging) return;
-                    console.log("Drag registeres", e.clientX - offsetX, e.clientY - offsetY)
+                    // console.log("Drag registeres", e.clientX - offsetX, e.clientY - offsetY)
                     el.style.left = `${e.clientX - offsetX}px`;
                     el.style.top = `${e.clientY - offsetY}px`;
                 });
             
                 document.addEventListener('mouseup', (e) => {
                     isDragging = false;
-                    console.log("Mouse up")
+                    // console.log("Mouse up")
                 });
             }
 
