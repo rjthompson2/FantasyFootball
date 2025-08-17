@@ -71,9 +71,7 @@
                 sleeperCells.forEach(div => {
                     const name = div.querySelector('.player-name')?.textContent.trim();
                     const team = div.querySelector('.position')?.textContent.trim();
-                    console.log(name)
-                    console.log(team)
-
+                    
                     if (name && !chosenPlayers.has(name)) {
                         chosenPlayers.add(name);
                         newPicks.push({
