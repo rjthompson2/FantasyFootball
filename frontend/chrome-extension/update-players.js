@@ -84,7 +84,6 @@
                     }
                 });
 
-                console.log("TESTING 1")
                 const info = document.querySelector('.cell.current-pick.is-active .pick')?.textContent.trim().split(".");
                 round = info[0];
                 pick = info[1];
