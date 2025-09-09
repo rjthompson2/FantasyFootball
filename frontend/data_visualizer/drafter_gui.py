@@ -27,7 +27,7 @@ path = find_in_data_folder(f"draft_order_{year}_copy.csv")
 df = pd.read_csv(path).copy()
 df = df.dropna(subset=["POS"])
 
-df = df.fillna("N/A")
+# df = df.fillna("N/A")
 
 st.sidebar.header("Filter here: ")
 position = st.sidebar.multiselect(

@@ -17,73 +17,104 @@ def main(year):
         rb_data_list.append(bd.rb_share(temp_df))
         flex_data_list.append(bd.flex_wopr(temp_df))
 
-    df_rush_share = build(rb_data_list, "Rusher", "Avg. Rushing Share")
-    df_rush_yards = build(rb_data_list, "Rusher", "Avg. Rushing Yards Share")
-    df_rush_attempt = build(rb_data_list, "Rusher", "Avg. Rushing Attempt")
-    df_rush_rz = build(
-        rb_data_list, "Rusher", "Redzone Looks", final_type=["total", "avg"]
-    )
-    df_rush_gz = build(
-        rb_data_list, "Rusher", "Greenzone Looks", final_type=["total", "avg"]
-    )
-    df_wopr = build(flex_data_list, "Receiver", "Avg. WOPR")
-    df_tgt = build(flex_data_list, "Receiver", "Avg. Targets")
-    df_rec_rz = build(
-        flex_data_list, "Receiver", "Redzone Looks", final_type=["total", "avg"]
-    )
-    df_it = bd.df_combine(
-        df1=df_rush_attempt,
-        df2=df_tgt,
-        on=["PLAYER", "TEAM"],
-        merge_values=df_rush_attempt.columns.to_list()[2:-1],
-        convert_to="float",
-    )
+    try:
+        df_rush_share = build(rb_data_list, "Rusher", "Avg. Rushing Share")
+        df_rush_share.to_csv(
+            find_in_data_folder("rush_share_" + str(year) + ".csv"),
+            header=True,
+            index=False,
+        )
+    except:
+        pass
+    
+    try:
+        df_rush_yards = build(rb_data_list, "Rusher", "Avg. Rushing Yards Share")
+        df_rush_yards.to_csv(
+            find_in_data_folder("rush_yards_share_" + str(year) + ".csv"),
+            header=True,
+            index=False,
+        )
+    except:
+        pass
+    
+    try:
+        df_rush_attempt = build(rb_data_list, "Rusher", "Avg. Rushing Attempt")
+        df_rush_attempt.to_csv(
+            find_in_data_folder("rush_attempts_" + str(year) + ".csv"),
+            header=True,
+            index=False,
+        )
+    except:
+        pass
 
-    df_rush_share.to_csv(
-        find_in_data_folder("rush_share_" + str(year) + ".csv"),
-        header=True,
-        index=False,
-    )
-    df_rush_yards.to_csv(
-        find_in_data_folder("rush_yards_share_" + str(year) + ".csv"),
-        header=True,
-        index=False,
-    )
-    df_rush_attempt.to_csv(
-        find_in_data_folder("rush_attempts_" + str(year) + ".csv"),
-        header=True,
-        index=False,
-    )
-    # df_rush_rz.to_csv(
-    #     find_in_data_folder("rush_rz_" + str(year) + ".csv"),
-    #     header=True,
-    #     index=False,
+    # df_rush_rz = build(
+    #     rb_data_list, "Rusher", "Redzone Looks", final_type=["total", "avg"]
     # )
-    df_rush_gz.to_csv(
-        find_in_data_folder("rush_gz_" + str(year) + ".csv"),
-        header=True,
-        index=False,
-    )
-    df_rec_rz.to_csv(
-        find_in_data_folder("rec_rz_" + str(year) + ".csv"),
-        header=True,
-        index=False,
-    )
-    df_wopr.to_csv(
-        find_in_data_folder("wopr_" + str(year) + ".csv"),
-        header=True,
-        index=False,
-    )
-    df_tgt.to_csv(
-        find_in_data_folder("reciever_tgts_" + str(year) + ".csv"),
-        header=True,
-        index=False,
-    )
-    df_it.to_csv(
-        find_in_data_folder("rush_it_" + str(year) + ".csv"),
-        header=True,
-        index=False,
-    )
+
+    try:
+        df_rush_gz = build(
+            rb_data_list, "Rusher", "Greenzone Looks", final_type=["total", "avg"]
+        )
+        df_rush_gz.to_csv(
+            find_in_data_folder("rush_gz_" + str(year) + ".csv"),
+            header=True,
+            index=False,
+        )
+    except:
+        pass
+
+    try:
+        df_wopr = build(flex_data_list, "Receiver", "Avg. WOPR")
+        df_wopr.to_csv(
+            find_in_data_folder("wopr_" + str(year) + ".csv"),
+            header=True,
+            index=False,
+        )
+    except:
+        pass
+
+    try:
+        df_tgt = build(flex_data_list, "Receiver", "Avg. Targets")
+        df_tgt.to_csv(
+            find_in_data_folder("reciever_tgts_" + str(year) + ".csv"),
+            header=True,
+            index=False,
+        )
+    except:
+        pass
+
+    try:
+        df_rec_rz = build(
+            flex_data_list, "Receiver", "Redzone Looks", final_type=["total", "avg"]
+        )
+        df_rec_rz.to_csv(
+            find_in_data_folder("rec_rz_" + str(year) + ".csv"),
+            header=True,
+            index=False,
+        )
+    except:
+        pass
+
+    try:
+        df_it = bd.df_combine(
+            df1=df_rush_attempt,
+            df2=df_tgt,
+            on=["PLAYER", "TEAM"],
+            merge_values=df_rush_attempt.columns.to_list()[2:-1],
+            convert_to="float",
+        )
+        # df_rush_rz.to_csv(
+        #     find_in_data_folder("rush_rz_" + str(year) + ".csv"),
+        #     header=True,
+        #     index=False,
+        # )
+        df_it.to_csv(
+            find_in_data_folder("rush_it_" + str(year) + ".csv"),
+            header=True,
+            index=False,
+        )
+    except:
+        pass
 
 
 def build(data_list, player_type, value, final_type=["avg"]):
