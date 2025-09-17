@@ -14,6 +14,7 @@ today = date.today()
 year = today.year
 if today.month < 8 and today.month > 1:
     year -= 1
+    print(year)
 
 
 class Functions(Enum):
@@ -36,7 +37,7 @@ class Names(Enum):
     plot = "Plot Weekly Data"
 
 
-enums = ["draft", "player", "corr_map", "weekly", "plot"]
+enums = ["draft", "player", "weekly", "plot"]
 
 
 def main(args) -> None:

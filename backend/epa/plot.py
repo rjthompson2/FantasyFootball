@@ -295,4 +295,4 @@ def make_all(years):
 
 
 if __name__ == "__main__":
-    make_all(years=[2023])
+    make_all(years=[2025])

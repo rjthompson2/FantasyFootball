@@ -6,8 +6,10 @@ def get_epa(year, df=None):
     if not isinstance(df, pd.DataFrame):
         df = nfl.import_pbp_data(years=year)
 
+    posteams = [x for x in df["posteam"].unique().tolist() if x != None]
     epa_df = pd.DataFrame(
         {
+            "posteam": posteams,
             "offense_epa": df.groupby("posteam")["epa"].sum(),
             "offense_plays": df["posteam"].value_counts(),
             "offense_yards": df.groupby("posteam")["yards_gained"].sum(),
