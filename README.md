@@ -42,9 +42,10 @@ Mini-update on seasons so far:
 2022 - 3rd  
 2023 - 2nd  
 2024 - 1st
+2025 - 9th (Jefferson 1st round)
 
 # TODOs/Future implementations
 
 accuracy metric for ECR, ADP, and VOR fantasy predictions
 
-normal distribution of recovery time per injury
+distribution of recovery time per injury

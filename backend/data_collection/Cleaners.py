@@ -9,9 +9,9 @@ LOG = logging.getLogger(__name__)
 
 
 class ADPCleaner:
-    """Cleans the average draaft pick for each player"""
+    """Cleans the average draft pick for each player"""
 
-    def clean_data(self, df):
+    def clean_data(self, df, pos=False):
         df = df[["Player Team (Bye)", "POS", "AVG"]]
         df["PLAYER"] = df["Player Team (Bye)"].apply(
             lambda x: " ".join(x.split()[:-2])
@@ -123,6 +123,18 @@ class InjuryCleaner:
             lambda x: x.translate({ord(" "): None, ord("\n"): None})
         )
         df = clean_name(df)
+        return df
+
+class PPRCleaner:
+    """Cleans the ppr data for each player end of year"""
+
+    def clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
+        df = df[["Player", "AVG", "TTL"]]
+        df = df.rename(columns=
+            {
+                "Player": "PLAYER", 
+                "AVG": "PPR_AVG"
+            })
         return df
 
 

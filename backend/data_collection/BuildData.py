@@ -102,11 +102,11 @@ def build_drafting_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def calculate_VOR(
-    df: pd.DataFrame, final_df: pd.DataFrame, replacement_values: dict
+    df: pd.DataFrame, final_df: pd.DataFrame, replacement_values: dict, on="FPTS"
 ) -> pd.DataFrame:
     df["POS"] = df["POS"].replace(np. nan,'None',regex=True)
     df["VOR"] = df.apply(
-        lambda row: row["FPTS"] - replacement_values[row["POS"]]
+        lambda row: row[on] - replacement_values[row["POS"]]
         if (row["POS"] != "None" and row["POS"] != "DST" and row["POS"] != "K")
         else None,
         axis=1,
