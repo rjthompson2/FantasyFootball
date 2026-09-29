@@ -8,7 +8,7 @@ from backend.data_collection.Collectors import (
     InjuryDataCollector,
     CBSDataCollector,
 )
-from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
+from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper, FProsWebScraper
 from backend.data_collection.Cleaners import (
     ADPCleaner,
     ECRCleaner,
@@ -27,7 +27,7 @@ LOG = logging.getLogger(__name__)
 class TestCollectors:
     def test_adp_collection(self):
         adp = Collector(
-            ws=WebScraper(),
+            ws=FProsWebScraper(),
             url="https://www.fantasypros.com/nfl/adp/ppr-overall.php",
             _id="id",
             tag="data",

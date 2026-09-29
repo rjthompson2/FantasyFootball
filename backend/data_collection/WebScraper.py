@@ -18,6 +18,7 @@ import urllib
 import logging
 import re
 import time
+import json
 
 
 LOG = logging.getLogger(__name__)
@@ -117,13 +118,21 @@ class DynamicScraper(ABC):
 
     driver = None
 
-    def start(self, url, headless=False, debug=False):
+    def start(self, url, headless=False, debug=False, fpros=False):
         """Opens a chrome browser and connects to the url"""
         opts = Options()
         if headless:
             opts.add_argument("--headless")
         if debug:
             opts.add_experimental_option("detach", True)
+        if fpros:
+            opts.add_argument(
+                "--user-data-dir=/Users/rileythompson/fantasypros-chrome"
+            )
+            opts.add_experimental_option(
+                "debuggerAddress",
+                "127.0.0.1:9222"
+            )
         opts.add_argument("--incognito")
         self.driver = webdriver.Chrome(
             options=opts,
@@ -173,6 +182,111 @@ class DynamicWebScraper(DynamicScraper):
             df = pd.DataFrame(data=dfs, columns=columns)
         return df
 
+
+class FProsWebScraper(DynamicScraper):
+    """Generalized scraper for collecting data dynamic static webpages"""
+
+    def collect(self, id, tag):
+        try:
+            self.load_credentials()
+        except:
+            input("Press enter when you have completed login: ")
+            self.collect_credentials()
+        # df = pd.DataFrame()
+        if self.driver == None:
+            print("Could not connect.")
+            return pd.DataFrame()
+        soup = BS(self.driver.page_source, "lxml")
+
+        rows = soup.find_all(
+            "tr",
+            class_="mcu-table__data-row"
+        )
+
+        data = []
+
+        for row in rows:
+            cells = row.find_all("td")
+
+            if not cells:
+                continue
+
+            # Player information
+            player_link = row.select_one(".reports__player-link")
+
+            if player_link is None:
+                continue
+
+            player_name = player_link.get("fp-player-name")
+
+            team_element = row.select_one(".reports__player-team")
+            team = team_element.get_text(strip=True) if team_element else None
+
+            # Remove the ranking number from the team, e.g. "DET (6)" -> "DET"
+            if team:
+                team = team.split("(")[0].strip()
+
+            # Position
+            position_element = row.select_one(".mcu-table__cell--pos")
+            position = (
+                position_element.get_text(strip=True)
+                if position_element
+                else None
+            )
+            position = re.sub(r'[^a-zA-Z]', '', position)
+
+            # Correct position to fantasy positions
+            pos_change = {
+                "FB": "RB"
+            }
+            if position in list(pos_change.keys()):
+                position = pos_change[position]
+
+            # Build row
+            row_data = {
+                "AVG": cells[0].get_text(strip=True),
+                "PLAYER": player_name,
+                "TEAM": team,
+                "POS": position,
+            }
+
+            # Extract remaining columns based on their CSS class
+            for cell in cells:
+                classes = cell.get("class", [])
+
+                for css_class in classes:
+                    if css_class.startswith("mcu-table__cell--src_"):
+                        source_id = css_class.replace(
+                            "mcu-table__cell--src_", ""
+                        )
+
+                        row_data[f"src_{source_id}"] = (
+                            cell.get_text(strip=True)
+                        )
+
+                    elif css_class == "mcu-table__cell--avg":
+                        row_data["avg"] = cell.get_text(strip=True)
+
+                    elif css_class == "mcu-table__cell--realtime":
+                        row_data["realtime"] = cell.get_text(strip=True)
+
+            data.append(row_data)
+
+        return pd.DataFrame(data)
+
+    def collect_credentials(self):
+        # After manually logging in:
+        cookies = self.driver.get_cookies()
+
+        with open("fantasypros_cookies.json", "w") as f:
+            json.dump(cookies, f)
+
+    def load_credentials(self):
+        with open("fantasypros_cookies.json") as f:
+            cookies = json.load(f)
+
+        for cookie in cookies:
+            self.driver.add_cookie(cookie)
 
 class DivScraper(DynamicScraper):
     def collect(self, _id, data):

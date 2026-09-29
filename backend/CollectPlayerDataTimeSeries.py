@@ -1,19 +1,21 @@
+from  backend.data_collection.api_call.nfl_api import get_data
+from backend.utils import find_in_data_folder
+from datetime import date
 import backend.data_collection.BuildData as bd
-import nfl_data_py as nfl
 import pandas as pd
 import numpy as np
 from datetime import date
-from backend.utils import find_in_data_folder
 
 
 def main(year):
-    df = nfl.import_pbp_data([year])
+    df = get_data(years=[year], columns=False)
 
     weeks = df.week.unique()
     rb_data_list = []
     flex_data_list = []
     for week in weeks:
         temp_df = df.loc[df["week"] == week]
+
         rb_data_list.append(bd.rb_share(temp_df))
         flex_data_list.append(bd.flex_wopr(temp_df))
 
@@ -44,24 +46,24 @@ def main(year):
             header=True,
             index=False,
         )
-    except:
-        pass
+    except Exception as e:
+        print(e)
 
     # df_rush_rz = build(
     #     rb_data_list, "Rusher", "Redzone Looks", final_type=["total", "avg"]
     # )
 
-    try:
-        df_rush_gz = build(
-            rb_data_list, "Rusher", "Greenzone Looks", final_type=["total", "avg"]
-        )
-        df_rush_gz.to_csv(
-            find_in_data_folder("rush_gz_" + str(year) + ".csv"),
-            header=True,
-            index=False,
-        )
-    except:
-        pass
+    # try:
+    #     df_rush_gz = build(
+    #         rb_data_list, "Rusher", "Greenzone Looks", final_type=["total", "avg"]
+    #     )
+    #     df_rush_gz.to_csv(
+    #         find_in_data_folder("rush_gz_" + str(year) + ".csv"),
+    #         header=True,
+    #         index=False,
+    #     )
+    # except:
+    #     pass
 
     try:
         df_wopr = build(flex_data_list, "Receiver", "Avg. WOPR")
@@ -83,17 +85,17 @@ def main(year):
     except:
         pass
 
-    try:
-        df_rec_rz = build(
-            flex_data_list, "Receiver", "Redzone Looks", final_type=["total", "avg"]
-        )
-        df_rec_rz.to_csv(
-            find_in_data_folder("rec_rz_" + str(year) + ".csv"),
-            header=True,
-            index=False,
-        )
-    except:
-        pass
+    # try:
+    #     df_rec_rz = build(
+    #         flex_data_list, "Receiver", "Redzone Looks", final_type=["total", "avg"]
+    #     )
+    #     df_rec_rz.to_csv(
+    #         find_in_data_folder("rec_rz_" + str(year) + ".csv"),
+    #         header=True,
+    #         index=False,
+    #     )
+    # except Exception as e:
+    #     print(e)
 
     try:
         df_it = bd.df_combine(
@@ -103,10 +105,8 @@ def main(year):
             merge_values=df_rush_attempt.columns.to_list()[2:-1],
             convert_to="float",
         )
-        # df_rush_rz.to_csv(
-        #     find_in_data_folder("rush_rz_" + str(year) + ".csv"),
-        #     header=True,
-        #     index=False,
+        # df_it = build(
+        #     flex_data_list, "Rusher", "Avg. Implied Touches", final_type=["total", "avg"]
         # )
         df_it.to_csv(
             find_in_data_folder("rush_it_" + str(year) + ".csv"),

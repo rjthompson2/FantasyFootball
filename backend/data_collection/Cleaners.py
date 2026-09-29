@@ -12,12 +12,7 @@ class ADPCleaner:
     """Cleans the average draft pick for each player"""
 
     def clean_data(self, df, pos=False):
-        df = df[["Player Team (Bye)", "POS", "AVG"]]
-        df["PLAYER"] = df["Player Team (Bye)"].apply(
-            lambda x: " ".join(x.split()[:-2])
-            if x.split()[-1] != "DST"
-            else " ".join(x.split()[:-1])
-        )  # removing the team and position
+        df = df[["PLAYER", "POS", "AVG"]]
         df = clean_name(df)
         df["POS"] = df["POS"].apply(
             lambda x: x[:1] if x[0] == "K" else (x[:3] if x[:3] == "DST" else x[:2])

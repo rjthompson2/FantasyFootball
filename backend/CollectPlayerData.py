@@ -1,30 +1,18 @@
-from backend.data_collection.WebScraper import WebScraper
+from  backend.data_collection.api_call.nfl_api import get_data
 from backend.utils import find_in_data_folder
 from datetime import date
 import backend.data_collection.BuildData as bd
-import nfl_data_py as nfl
-import multiprocessing
-import time
 
-# Collects player data for each position using multiprocessing
 def get_player_data(year):
-    total_time = time.time()
-    with multiprocessing.Pool() as pool:
-        pool.apply_async(qb_data(year))
-        pool.apply_async(flex_data(year))
-        pool.apply_async(rb_data(year))
-        pool.apply_async(flex_adv_data(year))
-        pool.apply_async(rb_adv_data(year))
-        pool.close()
-        pool.join()
-        pool.terminate()
-    print("Toal--- %s seconds ---" % (time.time() - total_time))
+    data = get_data(years=[year])
+    return data
+
 
 
 # Collects qb data for a specific year
 def qb_data(year):
     start_time = time.time()
-    ws = WebScraper()
+    ws = FProsWebScraper()
     qb_df = bd.player_data(
         "https://www.fantasypros.com/nfl/stats/{position}.php?year="
         + str(year)
@@ -44,7 +32,7 @@ def qb_data(year):
 # Collects wr and te data for a specific year
 def flex_data(year):
     start_time = time.time()
-    ws = WebScraper()
+    ws = FProsWebScraper()
     flex_df = bd.player_data(
         "https://www.fantasypros.com/nfl/stats/{position}.php?year="
         + str(year)
@@ -85,7 +73,7 @@ def flex_adv_data(year):
 # Collects rb data for a specific year
 def rb_data(year):
     start_time = time.time()
-    ws = WebScraper()
+    ws = FProsWebScraper()
     rb_df = bd.player_data(
         "https://www.fantasypros.com/nfl/stats/{position}.php?year="
         + str(year)

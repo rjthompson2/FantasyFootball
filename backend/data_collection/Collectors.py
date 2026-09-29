@@ -3,6 +3,7 @@ from backend.data_collection.WebScraper import (
     DynamicWebScraper,
     FilterWebScraper,
     RegexWebScraper,
+    FProsWebScraper,
 )
 from backend.data_collection.utils import (
     clean_name,
@@ -39,6 +40,8 @@ class Collector:
     def collect_data(self)-> pd.DataFrame:
         if isinstance(self.ws, DynamicWebScraper):
             self.ws.start(self.url, headless=True)
+        elif isinstance(self.ws, FProsWebScraper):
+            self.ws.start(self.url, fpros=True)
         else:
             self.ws.start(self.url)
         df = self.ws.collect(self.id, self.tag)

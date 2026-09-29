@@ -6,7 +6,7 @@ from backend.data_collection.Collectors import (
     InjuryDataCollector,
     APICollector,
 )
-from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper
+from backend.data_collection.WebScraper import WebScraper, DynamicWebScraper, FProsWebScraper
 from backend.data_collection.utils import merge_list
 from backend.data_collection.Cleaners import (
     ADPCleaner,
@@ -35,7 +35,7 @@ class DraftConnector:
     def __init__(self, year: int):
         self.year = year
         self.adp = Collector(
-            ws=WebScraper(),
+            ws=FProsWebScraper(),
             url="https://www.fantasypros.com/nfl/adp/ppr-overall.php",
             _id="id",
             tag="data",
